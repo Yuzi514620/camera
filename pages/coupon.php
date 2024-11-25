@@ -94,39 +94,6 @@
               <div class="table-responsive p-0">
                 <table class="table align-items-center mb-0">
                   <thead>
-                    <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        姓名
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        帳號 / email
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        電話
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
-                      </th>
                       <!-- <th class="text-secondary opacity-7"></th> -->
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">名稱</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">優惠券代碼</th>
@@ -151,11 +118,10 @@
                         <td><?=$row["discount"]?></td>
                         <td><?=$row["lower_purchase"]?></td>
                         <td><?=$row["quantity"]?></td>
-                        <td id="show">
+                        <td>
                             <?php if($row["is_deleted"] == 0):?>已上架
                             <?php else:?>已下架
                             <?php endif;?>
-                            
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
