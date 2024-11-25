@@ -42,12 +42,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'coupon' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/coupon.php">
-                    <i class="fa-solid fa-ticket opacity-5" style="font-size: 13px"></i>
-                    <span class="nav-link-text ms-1">優惠券管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link <?= $page === 'course' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/course.php">
                     <i class="material-symbols-rounded opacity-5">view_in_ar</i>
                     <span class="nav-link-text ms-1">課程管理</span>
@@ -57,6 +51,12 @@
                 <a class="nav-link <?= $page === 'article' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/article.php">
                     <i class="fa-regular fa-newspaper opacity-5" style="font-size: 14px"></i>
                     <span class="nav-link-text ms-1">文章管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?= $page === 'coupon' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/coupon.php">
+                    <i class="fa-solid fa-ticket opacity-5" style="font-size: 13px"></i>
+                    <span class="nav-link-text ms-1">優惠券管理</span>
                 </a>
             </li>
             <li class="nav-item">
