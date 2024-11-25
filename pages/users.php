@@ -88,8 +88,12 @@
                         圖片
                       </th>
                       <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
                         姓名
+                      </th>
+                      <th
+                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        性別
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
@@ -97,7 +101,15 @@
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        電話
+                        手機號碼
+                      </th>
+                      <th
+                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        地址
+                      </th>
+                      <th
+                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        加入時間
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">

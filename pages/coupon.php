@@ -66,6 +66,7 @@
       <?php $page = 'coupon'; ?>
       <?php include 'navbar.php'; ?>
     <!-- Navbar -->
+
     <div class="container-fluid py-2">
       <div class="row">
         <div class="col-12">
@@ -79,48 +80,15 @@
               <div class="table-responsive p-0">
                 <table class="table align-items-center mb-0">
                   <thead>
-                    <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        姓名
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        帳號 / email
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        電話
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
-                      </th>
                       <!-- <th class="text-secondary opacity-7"></th> -->
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">名稱</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">優惠券代碼</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">開始日</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">截止日</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">折扣</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">最低消費</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">數量</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">狀態</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">開始日</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">截止日</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">折扣</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">最低消費</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">數量</th>
+                      <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">狀態</th>
                       <th class="qopacity-7"></th>
                     </tr>
                   </thead>
@@ -129,432 +97,6 @@
                         foreach($rows as $row):
                     ?>
                     <tr>
-<<<<<<< HEAD
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 姓名 -->
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-=======
                         <td><?=$row["name"]?></td>
                         <td><?=$row["coupon_code"]?></td>
                         <td><?=$row["start_date"]?></td>
@@ -562,11 +104,10 @@
                         <td><?=$row["discount"]?></td>
                         <td><?=$row["lower_purchase"]?></td>
                         <td><?=$row["quantity"]?></td>
-                        <td id="show">
+                        <td>
                             <?php if($row["is_deleted"] == 0):?>已上架
                             <?php else:?>已下架
                             <?php endif;?>
-                            
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -574,7 +115,6 @@
                                 <button class="btn btn-danger mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
                             </div>
                         </td>
->>>>>>> e83eb3b1f396c702efdd961ce3b299ff4ccfb12b
                     </tr>
                     <?php endforeach;?>
                   </tbody>
@@ -596,22 +136,6 @@
                 <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
                 for a better web.
               </div>
-            </div>
-            <div class="col-lg-6">
-              <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                <li class="nav-item">
-                  <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
-                </li>
-                <li class="nav-item">
-                  <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
-                </li>
-                <li class="nav-item">
-                  <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
-                </li>
-                <li class="nav-item">
-                  <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
-                </li>
-              </ul>
             </div>
           </div>
         </div>
@@ -639,13 +163,31 @@
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
   <?php include_once("../../js.php")?>
   <script>
-    $(".btn-upDownLoad").click(function(){
+     $(".btn-upDownLoad").click(function(){
         let transData = $(this).data();
         $.ajax({
             method:"POST",
-            url:"./api/updateCouponStatus.php",
+            url:"./api/statusCouponStatus.php",
             data:{
                 status:transData.status,
+                id:transData.id
+            }
+        })
+        .done(function(response){   
+          document.location.reload();
+        })
+        .fail(function(jqXHR,textStatus,errorThrown){
+            console.log(textStatus,errorThrown);
+        }) 
+    })
+
+    $(".btn-deleted").click(function(){
+        let transData = $(this).data();
+        console.log(transData);
+        $.ajax({
+            method:"POST",
+            url:"./api/doDeleteCoupon.php",
+            data:{
                 id:transData.id
             }
         })
