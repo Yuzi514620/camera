@@ -1,5 +1,5 @@
 <?php
-    require_once("../../pdo_connect.php");
+    require_once("../pdo_connect.php");
     if(!isset($_POST["id"])){
         echo "請循正常管道進入";
         exit;
