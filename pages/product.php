@@ -81,7 +81,7 @@
                     <tr>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
+                        IDD
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 text-white">
