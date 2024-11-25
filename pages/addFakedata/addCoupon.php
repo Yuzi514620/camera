@@ -1,6 +1,6 @@
 <?php
 //新增假資料
-require_once("../../pdo_connect.php");
+require_once("../pdo_connect.php");
 $timeNow = date("Y-m-d H:i:s");
 $timeEnd = date("Y-m-d H:i:s",strtotime("+30 day"));
 
