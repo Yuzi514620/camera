@@ -182,6 +182,10 @@
 
     </div>
   </aside>
+  <!-- 側邊欄 -->
+  <?php $page = 'order'; ?>
+  <?php include 'sidebar.php'; ?>
+  <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur"

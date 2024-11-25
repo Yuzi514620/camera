@@ -1,17 +1,18 @@
-<!--
-=========================================================
-* Material Dashboard 3 - v3.2.0
-=========================================================
+<?php
+    require_once("pdo_connect.php");
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
+    $pdoSql = "SELECT * FROM coupon";
+    $stmt = $db_host->prepare($pdoSql);
+    try{
+        $stmt->execute();
+        $rows = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    }catch(PDOException $e){
+        echo "預處理陳述式執行失敗！ <br/>";
+        echo "Error: " . $e->getMessage() . "<br/>";
+        $db_host = NULL;
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,6 +57,7 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
+<<<<<<< HEAD
   <aside
     class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-gradient-dark my-2"
     id="sidenav-main">
@@ -182,6 +184,12 @@
 
     </div>
   </aside>
+=======
+  <!-- 側邊欄 -->
+  <?php $page = 'coupon'; ?>
+  <?php include 'sidebar.php'; ?>
+  <!-- 側邊欄 -->
+>>>>>>> e83eb3b1f396c702efdd961ce3b299ff4ccfb12b
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur"
@@ -323,15 +331,15 @@
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
+                <h6 class="text-white text-capitalize ps-3">優惠券列表</h6>
               </div>
-            </div> -->
+            </div>
             <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0 rounded-top">
+              <div class="table-responsive p-0">
                 <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
+                  <thead>
                     <tr>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -366,10 +374,23 @@
                         刪除
                       </th>
                       <!-- <th class="text-secondary opacity-7"></th> -->
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">名稱</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">優惠券代碼</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">開始日</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">截止日</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">折扣</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">最低消費</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">數量</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">狀態</th>
+                      <th class="qopacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
+                    <?php
+                        foreach($rows as $row):
+                    ?>
                     <tr>
+<<<<<<< HEAD
                       <td class="text-center">
                         <!-- ID -->
                         <p class="text-xs font-weight-bold mb-0">1</p>
@@ -794,7 +815,29 @@
                           <i class="fa-regular fa-trash-can"></i>
                         </a>
                       </td>
+=======
+                        <td><?=$row["name"]?></td>
+                        <td><?=$row["coupon_code"]?></td>
+                        <td><?=$row["start_date"]?></td>
+                        <td><?=$row["end_date"]?></td>
+                        <td><?=$row["discount"]?></td>
+                        <td><?=$row["lower_purchase"]?></td>
+                        <td><?=$row["quantity"]?></td>
+                        <td id="show">
+                            <?php if($row["is_deleted"] == 0):?>已上架
+                            <?php else:?>已下架
+                            <?php endif;?>
+                            
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?=$row["id"] ?>">上架</button>
+                                <button class="btn btn-danger mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                            </div>
+                        </td>
+>>>>>>> e83eb3b1f396c702efdd961ce3b299ff4ccfb12b
                     </tr>
+                    <?php endforeach;?>
                   </tbody>
                 </table>
               </div>
@@ -802,428 +845,38 @@
           </div>
         </div>
       </div>
-      <!-- <div class="row">
-          <div class="col-12">
-            <div class="card my-4">
-              <div
-                class="card-header p-0 position-relative mt-n4 mx-3 z-index-2"
-              >
-                <div
-                  class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3"
-                >
-                  <h6 class="text-white text-capitalize ps-3">
-                    Projects table
-                  </h6>
-                </div>
-              </div>
-              <div class="card-body px-0 pb-2">
-                <div class="table-responsive p-0">
-                  <table
-                    class="table align-items-center justify-content-center mb-0"
-                  >
-                    <thead>
-                      <tr>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-                        >
-                          Project
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                        >
-                          Budget
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                        >
-                          Status
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2"
-                        >
-                          Completion
-                        </th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-asana.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="spotify"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Asana</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$2,500</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">working</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >60%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-info"
-                                  role="progressbar"
-                                  aria-valuenow="60"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 60%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button class="btn btn-link text-secondary mb-0">
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/github.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="invision"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Github</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$5,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">done</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >100%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="100"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-atlassian.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="jira"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Atlassian</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$3,400</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">canceled</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >30%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-danger"
-                                  role="progressbar"
-                                  aria-valuenow="30"
-                                  aria-valuemin="0"
-                                  aria-valuemax="30"
-                                  style="width: 30%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/bootstrap.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="webdev"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Bootstrap</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$14,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">working</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >80%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-info"
-                                  role="progressbar"
-                                  aria-valuenow="80"
-                                  aria-valuemin="0"
-                                  aria-valuemax="80"
-                                  style="width: 80%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-slack.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="slack"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Slack</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$1,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">canceled</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >0%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="0"
-                                  aria-valuemin="0"
-                                  aria-valuemax="0"
-                                  style="width: 0%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/devto.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="xd"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Devto</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$2,300</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">done</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >100%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="100"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+      <footer class="footer py-4  ">
+        <div class="container-fluid">
+          <div class="row align-items-center justify-content-lg-between">
+            <div class="col-lg-6 mb-lg-0 mb-4">
+              <div class="copyright text-center text-sm text-muted text-lg-start">
+                © <script>
+                  document.write(new Date().getFullYear())
+                </script>,
+                made with <i class="fa fa-heart"></i> by
+                <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
+                for a better web.
               </div>
             </div>
+            <div class="col-lg-6">
+              <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                <li class="nav-item">
+                  <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
+                </li>
+                <li class="nav-item">
+                  <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
+                </li>
+                <li class="nav-item">
+                  <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
+                </li>
+                <li class="nav-item">
+                  <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div> -->
-      <!-- <footer class="footer py-4">
-          <div class="container-fluid">
-            <div class="row align-items-center justify-content-lg-between">
-              <div class="col-lg-6 mb-lg-0 mb-4">
-                <div
-                  class="copyright text-center text-sm text-muted text-lg-start"
-                >
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  , made with <i class="fa fa-heart"></i> by
-                  <a
-                    href="https://www.creative-tim.com"
-                    class="font-weight-bold"
-                    target="_blank"
-                    >Creative Tim</a
-                  >
-                  for a better web.
-                </div>
-              </div> -->
-      <!-- <div class="col-lg-6">
-                <ul
-                  class="nav nav-footer justify-content-center justify-content-lg-end"
-                >
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >Creative Tim</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/presentation"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >About Us</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/blog"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >Blog</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/license"
-                      class="nav-link pe-0 text-muted"
-                      target="_blank"
-                      >License</a
-                    >
-                  </li>
-                </ul>
-              </div> -->
-      <!-- </div>
-          </div>
-        </footer> -->
+        </div>
+      </footer>
     </div>
   </main>
   
@@ -1245,6 +898,26 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+  <?php include_once("../../js.php")?>
+  <script>
+    $(".btn-upDownLoad").click(function(){
+        let transData = $(this).data();
+        $.ajax({
+            method:"POST",
+            url:"./api/updateCouponStatus.php",
+            data:{
+                status:transData.status,
+                id:transData.id
+            }
+        })
+        .done(function(response){   
+          document.location.reload();
+        })
+        .fail(function(jqXHR,textStatus,errorThrown){
+            console.log(textStatus,errorThrown);
+        }) 
+    })
+  </script>
 </body>
 
 </html>
