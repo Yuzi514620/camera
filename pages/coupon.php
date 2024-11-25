@@ -143,6 +143,27 @@
                     <?php
                         foreach($rows as $row):
                     ?>
+                    <tr>
+                        <td><?=$row["name"]?></td>
+                        <td><?=$row["coupon_code"]?></td>
+                        <td><?=$row["start_date"]?></td>
+                        <td><?=$row["end_date"]?></td>
+                        <td><?=$row["discount"]?></td>
+                        <td><?=$row["lower_purchase"]?></td>
+                        <td><?=$row["quantity"]?></td>
+                        <td id="show">
+                            <?php if($row["is_deleted"] == 0):?>已上架
+                            <?php else:?>已下架
+                            <?php endif;?>
+                            
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?=$row["id"] ?>">上架</button>
+                                <button class="btn btn-danger mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                            </div>
+                        </td>
+                    </tr>
                     <?php endforeach;?>
                   </tbody>
                 </table>
