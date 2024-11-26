@@ -1,4 +1,25 @@
+<?php
+    session_start();
+    $id = $_SESSION["id"];
+    require_once("pdo_connect.php");
+    $pdoSql = "SELECT * FROM coupon WHERE `coupon`.`id` = ?";
+ 
+    $stmt = $db_host->prepare($pdoSql);
+    try{
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    }catch(PDOException $e){
+        $data = [
+            'message' => '預處理陳述式執行失敗！ <br/>',
+            'code' =>   "Error: " . $e->getMessage() . "<br/>"
+        ];
+        echo json_encode($data);
+        $db_host = NULL;
+        exit;
+    }
+?>
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -22,68 +43,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
         integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .textbox{
+            width: 50%;
+            left: 35%;
+            input{
+                border: 2px solid gray;
+                color: black;
+            }
+            input:focus{
+                color: black;
+                border: 2px solid black;
+                transition: 0.4s;
+            }
+            .btn-box{
+                left: 20%;
+            }
+        }
+    </style>
+        
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
-    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-dark my-2"
-        id="sidenav-main">
-        <div class="sidenav-header">
-            <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
-                aria-hidden="true" id="iconSidenav"></i>
-            <a class="navbar-brand px-4 py-3 m-0" href="#"
-                target="_blank">
-                <span class="ms-1 text-sm text-white">Camera</span>
-            </a>
-        </div>
-        <hr class="horizontal dark mt-0 mb-2" />
-        <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/users.php">
-                        <i class="fa-solid fa-user"></i>
-                        <span class="nav-link-text ms-1">會員管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/order.php">
-                        <i class="fa-solid fa-file"></i>
-                        <span class="nav-link-text ms-1">訂單管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/product.php">
-                        <i class="fa-solid fa-camera"></i>
-                        <span class="nav-link-text ms-1">商品管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/rental.php">
-                        <i class="fa-solid fa-handshake"></i>
-                        <span class="nav-link-text ms-1">租借商品管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/course.php">
-                        <i class="fa-solid fa-book"></i>
-                        <span class="nav-link-text ms-1">課程管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active bg-white text-dark" href="../pages/coupon.php">
-                        <i class="fa-solid fa-ticket"></i>
-                        <span class="nav-link-text ms-1">優惠券管理</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="../pages/article.php">
-                        <i class="fa-solid fa-book-open"></i>
-                        <span class="nav-link-text ms-1">文章管理</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-    </aside>
+     <!-- 側邊欄 -->
+  <?php $page = 'coupon'; ?>
+  <?php include 'sidebar.php'; ?>
+  <!-- 側邊欄 -->
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+      <?php $page = 'coupon'; ?>
+      <?php include 'navbar.php'; ?>
+    <!-- Navbar -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur"
@@ -113,17 +103,42 @@
                                 <h6 class="text-white text-capitalize ps-3">修改優惠券</h6>
                             </div>
                         </div>
-                        <div class="card-body px-0 pb-2">
-                            <div class="">名稱</div>
-                            <input type="text" class="" name="name" id="">
-                            <div class="">折扣</div>
-                            <input type="text" class="" name="discount" id="">
-                            <div class="">最低消費</div>
-                            <input type="text" class="" name="lower_purchase" id="">
-                            <div class="">數量</div>
-                            <input type="text" class="" name="quantity" id="">
-                            <div class="">
+                        <div class="textbox card-body px-0 pb-2 position-relative">
+                            <div class="input-box row g-2 mt-2 ms-2 align-items-center">
+                                <div class="col-1">
+                                    <span>名稱</span>
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" class="form-control " name="name" id="name" value="<?=$result["name"]?>">
+                                </div>
+                            </div>
+                            <div class="input-box row g-2 mt-2 ms-2 align-items-center">
+                                <div class="col-1">
+                                    <span>折扣</span>
+                                </div>
+                                <div class="col-5">
+                                    <input type="number" class="form-control " name="discount" id="discount" value="<?=$result["discount"]?>">
+                                </div>
+                            </div>
+                            <div class="input-box row g-2 mt-2 ms-2 align-items-center">
+                                <div class="col-1">
+                                    <span>最低消費</span>
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" class="form-control " name="lower_purchase" id="lower_purchase" value="<?=$result["lower_purchase"]?>">
+                                </div>
+                            </div>
+                            <div class="input-box row g-2 mt-2 ms-2 align-items-center">
+                                <div class="col-1">
+                                    <span>數量</span>
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" class="form-control " name="quantity" id="quantity" value="<?=$result["quantity"]?>">
+                                </div>
+                            </div>
+                            <div class="btn-box position-relative mt-3">
                                 <button class="btn btn-info btn-update">完成</button>
+                                <a href="coupon.php" class="btn btn-info">返回</a>
                             </div>
                         </div>
                     </div>
@@ -256,56 +271,29 @@
     <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
     <?php include_once("../../js.php") ?>
     <script>
-        $(".btn-upDownLoad").click(function() {
-            let transData = $(this).data();
-            $.ajax({
-                    method: "POST",
-                    url: "./api/statusCouponStatus.php",
-                    data: {
-                        status: transData.status,
-                        id: transData.id
-                    }
-                })
-                .done(function(response) {
-                    document.location.reload();
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                })
-        })
-        
+        const name = document.querySelector("#name");
+        const discount = document.querySelector("#discount");
+        const lower_purchase = document.querySelector("#lower_purchase");
+        const quantity = document.querySelector("#quantity");
+        const id = <?=$id?>;
         $(".btn-update").click(function() {
-            let transData = $(this).data();
-            console.log(transData);
-            // $.ajax({
-            //         method: "POST",
-            //         url: "./api/doDeleteCoupon.php",
-            //         data: {
-            //             id: transData.id
-            //         }
-            //     })
-            //     .done(function(response) {
-            //         document.location.reload();
-            //     })
-            //     .fail(function(jqXHR, textStatus, errorThrown) {
-            //         console.log(textStatus, errorThrown);
-            //     })
-        })
-
-        $(".btn-deleted").click(function() {
-            let transData = $(this).data();
             $.ajax({
                     method: "POST",
-                    url: "./api/doDeleteCoupon.php",
+                    url: "./api/doUpdateCoupon.php",
+                   
                     data: {
-                        id: transData.id
+                        id:id,
+                        name: name.value,
+                        discount:discount.value,
+                        lower_purchase:lower_purchase.value,
+                        quantity:quantity.value
                     }
                 })
                 .done(function(response) {
-                    document.location.reload();
+                    window.location.replace("coupon.php");
                 })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
+                .fail(function(jqXHR, textStatus) {
+                    console.log(textStatus);
                 })
         })
     </script>

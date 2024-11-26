@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once("pdo_connect.php");
 
     $pdoSql = "SELECT * FROM coupon";
@@ -112,7 +113,12 @@
                         <td>
                             <div class="d-flex justify-content-center">
                                 <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?=$row["id"] ?>">上架</button>
-                                <button class="btn btn-danger mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                                <button class="btn btn-info mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                                <a class="btn btn-warning mb-2 mt-2" href="updateCoupon.php">
+                                <?php $_SESSION["id"] = $row["id"];?>  
+                                修改
+                                </a>
+                                <button class="btn btn-danger mb-2 mt-2 btn-deleted" data-id="<?=$row["id"] ?>">刪除</button>
                             </div>
                         </td>
                     </tr>
@@ -168,6 +174,7 @@
         $.ajax({
             method:"POST",
             url:"./api/statusCouponStatus.php",
+            dataType:"json",
             data:{
                 status:transData.status,
                 id:transData.id
