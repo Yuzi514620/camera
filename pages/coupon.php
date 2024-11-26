@@ -73,9 +73,15 @@
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">優惠券列表</h6>
+              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between ">
+                <div class="">
+                  <h6 class="text-white text-capitalize ps-3">優惠券列表</h6>
+                </div>
+                <div class="">
+                  <a href="addCoupon.php" class="btn btn-info me-3">新增優惠券</a>
+                </div>
               </div>
+              
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0">
