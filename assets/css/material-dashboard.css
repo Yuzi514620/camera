@@ -30321,4 +30321,10 @@ pre[class*="language-"] {
   }
 }
 
+.course-img{
+  width: 150px;
+  aspect-ratio: 16 / 9;
+}
+
+
 /*# sourceMappingURL=dashboard-free.css.map */
