@@ -10,10 +10,10 @@
     
     if($status == 0){
         $pdoSql = "UPDATE `coupon` SET `is_deleted` = 0 WHERE `coupon`.`id` = ?";
-        echo '已上架';
+        echo json_encode('已上架');
     }else{
         $pdoSql = "UPDATE `coupon` SET `is_deleted` = 1 WHERE `coupon`.`id` = ?";
-        echo '已下架';
+        echo json_encode('已下架');
     }
     $stmt = $db_host->prepare($pdoSql);
     try{
