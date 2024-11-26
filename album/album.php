@@ -1,5 +1,5 @@
 <?php
-require_once("../db_camera_connect.php");  
+require_once("../db_connect.php");  
 
 // 確認資料庫連接是否成功
 if ($conn->connect_error) {
