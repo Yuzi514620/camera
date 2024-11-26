@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once("pdo_connect.php");
 
     $pdoSql = "SELECT * FROM coupon";
@@ -72,9 +73,15 @@
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">優惠券列表</h6>
+              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between ">
+                <div class="">
+                  <h6 class="text-white text-capitalize ps-3">優惠券列表</h6>
+                </div>
+                <div class="">
+                  <a href="addCoupon.php" class="btn btn-info me-3">新增優惠券</a>
+                </div>
               </div>
+              
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0">
@@ -112,7 +119,12 @@
                         <td>
                             <div class="d-flex justify-content-center">
                                 <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?=$row["id"] ?>">上架</button>
-                                <button class="btn btn-danger mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                                <button class="btn btn-info mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?=$row["id"] ?>">下架</button>
+                                <a class="btn btn-warning mb-2 mt-2" href="updateCoupon.php">
+                                <?php $_SESSION["id"] = $row["id"];?>  
+                                修改
+                                </a>
+                                <button class="btn btn-danger mb-2 mt-2 btn-deleted" data-id="<?=$row["id"] ?>">刪除</button>
                             </div>
                         </td>
                     </tr>
@@ -168,6 +180,7 @@
         $.ajax({
             method:"POST",
             url:"./api/statusCouponStatus.php",
+            dataType:"json",
             data:{
                 status:transData.status,
                 id:transData.id

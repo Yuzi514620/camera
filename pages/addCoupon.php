@@ -1,23 +1,3 @@
-<?php
-    session_start();
-    $id = $_SESSION["id"];
-    require_once("pdo_connect.php");
-    $pdoSql = "SELECT * FROM coupon WHERE `coupon`.`id` = ?";
- 
-    $stmt = $db_host->prepare($pdoSql);
-    try{
-        $stmt->execute([$id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    }catch(PDOException $e){
-        $data = [
-            'message' => '預處理陳述式執行失敗！ <br/>',
-            'code' =>   "Error: " . $e->getMessage() . "<br/>"
-        ];
-        echo json_encode($data);
-        $db_host = NULL;
-        exit;
-    }
-?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -46,7 +26,7 @@
     <style>
         .textbox{
             width: 50%;
-            left: 35%;
+            left: 30%;
             input{
                 border: 2px solid gray;
                 color: black;
@@ -57,7 +37,7 @@
                 transition: 0.4s;
             }
             .btn-box{
-                left: 20%;
+                left: 25%;
             }
         }
     </style>
@@ -100,40 +80,48 @@
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                                <h6 class="text-white text-capitalize ps-3">修改優惠券</h6>
+                                <h6 class="text-white text-capitalize ps-3">新增優惠券</h6>
                             </div>
                         </div>
                         <div class="textbox card-body px-0 pb-2 position-relative">
                             <div class="input-box row g-2 mt-2 ms-2 align-items-center">
-                                <div class="col-1">
+                                <div class="col-2">
                                     <span>名稱</span>
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" class="form-control " name="name" id="name" value="<?=$result["name"]?>">
+                                    <input type="text" class="form-control " name="name" id="name">
                                 </div>
                             </div>
                             <div class="input-box row g-2 mt-2 ms-2 align-items-center">
-                                <div class="col-1">
+                                <div class="col-2">
                                     <span>折扣</span>
                                 </div>
                                 <div class="col-5">
-                                    <input type="number" class="form-control " name="discount" id="discount" value="<?=$result["discount"]?>">
+                                    <input type="number" class="form-control " name="discount" id="discount">
                                 </div>
                             </div>
                             <div class="input-box row g-2 mt-2 ms-2 align-items-center">
-                                <div class="col-1">
+                                <div class="col-2">
                                     <span>最低消費</span>
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" class="form-control " name="lower_purchase" id="lower_purchase" value="<?=$result["lower_purchase"]?>">
+                                    <input type="text" class="form-control " name="lower_purchase" id="lower_purchase" >
                                 </div>
                             </div>
                             <div class="input-box row g-2 mt-2 ms-2 align-items-center">
-                                <div class="col-1">
+                                <div class="col-2">
                                     <span>數量</span>
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" class="form-control " name="quantity" id="quantity" value="<?=$result["quantity"]?>">
+                                    <input type="text" class="form-control " name="quantity" id="quantity">
+                                </div>
+                            </div>
+                            <div class="input-box row g-2 mt-2 ms-2 align-items-center">
+                                <div class="col-2">
+                                    <span>有效天數</span>
+                                </div>
+                                <div class="col-5">
+                                    <input type="number" class="form-control " name="quantity" id="days">
                                 </div>
                             </div>
                             <div class="btn-box position-relative mt-3">
@@ -275,18 +263,18 @@
         const discount = document.querySelector("#discount");
         const lower_purchase = document.querySelector("#lower_purchase");
         const quantity = document.querySelector("#quantity");
-        const id = <?=$id?>;
+        const days = document.querySelector("#days");
         $(".btn-update").click(function() {
             $.ajax({
                     method: "POST",
-                    url: "./api/doUpdateCoupon.php",
+                    url: "./api/doAddCoupon.php",
                    
                     data: {
-                        id:id,
                         name: name.value,
                         discount:discount.value,
                         lower_purchase:lower_purchase.value,
-                        quantity:quantity.value
+                        quantity:quantity.value,
+                        days:days.value
                     }
                 })
                 .done(function(response) {
