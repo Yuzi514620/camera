@@ -169,7 +169,7 @@ $conn->close();
                     <tr>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
+                        編號
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -201,11 +201,11 @@ $conn->close();
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
+                        編輯
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
+                        新增
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -273,24 +273,24 @@ $conn->close();
                             <?= $product["state"] ?>
                           </p>
                         </td>
-                        <!-- 檢視 -->
+                        <!-- 編輯 -->
                         <td class="align-middle text-center">
                           <a
-                            href="javascript:;"
+                            href="product-edit.php?id=<?= $product['id'] ?>"
                             class="text-secondary font-weight-bold text-xs"
                             data-toggle="tooltip"
                             data-original-title="Edit user">
-                            <i class="fa-regular fa-eye"></i>
+                            <i class="fa-regular fa-pen-to-square"></i>
                           </a>
                         </td>
-                        <!-- 編輯 -->
+                        <!-- 新增 -->
                         <td class="align-middle text-center">
                           <a
                             href="addProduct.php"
                             class="text-secondary font-weight-bold text-xs"
                             data-toggle="tooltip"
                             data-original-title="Edit user">
-                            <i class="fa-regular fa-pen-to-square"></i>
+                            <i class="fa-regular fa-add"></i>
                           </a>
                         </td>
                         <!-- 刪除 -->
