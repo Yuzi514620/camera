@@ -1,3 +1,25 @@
+<?php
+require_once 'pdo_connect_camera.php';
+
+// 只在函數不存在時定義 truncate()，避免重複宣告
+if (!function_exists('truncate')) {
+    function truncate($text, $length = 150, $suffix = '...') {
+        if (mb_strlen($text, 'UTF-8') > $length) {
+            return mb_substr($text, 0, $length, 'UTF-8') . $suffix;
+        }
+        return $text;
+    }
+}
+
+try {
+    $sql = "SELECT * FROM article";
+    $stmt = $pdo->query($sql);
+    $articles = $stmt->fetchAll();
+} catch (PDOException $e){
+    echo "資料撈取失敗: " . $e->getMessage();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,6 +61,12 @@
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+  <style>
+    .content {
+        word-wrap: break-word; /* 自動換行 */
+        white-space: normal;   /* 保留正常的空白符號 */
+    }
+  </style>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -115,37 +143,38 @@
                   <thead class="bg-gradient-dark">
                     <tr>
                       <th
-                        class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
+                        class="text-center text-uppercase text-secondary text-xs opacity-7 text-white" style="width:5%">
                         分類
                       </th>
                       <th
-                        class="text-uppercase text-secondary text-xs opacity-7 text-white">
+                        class="text-uppercase text-secondary text-xs opacity-7 text-white " style="width:35%">
                         文章列表
                       </th>
                       <th
-                        class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
+                        class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white" style="width:10%">
                         編輯者
                       </th>
                       <th
-                        class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white" colspan="2" style="width:25%">
+                        class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white" colspan="2" style="width:35%">
                         內文
                       </th>
                       <th
-                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
+                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
                         新增
                       </th>
                       <th
-                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
+                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
                         編輯
                       </th>
                       <th
-                        class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
+                        class="text-center text-uppercase text-secondary text-xs opacity-7 text-white" style="width:5%">
                         刪除
                       </th>
                       <!-- <th class="text-secondary opacity-7"></th> -->
                     </tr>
                   </thead>
                   <tbody>
+                  <?php foreach ($articles as $article): ?>
                     <tr>
                       <td class="text-center">
                         <!-- 分類 -->
@@ -154,9 +183,8 @@
                       <td>
                         <!-- 文章列表 -->
                         <div class="d-flex px-2 py-1">
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
+                          <div class="d-flex flex-column justify-content-center" >
+                            <h6 class="mb-0 text-sm"><?= htmlspecialchars($article['title']) ?></h6>
                           </div>
                         </div>
                       </td>
@@ -166,8 +194,8 @@
                       </td>
                       <!-- 內文 -->
                       <td colspan="2" style="width:25%">
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com..................................................................................................
+                        <p class="text-xs font-weight-bold mb-0 content">
+                        <?= htmlspecialchars(truncate($article['content'], 150)) ?>
                         </p>
                       </td>
                       <!-- 新增 -->
@@ -200,6 +228,7 @@
                           <i class="fa-regular fa-trash-can"></i>
                         </a>
                       </td>
+                    <?php endforeach; ?>
                   </tbody>
                 </table>
               </div>
