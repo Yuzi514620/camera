@@ -55,8 +55,11 @@
             <li class="breadcrumb-item text-sm">
               <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
             </li>
+            <li class="breadcrumb-item text-sm">
+              <a class="opacity-5 text-dark" href="javascript:;">文章列表</a>
+            </li>
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-              文章列表
+              新增文章
             </li>
           </ol>
         </nav>
@@ -174,17 +177,17 @@
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
-                          class="text-secondary font-weight-bold text-sm"
+                          class="text-secondary font-weight-bold text-xs"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
-                          <i class="fa-regular fa-add"></i>
+                          <i class="fa-regular fa-plus"></i>
                         </a>
                       </td>
                       <!-- 編輯 -->
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
-                          class="text-secondary font-weight-bold text-sm"
+                          class="text-secondary font-weight-bold text-xs"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
                           <i class="fa-regular fa-pen-to-square"></i>
@@ -194,7 +197,7 @@
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
-                          class="text-secondary font-weight-bold text-sm"
+                          class="text-secondary font-weight-bold text-xs"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
                           <i class="fa-regular fa-trash-can"></i>
