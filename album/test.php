@@ -1,5 +1,5 @@
 <?php  
-require_once("../db_camera_connect.php");  
+require_once("../db_connect.php");  
 ?>  
 <!DOCTYPE html>
 <html lang="zh-TW">
