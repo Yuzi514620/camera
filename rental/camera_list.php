@@ -1,52 +1,48 @@
 <?php
 require_once("../db_connect.php");
 
-// 大標
-$title = "租借列表";
+// 設定頁面標題
+$title = isset($_GET["search"]) ? "搜尋結果：" . htmlspecialchars($_GET["search"]) : "租借列表";
 
-// 撈
+// 搜尋條件
+$whereClause = "1=1";
+$search = isset($_GET["search"]) ? trim($_GET["search"]) : '';
+if (!empty($search)) {
+    $search_escaped = $conn->real_escape_string($search);
+    $whereClause .= " AND (images.name LIKE '%$search_escaped%' OR images.description LIKE '%$search_escaped%')";
+}
+
+// 設定分頁
+$items_per_page = 10;
+$currentPage = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
+
+// 計算總數與分頁
+$count_sql = "SELECT COUNT(*) AS total FROM camera JOIN images ON camera.image_id = images.id WHERE $whereClause";
+$count_result = $conn->query($count_sql);
+$totalItems = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$totalPages = max(ceil($totalItems / $items_per_page), 1);
+
+$offset = ($currentPage - 1) * $items_per_page;
+
+// 撈取資料
+$sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, 
+        images.type AS image_type, images.image_url
+        FROM camera
+        JOIN images ON camera.image_id = images.id
+        WHERE $whereClause
+        ORDER BY camera.id DESC
+        LIMIT $items_per_page OFFSET $offset";
+$result = $conn->query($sql);
+$cameras = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+// 保留圖片資料邏輯
 $imgSql = "SELECT * FROM images";
 $resultImg = $conn->query($imgSql);
 $images = $resultImg->fetch_all(MYSQLI_ASSOC);
-
-// 重組
 $imageArr = [];
 foreach ($images as $image) {
     $imageArr[$image["id"]] = $image["name"];
-
 }
-
-$whereClause = "1=1";
-
-// 可用 name 或 description 搜尋
-if (isset($_GET["search"])) {
-    $search = $conn->real_escape_string($_GET["search"]); // 防止 SQL 注入
-    $whereClause .= " AND (images.name LIKE '%$search%' OR images.description LIKE '%$search%')";
-    $title = "搜尋結果：$search";
-} elseif (isset($_GET["min"]) && isset($_GET["max"]) && is_numeric($_GET["min"]) && is_numeric($_GET["max"])) {
-    $min = (int) $_GET["min"];
-    $max = (int) $_GET["max"];
-    $whereClause .= " AND .id BETWEEN $min AND $max"; // 根據你的需求修改這條件
-} elseif (isset($_GET["image"])) {
-    $image_id = (int) $_GET["image"];
-    if (isset($imageArr[$image_id])) { // 檢查 image_id 是否有效
-        $title = "Kind : " . $imageArr[$image_id];
-        $whereClause .= " AND images.id = $image_id";
-    } else {
-        $title = "Unknown Image";
-    }
-}
-
-// 搜尋
-$sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, images.type AS image_type, images.image_url
-        FROM camera
-        JOIN images ON camera.image_id = images.id
-        WHERE $whereClause";
-
-$result = $conn->query($sql);
-$camerasCount = $result->num_rows;
-$cameras = $result->fetch_all(MYSQLI_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -81,13 +77,33 @@ $cameras = $result->fetch_all(MYSQLI_ASSOC);
           <div class="card my-4">
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
+
+              <!-- 搜尋 -->
+              <div class="row px-3">
+                <form method="GET" action="camera_list.php" class="form-inline col-md-12 mb-3">
+                  <div class="form-group mr-2">
+                    <input
+                      type="text"
+                      name="search"
+                      value="<?= htmlspecialchars(isset($_GET['search']) ? $_GET['search'] : '') ?>"
+                      class="form-control"
+                      placeholder="搜尋名稱或描述"
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-dark">搜尋</button>
+                  <a href="camera_list.php" class="btn btn-outline-secondary">清除搜尋</a>
+                </form>
+              </div>
+              <!-- 搜尋-end -->
+
+              <!-- 表格 -->
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gradient-dark">
                     <tr>
                       <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
                         選擇</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        產品</th>
+                      <!-- <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        產品</th> -->
                       <th class="text-uppercase text-secondary text-xxs opacity-7 text-white">
                         圖片</th>
                       <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
@@ -112,9 +128,9 @@ $cameras = $result->fetch_all(MYSQLI_ASSOC);
                         <input type="checkbox" name="selected[]" value="<?= $camera['id'] ?>">
                       </td>
                       <!-- 產品 -->
-                      <td class="text-center">
+                      <!-- <td class="text-center">
                         <p class="text-xs font-weight-bold mb-0"><?= htmlspecialchars($camera['image_name']) ?></p>
-                      </td>
+                      </td> -->
                       <!-- 圖片 -->
                       <td>                        
                         <div class="d-flex px-2 py-1">
@@ -172,6 +188,56 @@ $cameras = $result->fetch_all(MYSQLI_ASSOC);
                     <?php endforeach; ?>
                   </tbody>
                 </table>
+                <!-- 表格-end -->
+
+                <!-- 分頁導航 -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- 首頁 -->
+                        <li class="page-item <?= $currentPage == 1 ? 'disabled' : '' ?>">
+                            <a class="page-link" href="camera_list.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                            <i class="fa-solid fa-angles-left"></i></a>
+                        </li>
+
+                        <!-- 上一頁 -->
+                        <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link" href="camera_list.php?page=<?= max(1, $currentPage - 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                            <i class="fa-solid fa-angle-left"></i></a>
+                        </li>
+
+                        <!-- 中間頁碼 -->
+                        <?php
+                        $visiblePages = 5; // 最大顯示頁碼數量
+                        $startPage = max(1, $currentPage - floor($visiblePages / 2));
+                        $endPage = min($totalPages, $startPage + $visiblePages - 1);
+
+                        // 確保顯示 5 個頁碼範圍
+                        if ($endPage - $startPage + 1 < $visiblePages) {
+                            $startPage = max(1, $endPage - $visiblePages + 1);
+                        }
+                        ?>
+
+                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                                <a class="page-link" href="camera_list.php?page=<?= $i ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- 下一頁 -->
+                        <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                            <a class="page-link" href="camera_list.php?page=<?= min($totalPages, $currentPage + 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                            <i class="fa-solid fa-chevron-right"></i></a>
+                        </li>
+
+                        <!-- 末頁 -->
+                        <li class="page-item <?= $currentPage == $totalPages ? 'disabled' : '' ?>">
+                            <a class="page-link" href="camera_list.php?page=<?= $totalPages ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                            <i class="fa-solid fa-angles-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- 分頁-end -->
+                   
               </div>
             </div>
           </div>
