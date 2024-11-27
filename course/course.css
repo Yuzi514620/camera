@@ -1,0 +1,36 @@
+:root {
+  --gradient-dark: linear-gradient(195deg, #42424a 0%, #191919 100%);
+}
+
+.course-img {
+  width: 150px;
+  aspect-ratio: 16 / 9;
+}
+
+.page-link.active,
+.active > .page-link {
+  z-index: 3;
+  color: var(--gradient-dark);
+  background-color: var(--gradient-dark);
+  border-color: var(--gradient-dark);
+}
+
+.preview-img {
+  width: 500px;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  padding: 10px;
+}
+.form-container {
+  display: flex;
+}
+.form-container .form-column {
+  width: 50%;
+  padding: 15px;
+}
+
+input[type="datetime-local"] {
+  color: #bdbdbd;
+}
