@@ -12,7 +12,10 @@ if (!function_exists('truncate')) {
 }
 
 try {
-    $sql = "SELECT * FROM article";
+    $sql = "SELECT a.*, c.name as category_name 
+    FROM article a
+    JOIN article_category c ON a.category_id=c.id";
+
     $stmt = $pdo->query($sql);
     $articles = $stmt->fetchAll();
 } catch (PDOException $e){
@@ -160,7 +163,7 @@ try {
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
-                        新增
+                        檢視
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
@@ -178,7 +181,7 @@ try {
                     <tr>
                       <td class="text-center">
                         <!-- 分類 -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
+                        <p class="text-xs font-weight-bold mb-0"><?= htmlspecialchars($article['category_name']) ?></p>
                       </td>
                       <td>
                         <!-- 文章列表 -->
@@ -198,20 +201,20 @@ try {
                         <?= htmlspecialchars(truncate($article['content'], 150)) ?>
                         </p>
                       </td>
-                      <!-- 新增 -->
+                      <!-- 檢視-->
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
                           class="text-secondary font-weight-bold text-sm"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
-                          <i class="fa-regular fa-add"></i>
+                          <i class="fa-regular fa-eye"></i>
                         </a>
                       </td>
                       <!-- 編輯 -->
                       <td class="align-middle text-center">
                         <a
-                          href="javascript:;"
+                          href="articleEdit.php?id=<?= $article['id'] ?>"
                           class="text-secondary font-weight-bold text-sm"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
