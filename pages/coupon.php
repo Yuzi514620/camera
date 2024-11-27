@@ -13,7 +13,7 @@ if (isset($_GET["search"])) {
   if ($_GET["search"] == "") {
     header("location: coupon.php?p=1&sort=1");
   }
-  $pdosql = "SELECT * FROM coupon WHERE coupon_code LIKE '%$search%'";
+  $pdosql = "SELECT * FROM coupon WHERE coupon_code LIKE '%$search%' or lower_purchase LIKE '%$search%'";
 } else if (isset($_GET["p"])) {
   $p = $_GET["p"];
   if (!isset($_GET["sort"])) {
@@ -230,18 +230,18 @@ try {
     </div>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-body">
-                          確定要刪除嗎
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">返回</button>
-                          <button class="btn btn-primary btn-deleted" data-id="<?= $row["id"] ?>">刪除</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            確定要刪除嗎
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">返回</button>
+            <button class="btn btn-primary btn-deleted" data-id="<?= $row["id"] ?>">刪除</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!--   Core JS Files   -->

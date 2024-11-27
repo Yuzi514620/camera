@@ -33,12 +33,14 @@
                 justify-content: center;
             }
 
-            input {
+            input,
+            select {
                 border: 2px solid gray;
                 color: black;
             }
 
-            input:focus {
+            input:focus,
+            select:focus {
                 color: black;
                 border: 2px solid black;
                 transition: 0.4s;
@@ -71,43 +73,51 @@
                                         </div>
                                         <div class="textbox card-body px-0 pb-2 position-relative">
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
-                                                <div class="col-2">
+                                                <div class="col-1">
                                                     <span>名稱</span>
                                                 </div>
-                                                <div class="col-5">
+                                                <div class="col-4">
                                                     <input type="text" class="form-control " name="name" id="name">
                                                 </div>
                                             </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
-                                                <div class="col-2">
+                                                <div class="col-1">
                                                     <span>折扣</span>
                                                 </div>
-                                                <div class="col-5">
+                                                <div class="col-4">
                                                     <input type="number" class="form-control " name="discount" id="discount">
                                                 </div>
                                             </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
-                                                <div class="col-2">
+                                                <div class="col-1">
                                                     <span>最低消費</span>
                                                 </div>
-                                                <div class="col-5">
+                                                <div class="col-4">
                                                     <input type="text" class="form-control " name="lower_purchase" id="lower_purchase">
                                                 </div>
                                             </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
-                                                <div class="col-2">
+                                                <div class="col-1">
                                                     <span>數量</span>
                                                 </div>
-                                                <div class="col-5">
+                                                <div class="col-4">
                                                     <input type="text" class="form-control " name="quantity" id="quantity">
                                                 </div>
                                             </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
-                                                <div class="col-2">
+                                                <div class="col-1">
                                                     <span>有效天數</span>
                                                 </div>
-                                                <div class="col-5">
+                                                <div class="col-4">
                                                     <input type="number" class="form-control " name="quantity" id="days">
+                                                </div>
+                                            </div>
+                                            <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
+                                                <div class="col-1">
+                                                    <span>上傳圖片</span>
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
                                                 </div>
                                             </div>
                                             <div class="btn-box position-relative mt-3 ">
@@ -148,20 +158,29 @@
             const lower_purchase = document.querySelector("#lower_purchase");
             const quantity = document.querySelector("#quantity");
             const days = document.querySelector("#days");
+            
             $(".btn-update").click(function() {
+                let file_data = $('#uploadImg').prop('files')[0];
+                let form_data = new FormData();
+
+                form_data.append('file',file_data);
+                form_data.append('name',name.value);
+                form_data.append('discount',discount.value);
+                form_data.append('lower_purchase',lower_purchase.value);
+                form_data.append('quantity',quantity.value);
+                form_data.append('days',days.value);
+
                 $.ajax({
                         method: "POST",
                         url: "doAddCoupon.php",
-
-                        data: {
-                            name: name.value,
-                            discount: discount.value,
-                            lower_purchase: lower_purchase.value,
-                            quantity: quantity.value,
-                            days: days.value
-                        }
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data:form_data
+                
                     })
                     .done(function(response) {
+                        console.log(response);
                         window.location.replace("../pages/coupon.php");
                     })
                     .fail(function(jqXHR, textStatus) {
