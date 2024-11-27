@@ -2,8 +2,8 @@
 require_once("db_connect.php");
 
 if (!isset($_GET["id"])) {
-    echo "請帶入 id 到此頁";
-    exit;
+  echo "請帶入 id 到此頁";
+  exit;
 }
 $id = $_GET["id"];
 
@@ -25,10 +25,33 @@ ON
 LEFT JOIN
     image
 ON
-    product.image_id = image.id
+    product.name = image.name
 WHERE 
     product.id = '$id' AND product.is_deleted = 0;
 ";
+
+// $sql = "SELECT  
+//     p.id,  
+//     p.name AS product_name,
+//     i.name AS image_name,  
+//     i.image_url,  
+//     p.price,  
+//     b.brand_name,  
+//     c.category_name,  
+//     p.stock,
+//     p.created_at,  
+//     p.updated_at,  
+//     p.state  
+// FROM  
+//     product p  
+// INNER JOIN    
+//     category c ON p.category_id = c.category_id  
+// INNER JOIN  
+//     brand b ON p.brand_id = b.brand_id  
+// INNER JOIN  
+//     image i ON p.name = i.name  -- 條件：product 的 name 必須匹配 image 的 name  
+// WHERE  
+//     p.is_deleted = 0";
 
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
@@ -105,11 +128,6 @@ $row = $result->fetch_assoc();
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <!-- 添加 ms-auto 將內容推向右側 -->
           <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-            <li class="mt-1">
-              <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard"
-                data-icon="octicon-star" data-size="large" data-show-count="true"
-                aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
-            </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
@@ -149,6 +167,9 @@ $row = $result->fetch_assoc();
     <!-- Navbar -->
 
     <div class="container-fluid py-2">
+      <a href="product.php" class="btn btn-dark">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -163,144 +184,45 @@ $row = $result->fetch_assoc();
                   <thead class="bg-gradient-dark">
                     <tr>
                       <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
+                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white " colspan="10">
+                        商品內容
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        價格
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        品牌
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        種類
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        更新時間
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        庫存
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        狀態
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
-                      </th>
-                      <!-- <th class="text-secondary opacity-7"></th> -->
                     </tr>
                   </thead>
                   <tbody>
-                    <?php foreach ($products as $product): ?>
-                      <tr>
-                        <td class="text-center">
-                          <!-- ID -->
-                          <p class="text-xs font-weight-bold mb-0"><?= $product["id"] ?></p>
-                        </td>
-                        <td>
-                          <!-- 圖片 -->
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <a href="product-content.php?id=<?= $product['id'] ?>">
-                              <img
-                                src="../album/upload/<?= $product["image_url"] ?>"
-                                class="avatar avatar-xxl me-3 border-radius-lg object-fit-contain"
-                                alt="">
-                              </a>
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-0 text-sm"><?= htmlspecialchars($product["image_name"]) ?></h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <!-- 價格 -->
-                          <p class="text-xs font-weight-bold mb-0"><?= number_format($product["price"]) ?> </p>
-                        </td>
-                        <!-- 品牌 -->
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">
-                            <?= htmlspecialchars($product["brand_name"]) ?>
-                          </p>
-                        </td>
-
-                        <!-- 電話 -->
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">
-                            <?= htmlspecialchars($product["category_name"]) ?>
-                          </p>
-                        </td>
-                        <!-- 更新時間 -->
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">
-                            <?= $product["updated_at"] ?>
-                          </p>
-                        </td>
-                        <!-- 庫存 -->
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">
-                            <?= $product["stock"] ?>
-                          </p>
-                        </td>
-                        <!-- 狀態 -->
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">
-                            <?= $product["state"] ?>
-                          </p>
-                        </td>
-                        <!-- 檢視 -->
-                        <td class="align-middle text-center">
-                          <a
-                            href="javascript:;"
-                            class="text-secondary font-weight-bold text-xs"
-                            data-toggle="tooltip"
-                            data-original-title="Edit user">
-                            <i class="fa-regular fa-eye"></i>
-                          </a>
-                        </td>
-                        <!-- 編輯 -->
-                        <td class="align-middle text-center">
-                          <a
-                            href="addProduct.php"
-                            class="text-secondary font-weight-bold text-xs"
-                            data-toggle="tooltip"
-                            data-original-title="Edit user">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                          </a>
-                        </td>
-                        <!-- 刪除 -->
-                        <td class="align-middle text-center">
-                          <a
-                            href="javascript:;"
-                            class="text-secondary font-weight-bold text-xs"
-                            data-toggle="tooltip"
-                            data-original-title="Edit user">
-                            <i class="fa-regular fa-trash-can"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      </tr>
-                    <?php endforeach; ?>
+                    <div class="container">
+                      <table class="table table-bordered">
+                        <?php if ($result->num_rows > 0): ?>
+                          <h1><?= $row["name"] ?></h1>
+                          <tr>
+                            <th>id</th>
+                            <td><?= $row["id"] ?></td>
+                          </tr>
+                          <tr>
+                            <th>照片</th>
+                            <td>
+                              <div class="ratio ratio-4x3" style="width: 300px;">
+                                <img class="object-fit-cover" src="../album/upload/<?= $row["image_url"] ?>" alt="">
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>價格</th>
+                            <td><?= number_format($row["price"]) ?></td>
+                          </tr>
+                          <tr>
+                            <th>品牌</th>
+                            <td><?= $row["brand_name"] ?></td>
+                          </tr>
+                          <tr>
+                            <th>商品規格</th>
+                            <td><?= nl2br($row["spec"]) ?></td>
+                          </tr>
+                      </table>
+                    <?php else: ?>
+                      <h1>查無資料</h1>
+                    <?php endif; ?>
+                    </div>
                   </tbody>
                 </table>
               </div>
@@ -358,15 +280,15 @@ $row = $result->fetch_assoc();
                 </tr>
                 <tr>
                     <th>價格</th>
-                    <td><?=number_format($row["price"])?></td>
+                    <td><?= number_format($row["price"]) ?></td>
                 </tr>
                 <tr>
                     <th>品牌</th>
-                    <td><?=$row["brand_name"]?></td>
+                    <td><?= $row["brand_name"] ?></td>
                 </tr>
                 <tr>
                     <th>商品規格</th>
-                    <td><?=nl2br($row["spec"])?></td>
+                    <td><?= nl2br($row["spec"]) ?></td>
                 </tr>
         </table>
     <?php else: ?>
