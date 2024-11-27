@@ -14,10 +14,11 @@ $stock = intval($_POST["stock"]);
 $created_at = date("Y-m-d H:i:s");
 $updated_at = date("Y-m-d H:i:s");
 $spec = $_POST["spec"];
-$stare = $_POST["state"];
+$state = $_POST["state"];
+$is_deleted = 0; // 設定為上架
 
-$sql = "INSERT INTO `product`(`name`, `price`,`brand_id`, `category_id`,`stock`, `created_at`, `updated_at`,`spec`,`state`)  
-VALUES ('$name', $price, $brand_id, $category_id, $stock, '$created_at', '$updated_at', '$spec', '$state')";
+$sql = "INSERT INTO `product`(`name`, `price`,`brand_id`, `category_id`,`stock`, `created_at`, `updated_at`,`spec`,`state`,`is_deleted`)  
+VALUES ('$name', $price, $brand_id, $category_id, $stock, '$created_at', '$updated_at', '$spec', '$state', $is_deleted)";
 // echo $sql; // 在執行 SQL 前輸出語句，檢查是否正確
 // exit;
 

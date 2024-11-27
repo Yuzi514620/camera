@@ -25,8 +25,7 @@ $sql = "SELECT
     c.category_name,  
     p.stock,  
     p.created_at,  
-    p.updated_at,  
-    p.state  
+    p.updated_at
 FROM  
     product p  
 INNER JOIN  
@@ -165,7 +164,7 @@ $conn->close();
           <div class="card my-4">
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
-                <table class="table ">
+                <table class="table table-bordered">
                   <thead class="bg-gradient-dark">
                     <tr>
                       <th
@@ -178,29 +177,29 @@ $conn->close();
                     <form class="" action="doaddProduct.php" method="post" enctype="multipart/form-data">
                       <!-- 商品名稱 -->
                       <tr>
-                        <td >
-                          <label for="name" class="form-label">商品名稱：</label>
-                          <input type="text" class="form-control" name="name" placeholder="" required>
+                        <td>
+                          <!-- <label for="name" class="form-label">商品名稱：</label> -->
+                          <input type="text" class="form-control" name="name" placeholder="輸入商品名稱" required>
                         </td>
                       </tr>
                       <!-- 圖片 -->
-                      <tr >
+                      <tr>
                         <td>
-                          <label class="form-label">圖片：</label>
+                          <!-- <label class="form-label">圖片：</label> -->
                           <a href="up_image.php" class="btn btn-dark">選擇圖片</a>
                         </td>
                       </tr>
                       <!-- 價格 -->
                       <tr>
                         <td>
-                          <label for="price" class="form-label">價格：</label>
+                          <!-- <label for="price" class="form-label">價格：</label> -->
                           <input type="number" class="form-control" name="price" placeholder="輸入價格" required>
                         </td>
                       </tr>
                       <!-- 品牌 -->
                       <tr>
                         <td>
-                          <label for="brand_id" class="form-label">品牌：</label>
+                          <!-- <label for="brand_id" class="form-label">品牌：</label> -->
                           <select name="brand_id" id="brand_id" class="form-select border border-dark ps-2">
                             <option value="0">-請選擇品牌-</option>
                             <option value="1">Leica</option>
@@ -214,7 +213,7 @@ $conn->close();
                       <!-- 種類 -->
                       <tr>
                         <td>
-                          <label for="category_id" class="form-label">種類：</label>
+                          <!-- <label for="category_id" class="form-label">種類：</label> -->
                           <select name="category_id" id="category_id" class="form-select border border-dark ps-2">
                             <option value="0">-請選擇種類-</option>
                             <option value="1">相機</option>
@@ -226,28 +225,42 @@ $conn->close();
                       <!-- 庫存 -->
                       <tr>
                         <td>
-                          <label for="stock" class="form-label">庫存：</label>
+                          <!-- <label for="stock" class="form-label">庫存：</label> -->
                           <input type="number" class="form-control" name="stock" min="0" placeholder="輸入庫存數量" required>
                         </td>
                       </tr>
                       <!-- 規格 -->
                       <tr>
                         <td>
-                          <label for="spec" class="form-label">規格：</label>
+                          <!-- <label for="spec" class="form-label">規格：</label> -->
                           <textarea class="form-control" name="spec" placeholder="輸入規格"></textarea>
                         </td>
                       </tr>
                       <!-- 狀態 -->
                       <tr>
                         <td>
-                          <label for="state" class="form-label">狀態：</label>
-                          <input type="text" class="form-control" name="state" placeholder="輸入狀態">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_deleted" id="is_deleted_0" value="0" checked>
+                            <label class="form-check-label" for="is_deleted_0">上架</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_deleted" id="is_deleted_1" value="1">
+                            <label class="form-check-label" for="is_deleted_1">下架</label>
+                          </div>
+                        </td>
+                      </tr> 
+                      <tr>
+                        <td>
+                          <!-- 預設值為今天 -->
+                          <label for="form-label">日期</label>
+                          <input type="date" class="form-control" name="created_at" placeholder="選擇日期" value="<?= date('Y-m-d') ?>" min="2020-01-01" max="2030-12-31">
                         </td>
                       </tr>
                       <!-- 提交按鈕 -->
                       <tr>
                         <td class="text-center">
-                          <button class="btn btn-primary" type="submit">送出</button>
+                          <button class="btn btn-dark" type="submit">送出</button>
+                          <a class="btn btn-dark" href="product.php">取消</a>
                         </td>
                       </tr>
                     </form>
