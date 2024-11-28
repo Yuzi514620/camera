@@ -1,142 +1,75 @@
 <?php
+require_once("../db_connect.php");
 
+// 檢查是否提供 id
+if (!isset($_GET["id"])) {
+    echo "請從選單檢視";
+    exit;
+}
 
+$id = intval($_GET["id"]); // 確保 id 是數字
 
+// 定義 $whereClause
+$whereClause = "camera.id = $id";
 
+// 設定分頁參數
+$items_per_page = 10; // 每頁顯示的項目數
+$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1; // 確保頁數大於等於 1
+$offset = ($currentPage - 1) * $items_per_page; // 計算偏移量
 
+// 查詢相機清單
+$sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, 
+        images.type AS image_type, images.image_url
+        FROM camera
+        JOIN images ON camera.image_id = images.id
+        WHERE $whereClause
+        ORDER BY camera.id DESC
+        LIMIT $items_per_page OFFSET $offset";
+
+$result = $conn->query($sql);
+$cameras = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+if (empty($cameras)) {
+    echo "找不到相機資料";
+    exit;
+}
+
+// 顯示資料
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png" />
-  <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-  <title>camera</title>
+<div class="container">
+  <div class="py-2 text-end">
+      <a href="users.php" class="btn btn-dark" title="回使用者列表"><i class="fa-solid fa-right-to-bracket"></i></a>
+  </div>
 
-  <?php include("link.php") ?>
-
-</head>
-
-<body class="g-sidenav-show bg-gray-100">
-  <!-- 側邊欄 -->
-  <?php $page = 'rental'; ?>
-  <?php include '../pages/sidebar.php'; ?>
-  <!-- 側邊欄 -->
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-    <!-- Navbar -->
-      <?php $page = 'rental'; ?>
-      <?php include '../pages/navbar.php'; ?>
-    <!-- Navbar -->
-    <div class="container-fluid py-2">
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0 rounded-top">
-                <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
-                    <tr>
-                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        選擇</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        產品</th>
-                      <th class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片</th>
-                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        規格</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        租金 / 押金</th>
-                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        庫存</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        狀態</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <!-- 選擇 check box -->
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <!-- 產品 -->
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <!-- 圖片 -->
-                      <td>                        
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <!-- 規格 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                      </td>
-                      <!-- 租金 / 押金 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">test@gmail.com</p>
-                      </td>
-                      <!-- 庫存 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">0900000000</p>
-                      </td>
-                      <!-- 狀態 -->
-                      <td class="align-middle text-center">
-                        <a href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+  <table class="table table-bordered">
+      <?php foreach ($cameras as $camera): ?>
+      <tr>
+        <div class="d-flex px-2 py-1">
+          <img src="../album/upload/<?= htmlspecialchars($camera['image_url']) ?>" 
+            class="avatar avatar-sm me-3 border-radius-lg"
+            while="auto" height="300px"
+            alt="<?= htmlspecialchars($camera['image_name']) ?>" />
         </div>
-      </div>
-    </div>
-  </main>
-  
-  <?php include("script.php") ?>
-
-</body>
-
-</html>
+      </tr>
+      <tr>
+          <th>規格</th>
+          <td><?= htmlspecialchars($camera['image_description']) ?></td>
+      </tr>
+      <tr>
+          <th>租金</th>
+          <td><?= htmlspecialchars($camera['fee']) ?></td>
+      </tr>
+      <tr>
+          <th>押金</th>
+          <td><?= htmlspecialchars($camera['deposit']) ?></td>
+      </tr>
+      <tr>
+          <th>庫存</th>
+          <td><?= htmlspecialchars($camera['stock']) ?></td>
+      </tr>
+      <?php endforeach; ?>
+  </table>
+  <a href="user-edit.php?id=<?=$id?>" class="btn btn-dark" title="修改資料"><i class="fa-solid fa-pen-to-square"></i></a>
+</div>
