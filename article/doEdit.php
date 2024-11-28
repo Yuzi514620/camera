@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // 獲取 CKEditor 的內容  
   $content = $_POST['content'];  
 
-  // 移除 <p> 標籤  
   $cleanContent = strip_tags($content);  
 
   // 將清理後的內容寫入資料庫  
@@ -32,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 try {
   // 準備 SQL 語句，使用 ? 作為佔位符
-  $sql = "UPDATE article SET category_id = ?, title = ?, content = ? WHERE id = ?";
+  $sql = "UPDATE article SET category_id = ?, title = ?, content = ?, update_time = NOW() WHERE id = ?";
   $stmt = $pdo->prepare($sql);
 
   // 綁定參數並執行語句

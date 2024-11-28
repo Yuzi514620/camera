@@ -34,6 +34,23 @@ try {
 } catch (PDOException $e) {
   echo "資料撈取失敗: " . $e->getMessage();
 }
+
+// 分頁
+$limit = 5;
+// 處理搜尋條件
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+// 根據是否有搜尋條件來拼接 WHERE 子句
+$search_condition = $search ? "WHERE course.title LIKE '%$search%' AND course.is_visible = 1" : "WHERE course.is_visible = 1";
+// 計算總資料筆數，確保 is_visible 條件正確拼接
+$sql_count = "SELECT COUNT(*) AS total FROM course $search_condition";
+$result_count = $conn->query($sql_count);
+$row_count = $result_count->fetch_assoc();
+$total_records = $row_count['total'];
+// 計算總頁數
+$total_pages = ceil($total_records / $limit);
+// 當前頁數
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+$current_page = max(1, min($current_page, $total_pages));  // 保證頁數在範圍內
 ?>
 
 <!DOCTYPE html>
@@ -50,6 +67,9 @@ try {
     href="../assets/img/apple-icon.png" />
   <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
   <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+
   <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
   <style>
     .ck-editor__editable_inline {
@@ -88,8 +108,6 @@ try {
     referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./style.css">
 		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
-		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5-premium-features/43.3.1/ckeditor5-premium-features.css">
-    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/classic/ckeditor.js"></script>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -212,11 +230,50 @@ try {
           </div>
         </div>
       </div>
+
+      <!-- 分頁按紐 -->
+      <nav>
+        <ul class="pagination justify-content-center">
+          <!-- 第一頁按鈕 -->
+          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=1&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+              <i class="fa-solid fa-angles-left"></i>
+            </a>
+          </li>
+          <!-- 上一頁按鈕 -->
+          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $current_page - 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+              <i class="fa-solid fa-angle-left"></i>
+            </a>
+          </li>
+
+          <!-- 顯示頁碼 -->
+          <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
+              <a class="page-link" href="?page=<?= $i ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>"><?= $i ?></a>
+            </li>
+          <?php endfor; ?>
+
+          <!-- 下一頁按鈕 -->
+          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $current_page + 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+              <i class="fa-solid fa-chevron-right"></i>
+            </a>
+          </li>
+          <!-- 最後一頁按鈕 -->
+          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $total_pages ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+              <i class="fa-solid fa-angles-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </main>
 
 <!-- CKEditor 初始化 -->
 <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/classic/ckeditor.js"></script>
+<script type="module" src="path/to/main.js"></script>
 <script>
     class MyUploadAdapter {
         constructor(loader) {
@@ -224,7 +281,6 @@ try {
             this.uploadUrl = 'upload.php'; // 上傳圖片的 PHP 腳本路徑
         }
 
-        // 開始上傳
         upload() {
             return this.loader.file
                 .then(file => new Promise((resolve, reject) => {
@@ -262,9 +318,8 @@ try {
                 }));
         }
 
-        // 停止上傳 (可選)
         abort() {
-            // 沒有特定的中止邏輯
+            // 可選的中止上傳邏輯
         }
     }
 
@@ -281,17 +336,40 @@ try {
                 items: [
                     'heading', '|',
                     'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
-                    'insertTable', 'mediaEmbed', 'undo', 'redo', 'imageUpload'
+                    'insertTable', 'mediaEmbed', 'undo', 'redo', 'imageUpload', 'imageResize'
                 ]
             },
             image: {
                 toolbar: [
                     'imageStyle:full',
                     'imageStyle:side',
+                    'imageStyle:inline',
+                    'imageStyle:wrapText',
+                    'imageStyle:breakText',
                     '|',
-                    'imageTextAlternative'
-                ]
+                    'imageTextAlternative',
+                    'imageResize'
+                ],
+                resizeOptions: [
+                    {
+                        name: 'resizeImage:original',
+                        label: '原始大小',
+                        value: null
+                    },
+                    {
+                        name: 'resizeImage:50',
+                        label: '50%',
+                        value: '50'
+                    },
+                    {
+                        name: 'resizeImage:75',
+                        label: '75%',
+                        value: '75'
+                    }
+                ],
+                resizeUnit: '%'
             },
+            licenseKey: '', // 如有 CKEditor 授權密鑰，請填寫
         })
         .then(editor => {
             window.editor = editor;
@@ -300,7 +378,6 @@ try {
             console.error(error);
         });
 </script>
-
   
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
@@ -318,7 +395,7 @@ try {
     
 
     btnSend.addEventListener("click", function() {  
-      const contentInput = document.querySelector("input[name='content']");  // 獲取隱藏字段
+      const contentInput = document.querySelector("textarea[name='content']");  // 獲取隱藏字段
       contentInput.value = editorInstance.getData(); // 將編輯器內容填入隱藏字段  
       form.submit(); // 提交表單  
     });  
