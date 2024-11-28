@@ -3,17 +3,17 @@ require_once("./pdo_connect_camera.php");
 $result = [];
 
 // 取得表單提交的資料
-$id = $_POST['id'];
-$category_id = $_POST['category_id'];
-$title = $_POST['title'];
-$content = $_POST['content'];
+$id = $_POST['id'] ?? null;
+$category_id = $_POST['category_id'] ?? null;
+$title = $_POST['title'] ?? null;
+$content = $_POST['content'] ?? null;
 
 
 // 在進行更新之前進行基本的資料驗證  
 if (empty($id) || empty($category_id) || empty($title) || empty($content)) {  
   $result["status"] = "fail";  
   $result["message"] = "所有字段都必須填寫。";  
-  echo json_encode($result);  
+  echo json_encode($result, JSON_UNESCAPED_UNICODE);
   exit; // 結束執行  
 }  
 
@@ -45,12 +45,12 @@ try {
   } else {
     $result["status"] = "fail";
     $result["message"] = "更新文章時發生錯誤。";
-    echo json_encode($result);
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 } catch (PDOException $e) {
   $result["status"] = "error";
   $result["message"] = "資料庫連接失敗: " . $e->getMessage();
-  echo json_encode($result);
+  echo json_encode($result, JSON_UNESCAPED_UNICODE);
 }
 
 ?>
