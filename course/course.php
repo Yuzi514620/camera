@@ -46,9 +46,13 @@ $order_type = isset($_GET['order_type']) && $_GET['order_type'] == 'desc' ? 'des
 $offset = ($current_page - 1) * $limit;
 $sql = "SELECT 
             course.*,          
-            course_image.name AS image_name
+            course_image.name AS image_name,
+            teacher.name AS teacher_name,
+            course_category.name AS category_name
         FROM course
         LEFT JOIN course_image ON course.course_image_id = course_image.id
+        LEFT JOIN teacher ON course.teacher_id = teacher.id
+        LEFT JOIN course_category ON course.category_id = course_category.id
         $search_condition
         ORDER BY $order_by $order_type
         LIMIT $offset, $limit";
@@ -99,6 +103,7 @@ $result = $conn->query($sql);
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+
   <link rel="stylesheet" href="course.css">
 </head>
 
@@ -134,7 +139,7 @@ $result = $conn->query($sql);
             <button type="submit" class="btn btn-secondary my-0"><i class="fa-solid fa-magnifying-glass"></i></button>
           </form>
           <!-- 新增課程 -->
-          <a href="add_course.php" class="btn btn-secondary m-0 mx-3">新增課程</a>
+          <a href="course_add.php" class="btn btn-secondary m-0 mx-3">新增課程</a>
 
         </div>
 
@@ -229,7 +234,7 @@ $result = $conn->query($sql);
                             <!-- 圖片 -->
                             <div class="d-flex px-2 py-1">
                               <div>
-                                <img src="/course_images/course-cover/<?php echo $row['image_name']; ?>"
+                                <img src="../course_images/course_cover/<?php echo $row['image_name']; ?>"
                                   class="me-3 border-radius-lg course-img" alt="course image" />
                               </div>
                             </div>
@@ -240,7 +245,7 @@ $result = $conn->query($sql);
                           </td>
                           <td>
                             <!-- 分類 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['category_id']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['category_name']); ?></p>
                           </td>
                           <td>
                             <!-- 價格 -->
@@ -248,7 +253,7 @@ $result = $conn->query($sql);
                           </td>
                           <td>
                             <!-- 講師 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['teacher_id']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['teacher_name']); ?></p>
                           </td>
                           <td>
                             <!-- 報名時間 -->
@@ -268,14 +273,14 @@ $result = $conn->query($sql);
                           </td>
                           <td class="align-middle text-center">
                             <!-- 檢視 -->
-                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                            <a href="course_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
                               data-original-title="Edit user">
                               <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
                             <!-- 編輯 -->
-                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                            <a href="course_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
                               data-original-title="Edit user">
                               <i class="fa-regular fa-pen-to-square"></i>
                             </a>
@@ -288,7 +293,7 @@ $result = $conn->query($sql);
                           </td>
                           <td class="align-middle text-center">
                             <!-- 刪除 -->
-                            <a href="delete_course.php?id=<?php echo $row['id']; ?>"
+                            <a href="course_delete.php?id=<?php echo $row['id']; ?>"
                               class="text-secondary font-weight-bold text-xs"
                               data-toggle="tooltip" data-original-title="Delete course"
                               onclick="return confirm('確定要刪除這筆資料嗎？');">

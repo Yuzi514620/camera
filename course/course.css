@@ -17,6 +17,7 @@
 
 .preview-img {
   width: 500px;
+  max-width: 500px;
   height: auto;
   object-fit: contain;
   border: 1px solid #ccc;
@@ -33,4 +34,51 @@
 
 input[type="datetime-local"] {
   color: #bdbdbd;
+}
+
+.btn-secondary {
+  background-color: rgb(36, 36, 36);
+}
+
+.form-control {
+  background-color: white !important;
+}
+
+.img-fluid {
+  border-radius: 1rem;
+}
+
+/* 自訂 .custom-form-control 以模擬 Bootstrap form-control 樣式 */
+.custom-form-control {
+  display: block;
+  width: 500px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #484f55;
+  background-color: #fff;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #adadad;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(143, 143, 143, 0.25);
+}
+
+/* 自訂表單欄位容器 */
+.custom-form-container {
+  margin-bottom: 1rem;
+}
+
+/* 標籤樣式 */
+.custom-form-label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
 }

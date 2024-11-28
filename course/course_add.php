@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "INSERT INTO course (title, category_id, price, teacher_id, apply_start, apply_end, course_start, course_end, is_visible, status) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssisssss", $title, $category_id, $price, $teacher_id, $apply_start, $apply_end, $course_start, $course_end);
+                $stmt->bind_param("ssissssssi", $title, $category_id, $price, $teacher_id, $apply_start, $apply_end, $course_start, $course_end, $is_visible, $status);
 
                 if ($stmt->execute()) {
                     // 取得剛剛插入的課程 ID
@@ -163,7 +163,7 @@ if ($result->num_rows > 0) {
                 </div>
             <?php endif; ?>
 
-            <form action="add_course.php" method="POST" enctype="multipart/form-data">
+            <form action="course_add.php" method="POST" enctype="multipart/form-data">
                 <div class="form-container">
                     <!-- 左邊預覽區 -->
                     <div class="form-column">
