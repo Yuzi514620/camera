@@ -1,75 +1,85 @@
 <?php
 require_once("../db_connect.php");
 
+$title = "狀態";
+
 // 檢查是否提供 id
 if (!isset($_GET["id"])) {
-    echo "請從選單檢視";
+    echo "未提供正確的 ID";
     exit;
 }
 
 $id = intval($_GET["id"]); // 確保 id 是數字
-
-// 定義 $whereClause
-$whereClause = "camera.id = $id";
-
-// 設定分頁參數
-$items_per_page = 10; // 每頁顯示的項目數
-$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1; // 確保頁數大於等於 1
-$offset = ($currentPage - 1) * $items_per_page; // 計算偏移量
-
-// 查詢相機清單
 $sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, 
         images.type AS image_type, images.image_url
         FROM camera
         JOIN images ON camera.image_id = images.id
-        WHERE $whereClause
-        ORDER BY camera.id DESC
-        LIMIT $items_per_page OFFSET $offset";
+        WHERE camera.id = $id";
 
 $result = $conn->query($sql);
-$cameras = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+if ($result && $camera = $result->fetch_assoc()) {
 
-if (empty($cameras)) {
+?>
+
+<div class="modal fade" id="cameraModal<?= $id ?>" tabindex="-1" role="dialog">
+    <div div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <!-- 相機名稱 -->
+                <h5 class="modal-title"><?=$title?></h5>
+                <button type="button" class="close-modal btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
+                <span aria-hidden="true ">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 相機狀態 -->
+                <div class="container">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img src="../album/upload/<?= htmlspecialchars($camera['image_url']) ?>" 
+                            class="me-3 border-radius-lg p-1"
+                            height="255px" style="width: 100%; object-fit: contain;"
+                            alt="<?= htmlspecialchars($camera['image_name']) ?>" />
+                    </div>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>名稱</th>
+                            <td><?= htmlspecialchars($camera['image_name']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>規格</th>
+                            <td><?= htmlspecialchars($camera['image_description']) ?> / <?= htmlspecialchars($camera['image_type']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>租金</th>
+                            <td><?= htmlspecialchars($camera['fee']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>押金</th>
+                            <td><?= htmlspecialchars($camera['deposit']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>庫存</th>
+                            <td><?= htmlspecialchars($camera['stock']) ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+   
+                <!-- 按鈕用於打開 camera_edit.php -->
+                <button type="button" 
+                        class="btn btn-primary next-modal" 
+                        data-id="<?= $id ?>" 
+                        data-target="camera_edit.php">編輯
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+} else {
     echo "找不到相機資料";
-    exit;
 }
-
-// 顯示資料
 ?>
 
 
-<div class="container">
-  <div class="py-2 text-end">
-      <a href="users.php" class="btn btn-dark" title="回使用者列表"><i class="fa-solid fa-right-to-bracket"></i></a>
-  </div>
-
-  <table class="table table-bordered">
-      <?php foreach ($cameras as $camera): ?>
-      <tr>
-        <div class="d-flex px-2 py-1">
-          <img src="../album/upload/<?= htmlspecialchars($camera['image_url']) ?>" 
-            class="avatar avatar-sm me-3 border-radius-lg"
-            while="auto" height="300px"
-            alt="<?= htmlspecialchars($camera['image_name']) ?>" />
-        </div>
-      </tr>
-      <tr>
-          <th>規格</th>
-          <td><?= htmlspecialchars($camera['image_description']) ?></td>
-      </tr>
-      <tr>
-          <th>租金</th>
-          <td><?= htmlspecialchars($camera['fee']) ?></td>
-      </tr>
-      <tr>
-          <th>押金</th>
-          <td><?= htmlspecialchars($camera['deposit']) ?></td>
-      </tr>
-      <tr>
-          <th>庫存</th>
-          <td><?= htmlspecialchars($camera['stock']) ?></td>
-      </tr>
-      <?php endforeach; ?>
-  </table>
-  <a href="user-edit.php?id=<?=$id?>" class="btn btn-dark" title="修改資料"><i class="fa-solid fa-pen-to-square"></i></a>
-</div>

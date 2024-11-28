@@ -1,4 +1,11 @@
-  <!--     Fonts and icons     -->
+<style>
+.avatar {
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+}
+</style>
+<!--     Fonts and icons     -->
   <link
     rel="stylesheet"
     type="text/css"
@@ -29,4 +36,4 @@
 <!-- Bootstrap CSS -->
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 <!-- Bootstrap JavaScript Bundle with Popper -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

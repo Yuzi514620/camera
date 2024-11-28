@@ -31,7 +31,10 @@ $sql = "SELECT * FROM images $where_clause ORDER BY id DESC LIMIT $items_per_pag
 $result = $conn->query($sql);
 
 $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+include("link.php")
 ?>
+
 <div class="container my-4">
     <h2>圖片相簿</h2>
     <!-- 搜尋表單 -->
@@ -100,99 +103,4 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
             <button type="button" title="關閉" class="btn btn-secondary ms-1" onclick="closeModal()" >關閉</button>
         </div>
     </nav>
-
-        <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- jQuery -->
-
-       <script>
-        $(document).ready(function() {
-            // 處理搜尋表單提交
-            let currentSearchQuery = '';
-            $('#searchForm').off('submit').on('submit', function(e) {
-                e.preventDefault();
-              
-                currentSearchQuery = $('input[name="search"]').val().trim();
-
-                if (!currentSearchQuery) {
-                    alert('請輸入搜尋內容！');
-                    return;
-                }
-                loadContent(1, currentSearchQuery);
-            });
-
-            // 處理分頁連結點擊
-            $(document).on('click', '.pagination a', function(e) {
-                e.preventDefault();
-                const page = $(this).data('page');
-                loadContent(page, currentSearchQuery);
-            });
-
-            // 使用事件委派處理卡片點擊事件
-            $(document).on('click', '.card', function() {
-                // 移除其他卡片的選取狀態
-                $('.card').removeClass('selected');
-                // 為當前點擊的卡片添加選取狀態
-                $(this).addClass('selected');
-            });
-
-            // 相片選擇
-            $('#selectButton').on('click', function() {
-                const selectedCard = $('.card.selected');
-                if (selectedCard.length) {
-                    const imageUrl = selectedCard.find('img').attr('src');
-                    // 將 imageUrl 傳遞給主頁面，這裡可以使用事件或直接操作主頁面的 DOM
-                    console.log('選取的圖片 URL:', imageUrl);
-                    // 關閉模態框
-                    closeModal();
-                } else {
-                    alert('請先選取一張圖片。');
-                }
-            });
-
-            // 加載內容的函數
-            function loadContent(page, searchQuery) {
-                $.ajax({
-                    url: 'album.php',
-                    type: 'GET',
-                    data: {
-                        page: page,
-                        search: searchQuery
-                    },
-                    success: function(response) {
-                        $('#imageContainer').html($(response).find('#imageContainer').html());
-                        $('.pagination').html($(response).find('.pagination').html());
-
-                        $('input[name="search"]').val(searchValue);
-                        // 重新初始化事件綁定
-                        reinitializeEvents();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('資料載入失敗');
-                    }
-                });
-            }
-
-            // 重新初始化事件綁定的函數
-            function reinitializeEvents() {
-                // 重新綁定卡片點擊事件
-                $(document).on('click', '.card', function() {
-                    $('.card').removeClass('selected');
-                    $(this).addClass('selected');
-                });
-
-                // 重新綁定相片選擇按鈕事件
-                $('#selectButton').off('click').on('click', function () {
-                    const selectedCard = $('.card.selected');
-                    if (selectedCard.length) {
-                        const imageUrl = selectedCard.find('img').attr('src');
-                        console.log('選取的圖片 URL:', imageUrl);
-                        closeModal();
-                    } else {
-                        alert('請先選取一張圖片。');
-                    }
-                });
-            }
-        });
-    </script>
 </div>
