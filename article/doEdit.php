@@ -8,6 +8,7 @@ $category_id = $_POST['category_id'];
 $title = $_POST['title'];
 $content = $_POST['content'];
 
+
 // 在進行更新之前進行基本的資料驗證  
 if (empty($id) || empty($category_id) || empty($title) || empty($content)) {  
   $result["status"] = "fail";  
@@ -15,6 +16,19 @@ if (empty($id) || empty($category_id) || empty($title) || empty($content)) {
   echo json_encode($result);  
   exit; // 結束執行  
 }  
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
+  // 獲取 CKEditor 的內容  
+  $content = $_POST['content'];  
+
+  // 移除 <p> 標籤  
+  $cleanContent = strip_tags($content);  
+
+  // 將清理後的內容寫入資料庫  
+  $sql = "UPDATE article SET content = ? WHERE id = ?";  
+  $stmt = $pdo->prepare($sql);  
+  $stmt->execute([$cleanContent, $id]); // 使用清理後的內容  
+}
 
 try {
   // 準備 SQL 語句，使用 ? 作為佔位符
@@ -38,4 +52,5 @@ try {
   $result["message"] = "資料庫連接失敗: " . $e->getMessage();
   echo json_encode($result);
 }
+
 ?>

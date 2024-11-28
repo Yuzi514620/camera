@@ -198,7 +198,7 @@ try {
                       <!-- 內文 -->
                       <td colspan="2" style="width:25%">
                         <p class="text-xs font-weight-bold mb-0 content">
-                        <?= htmlspecialchars(truncate($article['content'], 150)) ?>
+                        <?= htmlspecialchars(truncate(strip_tags($article['content']), 150)) ?>
                         </p>
                       </td>
                       <!-- 檢視-->

@@ -13,16 +13,18 @@ try {
     $article = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($article) {
+      $cleanContent = strip_tags($article['content']); // 移除 HTML 標籤
     } else {
       die("找不到這篇文章。");
     }
   } else {
-    die("無效的文章 ID。");
+      die("無效的文章 ID。");
   }
 
 } catch (PDOException $e) {
   die("資料庫連接失敗: " . $e->getMessage());
 }
+
 
 try {
   // 撈取 article_category 資料表的資料
@@ -167,52 +169,52 @@ try {
                     </tr>
                   </thead>
                 </table>
-                <table class="table align-items-center mb-0">
-                  <tbody>
-                    <div class="container mt-3">
-                      <div class="d-flex my-3">  
-                        <h5 class="mt-2">文章類別 :</h5>  
-                        <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" onchange="updateCategory(this.value)">  
-                            <?php foreach ($categories as $category): ?>  
-                                <option value="<?= $category['id'] ?>" <?= $category['id'] == $article['category_id'] ? 'selected' : '' ?>>  
-                                    <?= htmlspecialchars($category['name']) ?>  
-                                </option>  
-                            <?php endforeach; ?>  
-                        </select>  
-                      </div>  
-                      <div class="main-container">
-                        <div class="editor-container editor-container_classic-editor" id="editor-container">
-                          <div class="input-group mb-1">
-                            <div class="input-group-text pe-4">標題</div>
-                            <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="<?= htmlspecialchars($article["title"]) ?>">
+                <form action="doEdit.php" method="post">
+                  <table class="table align-items-center mb-0">
+                    <tbody>
+                      <div class="container mt-3">
+                        <div class="d-flex my-3">  
+                          <h5 class="mt-2">文章類別 :</h5>  
+                          <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" onchange="updateCategory(this.value)" require>  
+                              <?php foreach ($categories as $category): ?>  
+                                  <option value="<?= $category['id'] ?>" <?= $category['id'] == $article['category_id'] ? 'selected' : '' ?>>  
+                                      <?= htmlspecialchars($category['name']) ?>  
+                                  </option>  
+                              <?php endforeach; ?>  
+                          </select>  
+                        </div>  
+                          <div class="main-container">
+                            <div class="editor-container editor-container_classic-editor" id="editor-container">
+                              <input type="hidden" name="id" value="<?= $id ?>">
+                              <input type="hidden" name="content" value="">
+                                <div class="input-group mb-1">  
+                                  <div class="input-group-text pe-4">標題</div>  
+                                  <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="<?= $article["title"] ?>">  
+                                </div>  
+                                <div class="editor-container__editor">  
+                                  <div id="editor">  
+                                    <?= $article["content"] ?>
+                                  </div>  
+                                </div>
+
+                                <div class="d-flex mt-3">  
+                                  <button type="button" class="btn btn-sm btn-dark ms-auto btn-send me-1 align-content-center" style="height:45px; border-radius:15px;">送出</button>  
+                                  <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>  
+                                </div>  
+                            </div>
                           </div>
-                          <div class="editor-container__editor">
-                          <div id="editor">
-                            <?= htmlspecialchars($article["content"]) ?>
-                          </div>
-                          <div class="d-flex mt-3">
-                            <div class="btn btn-sm btn-dark ms-auto btn-send me-1 align-content-center btn-send" style="height:45px; border-radius:15px;" >送出</div>
-                            <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>
-                          </div>
-                        </div>
-                          
                         </div>
                       </div>
-                    </div>
-                    </div>
-                  </tbody>
-                </table>
+                      </div>
+                    </tbody>
+                  </table>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <form action="doEdit.php" method="post">
-      <input type="text" name="id" value="<?=$id?>">
-      <input type="text" name="title">
-      <input type="text" name="content">
-    </form>
   </main>
 
   
@@ -224,17 +226,18 @@ try {
   <script>
     let editorInstance;
     const btnSend = document.querySelector(".btn-send");
-    const saveURL = "./doAdd.php";
+    const saveURL = "./doEdit.php";
     const inputTitle = document.querySelector("[name=title]");
     const input1 = document.querySelector("form input");
     const form = document.querySelector("form");
     
     
 
-    btnSend.addEventListener("click", function(){
-      input1.value = editorInstance.getData();
-      form.submit();
-    });
+    btnSend.addEventListener("click", function() {  
+      const contentInput = document.querySelector("input[name='content']");  // 獲取隱藏字段
+      contentInput.value = editorInstance.getData(); // 將編輯器內容填入隱藏字段  
+      form.submit(); // 提交表單  
+    });  
 
     class MyUploadAdapter {
       constructor(loader) {
@@ -309,6 +312,11 @@ try {
         });  
     }  
 </script>
+<script>
+    document.querySelectorAll('.content p').forEach(function(p) {  
+        p.style.display = 'none'; // 隱藏所有 <p> 標籤  
+    });
+</script> 
 </body>
 
 </html>
