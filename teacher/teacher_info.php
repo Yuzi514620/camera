@@ -112,9 +112,6 @@ $teacher = $result->fetch_assoc();
         //當前頁面
         $page = 'teacher_info';
 
-        $pageTitle = isset($breadcrumbs[$page]) ? $breadcrumbs[$page] : '';
-        $list = isset($breadcrumbs['teacher_list']) ? $breadcrumbs['teacher_list'] : '';
-
         // 設定麵包屑的連結
         $breadcrumbLinks = [
             'teacher' => 'teacher.php',

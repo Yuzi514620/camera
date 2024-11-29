@@ -11,13 +11,73 @@ if (!function_exists('truncate')) {
     }
 }
 
+//下面function是用來計算時間差的
+function time_elapsed_string($datetime, $full = false) {
+  date_default_timezone_set('Asia/Taipei'); // 設定時區
+  $now = new DateTime;
+  $ago = new DateTime($datetime);
+  $diff = $now->diff($ago);
+
+  // 計算各個單位的時間差
+  $diff->w = floor($diff->d / 7);
+  $diff->d -= $diff->w * 7;
+
+  // 定義時間單位
+  $string = array(
+      'y' => '年',
+      'm' => '個月',
+      'w' => '週',
+      'd' => '天',
+      'h' => '小時',
+      'i' => '分鐘',
+      's' => '秒',
+  );
+  foreach ($string as $k => &$v) {//&$v是傳址
+      if ($diff->$k) {//如果時間差有值
+          $v = $diff->$k . $v . '前';//diff->k是時間差 v是時間單位
+      } else {
+          unset($string[$k]);//如果時間差沒有值，就刪除
+      }
+  }
+  // 返回結果
+  if (!$full) $string = array_slice($string, 0, 1);//array_slice()函數從陣列中取出一段
+  return $string ? reset($string) : '剛剛';//reset()函數返回陣列中的第一個元素的值
+}
+
+$search = $_GET['search'] ?? '';
 try {
-    $sql = "SELECT * FROM article";
+  if (!empty($search)) {
+      // 使用預處理語句以防止 SQL 注入
+      $sql = "SELECT a.*, c.name as category_name
+              FROM article a
+              JOIN article_category c ON a.category_id = c.id
+              WHERE a.title LIKE :search OR a.content LIKE :search";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute(['search' => '%' . $search . '%']);//執行預處理語句
+  } else {
+      // 如果沒有搜尋關鍵字，則顯示所有文章
+      $sql = "SELECT a.*, c.name as category_name
+              FROM article a
+              JOIN article_category c ON a.category_id = c.id";
+      $stmt = $pdo->query($sql);
+  }
+  $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e){
+  echo "資料撈取失敗: " . $e->getMessage();
+}
+
+try {
+    $sql = "SELECT a.*, c.name as category_name
+    FROM article a
+    JOIN article_category c ON a.category_id=c.id";
+
     $stmt = $pdo->query($sql);
     $articles = $stmt->fetchAll();
+    $articleCount = $stmt->rowCount();
 } catch (PDOException $e){
     echo "資料撈取失敗: " . $e->getMessage();
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -61,10 +121,29 @@ try {
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/dist/boxicons.js" integrity="sha512-Dm5UxqUSgNd93XG7eseoOrScyM1BVs65GrwmavP0D0DujOA8mjiBfyj71wmI2VQZKnnZQsSWWsxDKNiQIqk8sQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <style>
     .content {
         word-wrap: break-word; /* 自動換行 */
         white-space: normal;   /* 保留正常的空白符號 */
+    }
+    .search-bar{
+      input{
+        height: 35px;
+      }
+      button{
+        height: 35px;
+      }
+      button:hover{
+        background: #fff;
+        color: #000;
+      }
+    }
+    .btn-addAeticle{
+      width: 35px;
+      height: 35px;
     }
   </style>
 </head>
@@ -128,15 +207,26 @@ try {
       </div>
     </nav>
    <!-- Navbar -->
+
+
+
+    <!-- 文章列表 -->
     <div class="container-fluid py-2">
       <div class="row">
         <div class="col-12">
-          <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
-              </div>
-            </div> -->
+          <!-- 搜尋 -->
+          <div class="d-flex justify-content-between align-items-center pe-5 ps-1">
+            <form class="d-flex search-bar" method="GET" action="article.php">
+              <input class="form-control me-2 border border-secondary px-1" type="search" placeholder="搜尋文章" aria-label="Search">
+              <button class="btn btn-dark" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <button class="btn btn-dark text-white btn-addAeticle px-2">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+
+          </div>
+          <div class="px-2 mb-2">目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章</div>
+          <div class="card ">
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
                 <table class="table align-items-center mb-0">
@@ -147,7 +237,7 @@ try {
                         分類
                       </th>
                       <th
-                        class="text-uppercase text-secondary text-xs opacity-7 text-white " style="width:35%">
+                        class="text-uppercase text-secondary text-xs opacity-7 text-white " style="width:25%">
                         文章列表
                       </th>
                       <th
@@ -159,8 +249,12 @@ try {
                         內文
                       </th>
                       <th
+                        class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white" style="width:10%">
+                        最後更新時間
+                      </th>
+                      <th
                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
-                        新增
+                        檢視
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white" style="width:5%">
@@ -170,15 +264,15 @@ try {
                         class="text-center text-uppercase text-secondary text-xs opacity-7 text-white" style="width:5%">
                         刪除
                       </th>
-                      <!-- <th class="text-secondary opacity-7"></th> -->
                     </tr>
                   </thead>
+
                   <tbody>
                   <?php foreach ($articles as $article): ?>
                     <tr>
                       <td class="text-center">
                         <!-- 分類 -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
+                        <p class="text-xs font-weight-bold mb-0 text-warning"><?= htmlspecialchars($article['category_name']) ?></p>
                       </td>
                       <td>
                         <!-- 文章列表 -->
@@ -188,30 +282,34 @@ try {
                           </div>
                         </div>
                       </td>
+                      <!-- 編輯者 -->
                       <td>
-                        <!-- 編輯者 -->
                         <p class="text-xs font-weight-bold mb-0">Manager</p>
                       </td>
                       <!-- 內文 -->
                       <td colspan="2" style="width:25%">
                         <p class="text-xs font-weight-bold mb-0 content">
-                        <?= htmlspecialchars(truncate($article['content'], 150)) ?>
+                          <?= htmlspecialchars(truncate(strip_tags($article['content']), 150)) ?>
                         </p>
                       </td>
-                      <!-- 新增 -->
+                      <!--更新時間 -->
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0 text-secondary"><?= isset($article['update_time']) ? htmlspecialchars(time_elapsed_string($article['update_time'])) : '未更新' ?></p>
+                      </td>
+                      <!-- 檢視-->
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
                           class="text-secondary font-weight-bold text-sm"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
-                          <i class="fa-regular fa-add"></i>
+                          <i class="fa-regular fa-eye"></i>
                         </a>
                       </td>
                       <!-- 編輯 -->
                       <td class="align-middle text-center">
                         <a
-                          href="javascript:;"
+                          href="articleEdit.php?id=<?= $article['id'] ?>"
                           class="text-secondary font-weight-bold text-sm"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
@@ -222,7 +320,7 @@ try {
                       <td class="align-middle text-center">
                         <a
                           href="javascript:;"
-                          class="text-secondary font-weight-bold text-sm"
+                          class="text-danger font-weight-bold text-sm"
                           data-toggle="tooltip"
                           data-original-title="Edit user">
                           <i class="fa-regular fa-trash-can"></i>

@@ -15,6 +15,16 @@
 <?php
 require_once("../db_connect.php");
 
+$per_page = 10;
+$p = isset($_GET["p"]) ? intval($_GET["p"]) : 1;
+$sqlCount = "SELECT COUNT(*) AS total FROM product p WHERE p.is_deleted = 0";
+$resultCount = $conn->query($sqlCount);
+$totalData = $resultCount->fetch_assoc()["total"];
+$totalPage = ceil($totalData / $per_page);
+$start_item = ($p - 1) * $per_page;
+
+
+
 $sql = "SELECT  
     p.id,  
     p.name AS product_name,
@@ -24,6 +34,7 @@ $sql = "SELECT
     b.brand_name,  
     c.category_name,  
     p.stock,
+    p.is_deleted,
     p.created_at,  
     p.updated_at,  
     p.state  
@@ -34,9 +45,21 @@ INNER JOIN
 INNER JOIN  
     brand b ON p.brand_id = b.brand_id  
 INNER JOIN  
-    image i ON p.name = i.name  -- 條件：product 的 name 必須匹配 image 的 name  
+    image i ON p.name = i.name  
 WHERE  
     p.is_deleted = 0";
+
+$search = $_GET['search'] ?? '';
+if (!empty($search)) {
+  $search = $conn->real_escape_string($search);
+  $sql .= " AND p.name LIKE '%$search%'";
+}
+
+$start_item = ($p - 1) * $per_page; // 計算當前頁面的起始記錄
+$sql .= " ORDER BY p.id ASC LIMIT $start_item, $per_page"; // 添加 LIMIT
+
+
+
 
 
 $result = $conn->query($sql);
@@ -89,6 +112,7 @@ $conn->close();
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
+
   <!-- 側邊欄 -->
   <?php $page = 'product'; ?>
   <?php include 'sidebar.php'; ?>
@@ -110,11 +134,7 @@ $conn->close();
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <!-- 添加 ms-auto 將內容推向右側 -->
           <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-            <li class="mt-1">
-              <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard"
-                data-icon="octicon-star" data-size="large" data-show-count="true"
-                aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
-            </li>
+ 
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
@@ -152,16 +172,19 @@ $conn->close();
       </div>
     </nav>
     <!-- Navbar -->
-
     <div class="container-fluid py-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <form action="" method="get">
+          <div class="input-group">
+            <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm" name="search" value="<?= $_GET["search"] ?? "" ?>" style="height: 38px;">
+            <button class="btn btn-dark" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </div>
+        </form>
+        <a class="btn btn-dark ms-3 " href="addProduct.php" ><i class="fa-solid fa-plus  "></i></a>
+      </div>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
-              </div>
-            </div> -->
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
                 <table class="table align-items-center mb-0">
@@ -205,7 +228,7 @@ $conn->close();
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        新增
+                        檢視
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -226,10 +249,10 @@ $conn->close();
                           <div class="d-flex px-2 py-1">
                             <div>
                               <a href="product-content.php?id=<?= $product['id'] ?>">
-                              <img
-                                src="../album/upload/<?= $product["image_url"] ?>"
-                                class="avatar avatar-xxl me-3 border-radius-lg object-fit-contain"
-                                alt="">
+                                <img
+                                  src="../album/upload/<?= $product["image_url"] ?>"
+                                  class="avatar avatar-xxl me-3 border-radius-lg object-fit-contain"
+                                  alt="">
                               </a>
                             </div>
                             <div
@@ -270,7 +293,7 @@ $conn->close();
                         <!-- 狀態 -->
                         <td>
                           <p class="text-xs font-weight-bold mb-0">
-                            <?= $product["state"] ?>
+                            <?= $product["is_deleted"] == 0 ? "上架" : "下架" ?>
                           </p>
                         </td>
                         <!-- 編輯 -->
@@ -283,14 +306,14 @@ $conn->close();
                             <i class="fa-regular fa-pen-to-square"></i>
                           </a>
                         </td>
-                        <!-- 新增 -->
+                        <!-- 檢視 -->
                         <td class="align-middle text-center">
                           <a
-                            href="addProduct.php"
+                            href="product-content.php?id=<?= $product['id'] ?>"
                             class="text-secondary font-weight-bold text-xs"
                             data-toggle="tooltip"
                             data-original-title="Edit user">
-                            <i class="fa-regular fa-add"></i>
+                            <i class="fa-regular fa-eye"></i>
                           </a>
                         </td>
                         <!-- 刪除 -->
@@ -309,10 +332,30 @@ $conn->close();
                   </tbody>
                 </table>
               </div>
+              <!-- 分頁 -->
+              <?php if ($totalPage > 1): ?>
+                <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item <?= ($p == 1) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="product.php?p=<?= $p - 1 ?>&search=<?= $search ?>">上頁</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPage; $i++): ?>
+                      <li class="page-item <?= ($i == $p) ? 'active' : '' ?>">
+                        <a  class="page-link" href="product.php?p=<?= $i ?>&search=<?= $search ?>"><?= $i ?></a>
+                      </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= ($p == $totalPage) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="product.php?p=<?= $p + 1 ?>&search=<?= $search ?>">下頁</a>
+                    </li>
+                  </ul>
+                </nav>
+              <?php endif; ?>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    </div>
 
     </div>
     </div>
