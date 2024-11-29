@@ -24,7 +24,7 @@
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'users' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/users.php">
+                <a class="nav-link <?= $page === 'users' ? 'active bg-white text-dark' : 'text-white' ?>" href="../users/users.php">
                     <i class="fa-regular fa-user opacity-5 fa-xs" style="font-size: 15px"></i>
                     <span class="nav-link-text ms-1">會員管理</span>
                 </a>

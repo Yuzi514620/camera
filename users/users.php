@@ -216,12 +216,12 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
   <!-- 側邊欄 -->
   <?php $page = 'users'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <?php $page = 'users'; ?>
-    <?php include 'navbar.php'; ?>
+    <?php include '../navbar.php'; ?>
     <!-- Navbar -->
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center">
