@@ -33,13 +33,13 @@ $timeEnd = date("Y-m-d H:i:s",strtotime("+$days day"));
 $couponCodeSql = "SELECT `id` FROM coupon order by id DESC";
 $stmt = $db_host->prepare($couponCodeSql);
 $stmt->execute();
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-$random = ''; 
+$code = $stmt->rowCount();
+
 
 for($i=1;$i<=6;$i++){
     $random .= rand(1,9);
 }
-$cpnCode = 'cacpn'.($result['id']+1).$random;
+$cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
 
 
 $pdoSql = "INSERT INTO `coupon`(`name`, `coupon_code`, `start_date`, `end_date`, `discount`, `lower_purchase`, `quantity`, `img`, `brand`, `accessories`, `is_deleted`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
