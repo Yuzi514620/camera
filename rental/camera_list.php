@@ -245,6 +245,7 @@ foreach ($images as $image) {
     </div>
 
   <div id="cameraModalContainer"></div>
+  <div id="albumModalContainer"></div>
 
   </main>
   
@@ -325,8 +326,30 @@ foreach ($images as $image) {
             data: $(this).serialize(), // 序列化表單數據
         });
     });
+</script>
+
+<script>
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('album-page-link')) {
+        e.preventDefault(); // 阻止默認的超鏈接行為
+
+        // 取得分頁目標 URL
+        const url = e.target.href;
+
+        // 通過 AJAX 請求更新 album 區域的內容
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // 將響應內容插入到 album 的容器中
+                document.getElementById('albumContainer').innerHTML = data;
+            });
+    }
+});
+</script>
 
 
+
+<script>
     // 自定義關閉模態框
     $(document).on('click', '.close-modal', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框

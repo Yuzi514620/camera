@@ -33,21 +33,6 @@ $sql = "SELECT * FROM images $where_clause ORDER BY id DESC LIMIT $items_per_pag
 $result = $conn->query($sql);
 $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : []; // 確保有默認值
 
-// 確保變數初始化，避免未定義錯誤
-$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$currentPage = max(1, $currentPage); // 確保頁數最小為 1
-
-$totalPages = $total_pages ?? 1; // 確保總頁數有默認值
-
-// 設定分頁範圍
-$visiblePages = 5; // 最大顯示頁碼數量
-$startPage = max(1, $currentPage - floor($visiblePages / 2));
-$endPage = min($totalPages, $startPage + $visiblePages - 1);
-
-// 確保顯示固定範圍的頁碼
-if ($endPage - $startPage + 1 < $visiblePages) {
-    $startPage = max(1, $endPage - $visiblePages + 1);
-}
 
 include("../rental/link.php");
 ?>
@@ -62,7 +47,7 @@ include("../rental/link.php");
     content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png" />
   <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-  <title><?=$title?></title>
+  <title>camera</title>
 
 </head>
 
@@ -96,8 +81,9 @@ include("../rental/link.php");
           </form>
             <!-- 新增 -->
             <div>
-              <button id="loadModalButton" class="btn btn-primary">新增圖片</button>
+            <button button id="loadModalButton" class="btn btn-primary">新增圖片</button>
 
+              <a class="btn btn-dark" href="create-user.php" title="新增使用者"><i class="fa-solid fa-fw fa-user-plus"></i></a>
             </div>
           </div>
       </div>
@@ -152,6 +138,23 @@ include("../rental/link.php");
         </div>
 
 
+        <?php
+// 確保變數初始化，避免未定義錯誤
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$currentPage = max(1, $currentPage); // 確保頁數最小為 1
+
+$totalPages = $total_pages ?? 1; // 確保總頁數有默認值
+
+// 設定分頁範圍
+$visiblePages = 5; // 最大顯示頁碼數量
+$startPage = max(1, $currentPage - floor($visiblePages / 2));
+$endPage = min($totalPages, $startPage + $visiblePages - 1);
+
+// 確保顯示固定範圍的頁碼
+if ($endPage - $startPage + 1 < $visiblePages) {
+    $startPage = max(1, $endPage - $visiblePages + 1);
+}
+?>
 
 <!-- 分頁導航 -->
 <nav aria-label="Page navigation">
@@ -198,7 +201,7 @@ include("../rental/link.php");
       </div>
     </div>
 
-    <div id="albumModalContainer"></div>
+  <div id="cameraModalContainer"></div>
 
   </main>
   
@@ -208,30 +211,79 @@ include("../rental/link.php");
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- jQuery -->
+  <script>
+    // 通用model按鈕點擊事件
+    $(document).on('click', '[data-toggle="modal"]', function () {
+        var targetUrl = $(this).data('target'); // 獲取目標 URL
+        var dataId = $(this).data('id') || null; // 獲取數據 ID（如果有）
 
-
-<script>
-        $(document).ready(function () {
-            // 當按鈕被點擊時
-            $('#loadModalButton').click(function () {
-                // 使用 AJAX 加載模態框內容
-                $.ajax({
-                    url: 'images_create.php', // 請求目標
-                    method: 'GET', // 請求方法
-                    success: function (data) {
-                        $('#albumModalContainer').html(data); // 將回應的 HTML 插入到容器中
-                        // 顯示模態框
-                        $('#albumModalContainer .modal').modal('show');
-                    },
-                    error: function () {
-                        alert('模態框內容載入失敗，請稍後再試。');
-                    }
+        // 發送 AJAX 請求
+        $.ajax({
+            url: targetUrl,
+            type: 'GET',
+            data: { id: dataId }, // 如果沒有 ID，傳遞空值
+            success: function (response) {
+                // 將返回的模態框 HTML 插入容器中
+                $('#cameraModalContainer').html(response);
+                // 顯示模態框
+                var modal = $('#cameraModalContainer .modal');
+                modal.modal('show');
+                // 清理舊事件以避免多次綁定
+                modal.on('hidden.bs.modal', function () {
+                  modal.remove(); // 移除模態框的 DOM 元素，防止累積
                 });
-            });
+            },
+            error: function () {
+                alert('無法加載內容，請稍後再試！');
+            },
         });
-    </script>
+    });
 
-<script>
+    // 專屬於 open-edit-modal 的按鈕點擊事件
+    $(document).on('click', '.next-modal', function () {
+        var targetUrl = $(this).data('target'); // 獲取目標 URL
+        var dataId = $(this).data('id');       // 獲取數據 ID
+        var currentModal = $(this).closest('.modal'); // 當前模態框
+
+        // 關閉當前模態框
+        currentModal.modal('hide');
+
+        // AJAX 請求加載目標模態框
+        $.ajax({
+            url: targetUrl,
+            type: 'GET',
+            data: { id: dataId },
+            success: function (response) {
+                // 插入返回的模態框 HTML
+                $('#cameraModalContainer').html(response);
+
+                // 顯示新的模態框
+                var newModal = $('#cameraModalContainer .modal');
+                newModal.modal('show');
+
+                // 清理舊事件，避免重複綁定
+                newModal.on('hidden.bs.modal', function () {
+                    newModal.remove(); // 移除 DOM，防止累積
+                });
+            },
+            error: function () {
+                alert('無法加載內容，請稍後再試！');
+            },
+        });
+    });
+
+    // 更新提示
+    $(document).on('submit', '#updateForm', function (e) {
+        e.preventDefault(); // 防止默認表單提交行為
+
+        $.ajax({
+            url: 'camera_edit.php',
+            type: 'POST',
+            data: $(this).serialize(), // 序列化表單數據
+        });
+    });
+
+
     // 自定義關閉模態框
     $(document).on('click', '.close-modal', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框
@@ -246,6 +298,30 @@ include("../rental/link.php");
       });
   });
   </script>
+
+      <!-- Include Bootstrap and jQuery -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 當按鈕被點擊時
+            $('#openModal').click(function () {
+                // 顯示模態框
+                $('#imagesModal').modal('show');
+                // 使用 AJAX 加載內容
+                $.ajax({
+                    url: 'images_create.php',
+                    method: 'GET',
+                    success: function (data) {
+                        $('#modalContent').html(data); // 將回應插入模態框
+                    },
+                    error: function () {
+                        $('#modalContent').html('<p class="text-danger">無法載入內容，請稍後再試。</p>');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

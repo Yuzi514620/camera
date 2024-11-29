@@ -1,7 +1,6 @@
 <?php
 require_once("../db_connect.php");
 
-// 設定頁面標題
 $title = isset($_GET["search"]) ? "搜尋結果：" . htmlspecialchars($_GET["search"]) : "租借列表";
 
 // 搜尋條件
@@ -88,7 +87,14 @@ foreach ($images as $image) {
             </div>
           </form>          
           <!-- 新增 -->
-          <a class="btn btn-dark" href="create-user.php" title="新增使用者"><i class="fa-solid fa-fw fa-user-plus"></i></a>
+          <div>
+            <button type="button" 
+                    class="btn btn-success" 
+                    data-toggle="modal" 
+                    data-target="camera_create.php">新增相機
+            </button>
+            <a class="btn btn-dark" href="create-user.php" title="新增使用者"><i class="fa-solid fa-fw fa-user-plus"></i></a>
+          </div>
         </div>
 
 
@@ -156,9 +162,9 @@ foreach ($images as $image) {
                   <button type="button" 
                           class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                           data-toggle="modal" 
-                          data-target="#cameraModal<?= $camera['id'] ?>"
-                          data-id="<?= $camera['id'] ?>">
-                    <i class="fa-regular fa-eye"></i>
+                          data-id="<?= $camera['id'] ?>" 
+                          data-target="camera.php">
+                      <i class="fa-regular fa-eye"></i>
                   </button>
                 </td>
                 <!-- 編輯 -->
@@ -166,9 +172,9 @@ foreach ($images as $image) {
                   <button type="button" 
                           class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                           data-toggle="modal" 
-                          data-target="#cameraModal<?= $camera['id'] ?>"
-                          data-id="<?= $camera['id'] ?>">
-                    <i class="fa-regular fa-pen-to-square"></i>
+                          data-id="<?= $camera['id'] ?>" 
+                          data-target="camera_edit.php">
+                      <i class="fa-regular fa-pen-to-square"></i>
                   </button>
                 </td>
                 <!-- 刪除 -->
@@ -249,29 +255,77 @@ foreach ($images as $image) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- jQuery -->
   <script>
-    // 打開st
+    // 通用model按鈕點擊事件
     $(document).on('click', '[data-toggle="modal"]', function () {
-      var cameraId = $(this).data('id'); // 獲取按鈕上的 ID
+        var targetUrl = $(this).data('target'); // 獲取目標 URL
+        var dataId = $(this).data('id') || null; // 獲取數據 ID（如果有）
 
-      // 發送 AJAX 請求到 camera.php
-      $.ajax({
-        url: 'camera.php',
-        type: 'GET',
-        data: { id: cameraId },
-        success: function (response) {
-          // 將內容插入 Modal 容器中
-          $('#cameraModalContainer').html(response);
-          // 顯示 Modal
-          $('#cameraModalContainer .modal').modal('show');
-          
-          // var modal = $('#cameraModalContainer .modal');
-          // modal.modal('show'); // 顯示模態框
-        },
-        error: function () {
-          alert('無法加載內容，請稍後再試！');
-        },
-      });
+        // 發送 AJAX 請求
+        $.ajax({
+            url: targetUrl,
+            type: 'GET',
+            data: { id: dataId }, // 如果沒有 ID，傳遞空值
+            success: function (response) {
+                // 將返回的模態框 HTML 插入容器中
+                $('#cameraModalContainer').html(response);
+                // 顯示模態框
+                var modal = $('#cameraModalContainer .modal');
+                modal.modal('show');
+                // 清理舊事件以避免多次綁定
+                modal.on('hidden.bs.modal', function () {
+                  modal.remove(); // 移除模態框的 DOM 元素，防止累積
+                });
+            },
+            error: function () {
+                alert('無法加載內容，請稍後再試！');
+            },
+        });
     });
+
+    // 專屬於 open-edit-modal 的按鈕點擊事件
+    $(document).on('click', '.next-modal', function () {
+        var targetUrl = $(this).data('target'); // 獲取目標 URL
+        var dataId = $(this).data('id');       // 獲取數據 ID
+        var currentModal = $(this).closest('.modal'); // 當前模態框
+
+        // 關閉當前模態框
+        currentModal.modal('hide');
+
+        // AJAX 請求加載目標模態框
+        $.ajax({
+            url: targetUrl,
+            type: 'GET',
+            data: { id: dataId },
+            success: function (response) {
+                // 插入返回的模態框 HTML
+                $('#cameraModalContainer').html(response);
+
+                // 顯示新的模態框
+                var newModal = $('#cameraModalContainer .modal');
+                newModal.modal('show');
+
+                // 清理舊事件，避免重複綁定
+                newModal.on('hidden.bs.modal', function () {
+                    newModal.remove(); // 移除 DOM，防止累積
+                });
+            },
+            error: function () {
+                alert('無法加載內容，請稍後再試！');
+            },
+        });
+    });
+
+    // 更新提示
+    $(document).on('submit', '#updateForm', function (e) {
+        e.preventDefault(); // 防止默認表單提交行為
+
+        $.ajax({
+            url: 'camera_edit.php',
+            type: 'POST',
+            data: $(this).serialize(), // 序列化表單數據
+        });
+    });
+
 
     // 自定義關閉模態框
     $(document).on('click', '.close-modal', function () {
@@ -282,7 +336,8 @@ foreach ($images as $image) {
 
       // 在模態框完全隱藏後移除 HTML，防止累積
       modal.on('hidden.bs.modal', function () {
-          modal.remove();
+          // modal.remove();
+          location.reload();
       });
   });
   </script>
