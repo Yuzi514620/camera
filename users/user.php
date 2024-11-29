@@ -1,5 +1,16 @@
-<?php require_once("pdo_connect.php"); 
+<?php
+require_once("../db_connect.php");
 
+if (!isset($_GET["id"])) {
+  echo "請帶入ID 到此網頁";
+  exit;
+}
+$id = $_GET["id"];
+
+$sql = "SELECT * FROM users WHERE id='$id' AND is_deleted=0";
+
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
 
 // $per_page = 10;
 // $sqlAll = "SELECT * FROM users WHERE is_deleted=0";
@@ -47,7 +58,21 @@
 // }
 
 // $rows = $result->fetch_all(MYSQLI_ASSOC);
-// ?>
+// 
+
+$sql = "SELECT * FROM users";
+$result = $conn->query($sql);
+$user_count = $result->num_rows;
+$rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+?>
+<style>
+  .form1 {
+    width: 100%;
+    max-width: 300px;
+  }
+</style>
 <!--
 =========================================================
 * Material Dashboard 3 - v3.2.0
@@ -103,34 +128,44 @@
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
-
-
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
+
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          確認刪除該帳號?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <a href="doDeleted.php?id=<?= $row["id"] ?> " class="btn btn-danger">確認</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- 側邊欄 -->
-    <?php $page = 'users'; ?>
-    <?php include 'sidebar.php'; ?>
+  <?php $page = 'users'; ?>
+  <?php include 'sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-  <!-- Navbar -->
+    <!-- Navbar -->
     <?php $page = 'users'; ?>
     <?php include 'navbar.php'; ?>
-  <!-- Navbar -->
+    <!-- Navbar -->
     <div class="container-fluid py-2">
-    <div class="d-flex align-items-center">
-        </div>
+      <div class="d-flex align-items-center">
+      </div>
 
       <div class="row">
-        <div class="d-flex justify-content-between ">
-        <div class="">
-          <input class="border-radius-lg btn btn-white border border-dark" type="search" placeholder="請輸入要搜尋的關鍵字">
-          <button class="btn btn-dark">搜尋</button>
-        </div>
-        <div class="col-md-auto">
-                    <a href="create-user.php" class="btn btn-dark " title="新增使用者"><i class="fa-solid fa-user-plus"></i></a>
-                </div>
-        </div>
+
 
         <div class="col-12">
           <div class="card my-4">
@@ -141,138 +176,104 @@
             </div> -->
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
-                <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
+                <div class="text-center text-uppercase text-secondary text-xxs text-white bg-dark">
+                  <h4 class="text-white">詳細資料</h4>
+                </div>
+                <table class="table table-bordered">
+                  <?php if ($result->num_rows > 0) : ?>
                     <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        姓名
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        性別
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        帳號 / email
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        手機號碼
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        地址
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        加入時間
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
-                      </th>
-                      <!-- <th class="text-secondary opacity-7"></th> -->
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
+                      <th class="">大頭貼</th>
                       <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img
-                              src="../assets/img/team-2.jpg"
-                              class="avatar avatar-sm me-3 border-radius-lg"
-                              alt="user1" />
-                          </div>
-                          <!-- 姓名+Email -->
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Manager</h6>
-                            <p class="text-xs text-secondary mb-0">
-                              john@creative-tim.com
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td>
-                        <!-- 性別 -->
-                        <p class="text-xs font-weight-bold mb-0">女</p>
-                      </td>
-                      <!-- 帳號 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          test@gmail.com
-                        </p>
-                      </td>
+                        <img class="avatar-lg" src="/camera/users/img/<?= $row["img"] ?>" alt="">
 
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          0900000000
-                        </p>
-                      </td>
-                      <!-- 地址 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          新北市五股區御史路53巷7號
-                        </p>
-                      </td>
-                      <!-- 加入時間 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          2024-01-01
-                        </p>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="javascript:;"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
                       </td>
                     </tr>
-                    
+                    <tr>
+                      <th>id</th>
+                      <td><?= $row["id"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>帳號</th>
+                      <td><?= $row["account"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>密碼</th>
+                      <td><?= $row["password"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>姓名</th>
+                      <td><?= $row["name"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>性別</th>
+                      <td><?= $row["gender"] == 1 ? "男" : "女" ?></td>
+                    </tr>
+                    <tr>
+                      <th>信箱</th>
+                      <td><?= $row["email"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>生日</th>
+                      <td><?= $row["birthday"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>手機</th>
+                      <td><?= $row["phone"] ?></td>
+                    </tr>
+                    <tr>
+                      <th>地址</th>
+                      <td><?= $row["address"] ?></td>
+                    </tr>
+                  <?php endif; ?>
+                </table>
+                <div class="d-flex justify-content-between">
+                  <div class="m-3">
+                    <a href="user-edit.php?id=<?= $row["id"] ?>" class="btn btn-primary">編輯</a>
+                    <a href="users.php" class="btn btn-danger">回到會員列表</a>
+                  </div>
+                  <div class="m-3">
+                  <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" type="button">刪除</button>
+                </div>
+                <!-- <table class="table align-items-center mb-0">
+                  <thead class="">
+                  <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">id</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">1</td>
+                    </tr>
+                    <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">姓名</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">蔡育騰</td>
+                    </tr>
+                    <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">信箱</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">a@b.com</td>
+                    </tr>
+                    <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">生日</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">1999/99/99</td>
+                    </tr>
+                    <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">手機</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">098888888</td>
+                    </tr>
+                    <tr>
+                      <th class="text-end text-uppercase text-secondary text-lg ">地址</th>
+                      <td class="text-center text-uppercase text-secondary text-lg ">新北勢111111111111111111111111111</td>
+                    </tr>
+                  </thead> -->
+
+
+
+                <tbody>
+                </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <!-- <div class="row">
           <div class="col-12">
             <div class="card my-4">
@@ -697,7 +698,7 @@
         </footer> -->
     </div>
   </main>
-  
+
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
