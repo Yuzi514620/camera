@@ -1,7 +1,8 @@
 <?php
-session_start();
-$id = $_SESSION["id"];
 require_once("pdo_connect.php");
+
+$id = $_POST["id"];
+
 $pdoSql = "SELECT * FROM coupon WHERE `coupon`.`id` = ?";
 
 $stmt = $db_host->prepare($pdoSql);

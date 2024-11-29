@@ -117,11 +117,14 @@
                                                     <span>上傳圖片</span>
                                                 </div>
                                                 <div class="col-4">
-                                                    <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
-                                                </div>
+                                                    <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">    
+                                                </div>       
                                             </div>
+                                            <div class="d-flex justify-content-center">
+                                                <span class="imgError"></span>
+                                                </div>
                                             <div class="btn-box position-relative mt-3 ">
-                                                <button class="btn btn-info btn-update me-3">完成</button>
+                                                <button class="btn btn-info btn-add me-3">完成</button>
                                                 <a href="../pages/coupon.php" class="btn btn-info">返回</a>
                                             </div>
                                         </div>
@@ -158,34 +161,40 @@
             const lower_purchase = document.querySelector("#lower_purchase");
             const quantity = document.querySelector("#quantity");
             const days = document.querySelector("#days");
+            const imgError = document.querySelector(".imgError");
             
-            $(".btn-update").click(function() {
+
+
+            $(".btn-add").click(function() {
                 let file_data = $('#uploadImg').prop('files')[0];
                 let form_data = new FormData();
+                if (file_data != null) {
+                    form_data.append('file', file_data);
+                    form_data.append('name', name.value);
+                    form_data.append('discount', discount.value);
+                    form_data.append('lower_purchase', lower_purchase.value);
+                    form_data.append('quantity', quantity.value);
+                    form_data.append('days', days.value);
 
-                form_data.append('file',file_data);
-                form_data.append('name',name.value);
-                form_data.append('discount',discount.value);
-                form_data.append('lower_purchase',lower_purchase.value);
-                form_data.append('quantity',quantity.value);
-                form_data.append('days',days.value);
+                    $.ajax({
+                            method: "POST",
+                            url: "doAddCoupon.php",
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: form_data
 
-                $.ajax({
-                        method: "POST",
-                        url: "doAddCoupon.php",
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data:form_data
-                
-                    })
-                    .done(function(response) {
-                        console.log(response);
-                        window.location.replace("../pages/coupon.php");
-                    })
-                    .fail(function(jqXHR, textStatus) {
-                        console.log(textStatus);
-                    })
+                        })
+                        .done(function(response) {
+                            window.location.replace("../pages/coupon.php");
+                        })
+                        .fail(function(jqXHR, textStatus) {
+                            console.log(textStatus);
+                        })
+                } else {
+                    imgError.textContent = "請上傳圖片";
+                    imgError.style.color = "red";
+                }
             })
         </script>
 </body>

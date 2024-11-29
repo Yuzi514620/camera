@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once("../coupon/pdo_connect.php");
 
 $pdoSqlALl = "SELECT * FROM coupon ";
@@ -195,10 +194,13 @@ try {
                             <div class="d-flex justify-content-center">
                               <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>">上架</button>
                               <button class="btn btn-info mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>">下架</button>
-                              <a class="btn btn-warning mb-2 mt-2" href="../coupon/updateCoupon.php">
-                                <?php $_SESSION["id"] = $row["id"]; ?>
-                                修改
-                              </a>
+                              <form action="../coupon/updateCoupon.php" method="POST">
+                                <input type="hidden" name="id" value="<?= $row["id"] ?>">
+                                <button class="btn btn-warning mb-2 mt-2 btn-updated" type="submit">
+                                  修改
+                                </button>
+                              </form>
+                             
                               <button class="btn btn-danger mb-2 mt-2" data-toggle="modal" data-target="#exampleModal">
                                 刪除
                               </button>
