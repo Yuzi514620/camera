@@ -12,21 +12,21 @@
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
+
 <?php
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "課程列表";
+$title = "師資列表";
 
 // 每頁顯示五筆資料
 $limit = 5;
 
 // 處理搜尋條件
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$search_condition = $search ? "WHERE course.title LIKE '%$search%' AND course.is_visible = 1" : "WHERE course.is_visible = 1";
+$search_condition = $search ? "WHERE teacher.name LIKE '%$search%' AND teacher.is_visible = 1" : "WHERE teacher.is_visible = 1";
 
 // 計算總資料筆數
-$sql_count = "SELECT COUNT(*) AS total FROM course $search_condition";
+$sql_count = "SELECT COUNT(*) AS total FROM teacher $search_condition";
 $result_count = $conn->query($sql_count);
 $row_count = $result_count->fetch_assoc();
 $total_records = $row_count['total'];
@@ -45,20 +45,17 @@ $order_type = isset($_GET['order_type']) && $_GET['order_type'] == 'desc' ? 'des
 // 查詢當前頁數的資料並加入排序
 $offset = ($current_page - 1) * $limit;
 $sql = "SELECT 
-            course.*,          
-            course_image.name AS image_name,
-            teacher.name AS teacher_name,
-            course_category.name AS category_name
-        FROM course
-        LEFT JOIN course_image ON course.course_image_id = course_image.id
-        LEFT JOIN teacher ON course.teacher_id = teacher.id
-        LEFT JOIN course_category ON course.category_id = course_category.id
+            teacher.*,     
+            course_image.name AS image_name  
+        FROM teacher
+        LEFT JOIN course_image ON teacher.course_image_id = course_image.id
         $search_condition
         ORDER BY $order_by $order_type
         LIMIT $offset, $limit";
 
 // 執行查詢
 $result = $conn->query($sql);
+
 ?>
 
 
@@ -75,7 +72,7 @@ $result = $conn->query($sql);
     sizes="76x76"
     href="../assets/img/apple-icon.png" />
   <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-  <title>課程管理</title>
+  <title>師資管理</title>
   <!--     Fonts and icons     -->
   <link
     rel="stylesheet"
@@ -104,22 +101,41 @@ $result = $conn->query($sql);
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
 
-  <link rel="stylesheet" href="course.css">
+  <link rel="stylesheet" href="teacher.css">
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
-  <?php $page = 'course'; ?>
+  <?php $page = 'teacher'; ?>
   <?php include 'sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-    <?php $page = 'course'; ?>
-    <?php include 'navbar.php'; ?>
-    <!-- Navbar -->
+    <?php $page = 'teacher'; ?>
+    <?php
+    // 設定麵包屑的層級
+    $breadcrumbs = [
+      'teacher' => '師資管理',
+      'teacher_list' => '師資列表',
+    ];
+
+    //當前頁面
+    $page = 'teacher_list';
+
+    $pageTitle = isset($breadcrumbs[$page]) ? $breadcrumbs[$page] : '';
+    $list = isset($breadcrumbs['teacher_list']) ? $breadcrumbs['teacher_list'] : '';
+
+    // 設定麵包屑的連結
+    $breadcrumbLinks = [
+      'teacher' => 'teacher.php',           // 第一層的連結
+      'teacher_list' => 'teacher.php',      // 第二層的連結
+    ];
+
+    include 'navbar.php';
+    ?>
 
 
-    <div class="container-fluid pt-2 mt-6">
+    <div class="container-fluid pt-2 mt-3">
       <p class="text-xs text-end px-2">總共有 <?php echo $row_count['total']; ?> 筆資料</p>
       <!-- 搜尋欄位 -->
       <div class="d-flex justify-content-between align-items-center p-0">
@@ -131,7 +147,7 @@ $result = $conn->query($sql);
             <input type="hidden" name="order_type" value="<?= $order_type ?>">
 
             <!-- 清空搜尋按鈕 -->
-            <a href="course.php" class="btn btn-outline-secondary me-2 my-0">
+            <a href="teacher.php" class="btn btn-outline-secondary me-2 my-0">
               <i class="fa-solid fa-arrow-rotate-left fa-fw pe-1"></i>
             </a>
 
@@ -140,12 +156,12 @@ $result = $conn->query($sql);
               type="text"
               name="search"
               class="form-control me-2 ps-3 py-0"
-              placeholder="搜尋課程名稱"
+              placeholder="搜尋講師名稱"
               value="<?= htmlspecialchars($search) ?>">
             <button type="submit" class="btn btn-secondary my-0"><i class="fa-solid fa-magnifying-glass fa-fw pe-1"></i></button>
           </form>
           <!-- 新增課程 -->
-          <a href="course_add.php" class="btn btn-secondary m-0 mx-3">新增課程</a>
+          <a href="teacher_add.php" class="btn btn-secondary m-0 mx-3">新增師資</a>
         </div>
 
         <!-- 排序按鈕 -->
@@ -155,25 +171,9 @@ $result = $conn->query($sql);
             id
             <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
           </a>
-          <!-- 報名開始時間 -->
-          <div class="d-flex justify-content-end">
-            <a href="?page=<?= $current_page ?>&order_by=apply_start&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
-              報名開始時間
-              <!-- 根據排序狀態顯示不同的箭頭，方向和課程開始時間相反 -->
-              <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
-            </a>
-          </div>
-
-          <!-- 課程開始時間 -->
-          <div class="d-flex justify-content-end">
-            <a href="?page=<?= $current_page ?>&order_by=course_start&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
-              課程開始時間
-              <!-- 根據排序狀態顯示不同的箭頭 -->
-              <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
-            </a>
-          </div>
         </div>
       </div>
+    </div>
 
     </div>
 
@@ -198,31 +198,23 @@ $result = $conn->query($sql);
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片
+                        照片
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        名稱
+                        姓名
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        分類
+                        簡介
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        價格
+                        信箱
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        講師
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        報名時間
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        課程時間
+                        電話
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
@@ -231,10 +223,6 @@ $result = $conn->query($sql);
                       <th
                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
                         編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        狀態
                       </th>
                       <th
                         class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -253,70 +241,48 @@ $result = $conn->query($sql);
                             <p class="text-xs font-weight-bold mb-0"><?php echo $row['id']; ?></p>
                           </td>
                           <td>
-                            <!-- 圖片 -->
+                            <!-- 照片 -->
                             <div class="d-flex px-2 py-1" style="overflow: hidden">
                               <div>
-                                <img src="../course_images/course_cover/<?php echo $row['image_name']; ?>"
-                                  class="me-3 border-radius-lg course-img img-fit" alt="course image" />
+                                <img src="../course_images/teacher/<?php echo $row['image_name']; ?>"
+                                  class="me-3 border-radius-lg teacher-img img-fit" alt="teacher_image" />
                               </div>
                             </div>
                           </td>
                           <td>
-                            <!-- 名稱 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['title']); ?></p>
+                            <!-- 姓名 -->
+                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['name']); ?></p>
                           </td>
                           <td>
-                            <!-- 分類 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['category_name']); ?></p>
+                            <!-- 簡介 -->
+                            <p class="text-xs font-weight-bold mb-0 text-ellipsis"><?php echo htmlspecialchars($row['info']); ?></p>
                           </td>
 
                           <td>
-                            <!-- 價格 -->
-                            <p class="text-xs font-weight-bold mb-0"> <?php echo number_format($row['price']); ?></p>
+                            <!-- 信箱 -->
+                            <p class="text-xs font-weight-bold mb-0"> <?php echo htmlspecialchars($row['email']); ?></p>
                           </td>
                           <td>
-                            <!-- 講師 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['teacher_name']); ?></p>
-                          </td>
-                          <td>
-                            <!-- 報名時間 -->
-                            <p class="text-xs font-weight-bold mb-0">
-                              <?php
-                              echo date("Y/m/d", strtotime($row['apply_start'])) . " ~ " . date("Y/m/d", strtotime($row['apply_end']));
-                              ?>
-                            </p>
-                          </td>
-                          <td>
-                            <!-- 課程時間 -->
-                            <p class="text-xs font-weight-bold mb-0">
-                              <?php
-                              echo date("Y/m/d", strtotime($row['course_start'])) . " ~ " . date("Y/m/d", strtotime($row['course_end']));
-                              ?>
-                            </p>
+                            <!-- 電話 -->
+                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['phone']); ?></p>
                           </td>
                           <td class="align-middle text-center">
                             <!-- 檢視 -->
-                            <a href="course_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                            <a href="teacher_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
                               data-original-title="Edit user">
                               <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
                             <!-- 編輯 -->
-                            <a href="course_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                            <a href="teacher_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
                               data-original-title="Edit user">
                               <i class="fa-regular fa-pen-to-square"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
-                            <!-- 狀態 -->
-                            <a href="course_status.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs">
-                              <?php echo $row['status'] == 1 ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'; ?>
-                            </a>
-                          </td>
-                          <td class="align-middle text-center">
                             <!-- 刪除 -->
-                            <a href="course_delete.php?id=<?php echo $row['id']; ?>"
+                            <a href="teacher_delete.php?id=<?php echo $row['id']; ?>"
                               class="text-secondary font-weight-bold text-xs"
                               data-toggle="tooltip" data-original-title="Delete course"
                               onclick="return confirm('確定要刪除這筆資料嗎？');">
@@ -378,28 +344,7 @@ $result = $conn->query($sql);
 
 
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var deleteButtons = document.querySelectorAll('.delete-btn');
 
-      deleteButtons.forEach(function(button) {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          var row = e.target.closest("tr");
-          if (row) {
-            row.parentNode.removeChild(row);
-          }
-        });
-      });
-    });
-  </script>
-
-  <!-- <?php if (isset($_GET['message']) && $_GET['message'] === 'success'): ?>
-    <script>
-      alert('課程資料新增完成！');
-      history.replaceState(null, '', 'course.php');
-    </script>
-  <?php endif; ?> -->
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
