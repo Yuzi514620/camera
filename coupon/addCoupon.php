@@ -72,6 +72,29 @@
                                             <h6 class="text-white text-capitalize ps-3">新增優惠券</h6>
                                         </div>
                                         <div class="textbox card-body px-0 pb-2 position-relative">
+                                                <div class="row d-flex justify-content-center">
+                                                    <div class="col-1">
+                                                        <span>品牌</span>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <select name="coupon-select" class="coupon-select form-select " aria-label="Default select example">
+                                                            <option value="" selected disabled>請選擇</option>
+                                                            <option value="0">全館</option>
+                                                            <option value="1">sony</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <span>配件</span>
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <select name="coupon-subselect" class="coupon-subselect form-select" aria-label="Default select example">
+                                                            <option value="" selected disabled>請選擇</option>
+                                                            <option value="0">全館</option>
+                                                            <option value="1">相機</option>
+                                                            <option value="2">包包</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
                                                 <div class="col-1">
                                                     <span>名稱</span>
@@ -117,14 +140,14 @@
                                                     <span>上傳圖片</span>
                                                 </div>
                                                 <div class="col-4">
-                                                    <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">    
-                                                </div>       
+                                                    <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
+                                                </div>
                                             </div>
                                             <div class="d-flex justify-content-center">
                                                 <span class="imgError"></span>
-                                                </div>
+                                            </div>
                                             <div class="btn-box position-relative mt-3 ">
-                                                <button class="btn btn-info btn-add me-3">完成</button>
+                                                <button class="btn btn-success btn-add me-3">完成</button>
                                                 <a href="../pages/coupon.php" class="btn btn-info">返回</a>
                                             </div>
                                         </div>
@@ -162,12 +185,15 @@
             const quantity = document.querySelector("#quantity");
             const days = document.querySelector("#days");
             const imgError = document.querySelector(".imgError");
+
             
 
-
             $(".btn-add").click(function() {
+                const brand = $("select[name='coupon-select']").val();
+                const accessories = $("select[name='coupon-subselect']").val();
                 let file_data = $('#uploadImg').prop('files')[0];
                 let form_data = new FormData();
+
                 if (file_data != null) {
                     form_data.append('file', file_data);
                     form_data.append('name', name.value);
@@ -175,6 +201,8 @@
                     form_data.append('lower_purchase', lower_purchase.value);
                     form_data.append('quantity', quantity.value);
                     form_data.append('days', days.value);
+                    form_data.append('brand', brand);
+                    form_data.append('accessories', accessories);
 
                     $.ajax({
                             method: "POST",
