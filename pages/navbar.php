@@ -6,7 +6,7 @@
           <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
         </li>
         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-          Tables
+          <?= $title ?>
         </li>
       </ol>
     </nav>
