@@ -24,6 +24,7 @@ $sql = "SELECT
     b.brand_name,  
     c.category_name,  
     p.stock,  
+    p.state,
     p.created_at,  
     p.updated_at
 FROM  
@@ -90,69 +91,30 @@ $conn->close();
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'product'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
-      <div class="container-fluid py-1 px-3 justify-content-end">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm">
-              <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
-            </li>
-            <li class="breadcrumb-item text-sm">
-              <a class="opacity-5 text-dark" href="javascript:;">商品管理</a>
-            </li>
-            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-              新增商品
-            </li>
-          </ol>
-        </nav>
-        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <!-- 添加 ms-auto 將內容推向右側 -->
-          <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-            <li class="mt-1">
-              <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard"
-                data-icon="octicon-star" data-size="large" data-show-count="true"
-                aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
-            </li>
-            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                <div class="sidenav-toggler-inner">
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                </div>
-              </a>
-            </li>
-            <li class="nav-item px-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0">
-                <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
-              </a>
-            </li>
-            <li class="nav-item dropdown pe-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="material-symbols-rounded">notifications</i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                <!-- 通知內容 -->
-              </ul>
-            </li>
-            <li class="nav-item d-flex align-items-center">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </li>
-            <li class="nav-item d-flex align-items-center ms-3">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-right-from-bracket"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+          'teacher' => '首頁', // 第一層的文字
+          'teacher_list' => '商品管理', // 第一層的文字
+          'teacher_add' => '新增商品', // 第二層的文字
+
+          ];
+
+        $page = 'teacher_add';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'teacher' => 'product.php',           // 第一層的連結
+            'teacher_list' => 'product.php',      // 第二層的連結
+            'teacher_add' => 'addProduct.php',      // 第二層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
     <!-- Navbar -->
 
     <div class="container-fluid py-2">
@@ -184,9 +146,11 @@ $conn->close();
                       </tr>
                       <!-- 圖片 -->
                       <tr>
-                        <td>
-                          <!-- <label class="form-label">圖片：</label> -->
-                          <a href="up_image.php" class="btn btn-dark">選擇圖片</a>
+                      <td>
+                        <a class="btn btn-dark" href="up_image.php">圖片</a>
+                          <!-- <label for="myFile" class="form-label">選擇圖片</label>
+                          <input type="file" class="form-control" id="fileInput" name="myFile[]" accept="image/*" multiple required>
+                          <div id="previewContainer" class="mt-3 d-flex flex-wrap"></div> -->
                         </td>
                       </tr>
                       <!-- 價格 -->
@@ -239,16 +203,12 @@ $conn->close();
                       <!-- 狀態 -->
                       <tr>
                         <td>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_deleted" id="is_deleted_0" value="0" checked>
-                            <label class="form-check-label" for="is_deleted_0">上架</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_deleted" id="is_deleted_1" value="1">
-                            <label class="form-check-label" for="is_deleted_1">下架</label>
-                          </div>
+                          <select class="form-select ps-2" name="state" id="state" required>
+                            <option value="上架" selected>上架</option>
+                            <option value="下架">下架</option>
+                          </select>
                         </td>
-                      </tr> 
+                      </tr>
                       <tr>
                         <td>
                           <!-- 預設值為今天 -->
@@ -275,6 +235,31 @@ $conn->close();
   </main>
 
   <!--   Core JS Files   -->
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const files = event.target.files;
+      const previewContainer = document.getElementById('previewContainer');
+      previewContainer.innerHTML = ''; // 清空之前的預覽內容
+
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '150px';
+            img.style.height = '150px';
+            img.style.marginRight = '10px';
+            img.style.objectFit = 'cover';
+            img.style.border = '1px solid #ddd';
+            img.style.borderRadius = '5px';
+            previewContainer.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
+  </script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>

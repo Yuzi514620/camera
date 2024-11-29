@@ -84,64 +84,30 @@ $categories_result = $conn->query($sql_categories);
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'product'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
-            <div class="container-fluid py-1 px-3 justify-content-end">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                        <li class="breadcrumb-item text-sm">
-                            <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
-                        </li>
-                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-                            商品管理
-                        </li>
-                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-                            編輯商品
-                        </li>
-                    </ol>
-                </nav>
-                <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                    <!-- 添加 ms-auto 將內容推向右側 -->
-                    <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                                <div class="sidenav-toggler-inner">
-                                    <i class="sidenav-toggler-line"></i>
-                                    <i class="sidenav-toggler-line"></i>
-                                    <i class="sidenav-toggler-line"></i>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item px-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-body p-0">
-                                <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown pe-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="material-symbols-rounded">notifications</i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                                <!-- 通知內容 -->
-                            </ul>
-                        </li>
-                        <li class="nav-item d-flex align-items-center">
-                            <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                                <i class="fa-solid fa-circle-user"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center ms-3">
-                            <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+          'teacher' => '首頁', // 第一層的文字
+          'teacher_list' => '商品管理', // 第一層的文字
+          'teacher_add' => '編輯商品', // 第二層的文字
+
+          ];
+
+        $page = 'teacher_add';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'teacher' => 'product.php',           // 第一層的連結
+            'teacher_list' => 'product.php',      // 第二層的連結
+            'teacher_add' => 'product-edit.php',      // 第二層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
         <!-- Navbar -->
 
         <div class="container-fluid py-2">
@@ -245,48 +211,10 @@ $categories_result = $conn->query($sql_categories);
                                                         <tr>
                                                             <th>狀態</th>
                                                             <td>
-                                                                <div class="form-check form-check-inline">
-                                                                    <input
-                                                                        class="form-check-input"
-                                                                        type="radio"
-                                                                        name="state"
-                                                                        id="inlineRadio1"
-                                                                        value="1"
-                                                                        <?= $row["is_deleted"] == 0 ? "checked" : "" ?>>
-                                                                    <label class="form-check-label" for="inlineRadio1">上架</label>
-                                                                </div>
-                                                                <div class="form-check form-check-inline">
-                                                                    <input
-                                                                        class="form-check-input"
-                                                                        type="radio"
-                                                                        name="state"
-                                                                        id="inlineRadio2"
-                                                                        value="0"
-                                                                        <?= $row["is_deleted"] == 1 ? "checked" : "" ?>>
-                                                                    <label class="form-check-label" for="inlineRadio2">下架</label>
-                                                                </div>
-
-
-                                                                <!-- <div class="form-check form-check-inline">
-                                                                    <input
-                                                                        class="form-check-input"
-                                                                        type="radio"
-                                                                        name="state"
-                                                                        id="inlineRadio1"
-                                                                        value="1"
-                                                                        <?= $row["state"] == 1 ? "checked" : "" ?>>
-                                                                    <label class="form-check-label" for="inlineRadio1">上架</label>
-                                                                </div>
-                                                                <div class="form-check form-check-inline">
-                                                                    <input
-                                                                        class="form-check-input"
-                                                                        type="radio"
-                                                                        name="state"
-                                                                        id="inlineRadio2"
-                                                                        value="0"
-                                                                        <?= $row["state"] == 0 ? "checked" : "" ?>>
-                                                                    <label class="form-check-label" for="inlineRadio2">下架</label>
-                                                                </div> -->
+                                                                <select class="form-select ps-2" name="state" id="state" required>
+                                                                    <option value="上架" <?= $row["state"] == "上架" ? "selected" : "" ?>>上架</option>
+                                                                    <option value="下架" <?= $row["state"] == "下架" ? "selected" : "" ?>>下架</option>
+                                                                </select>
                                                             </td>
                                                         </tr>
                                                     </table>
