@@ -138,12 +138,30 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'users'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <?php $page = 'users'; ?>
-    <?php include 'navbar.php'; ?>
+    <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'teacher' => '首頁', // 第一層的文字
+            'teacher_list' => '會員管理', 
+            'teacher_add' => '編輯會員', // 第一層的文字
+        ];
+
+        $page = 'teacher_add';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'teacher' => 'users.php',           // 第一層的連結
+            'teacher_list' => 'users.php',      
+            'teacher_add' => 'user-edit.php',   // 第三層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
     <!-- Navbar -->
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center">
@@ -161,8 +179,8 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
             </div> -->
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
-                <div class="text-center text-uppercase text-secondary text-xxs text-white bg-dark">
-                <h4 class="text-white">詳細資料</h4>
+                <div class="text-center text-uppercase text-secondary text-xxs text-white bg-dark p-1">
+                <h5 class="text-white">編輯會員</h5>
                 </div>
                 <table class="table table-bordered">
                 <form action="doUpdateUser.php" method="post">
@@ -709,13 +727,12 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script>
 
     const testImg = document.querySelector("#test-img");
-
+    
     $(".test").change(function(){
       let image = $(this).val();
       newImage = image.split("\\");
       testImg.src="/camera/users/img/"+`${newImage[newImage.length-1]}`;
-      console.log(image);
-      console.log(newImage);
+      
     })
   </script>
 </body>
