@@ -17,38 +17,36 @@
 // 引入資料庫連線
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "課程資訊";
+$title = "講師資訊";
 
 // 檢查是否有傳入 course_id
 if (!isset($_GET['id'])) {
-    echo "未指定課程！";
+    echo "未指定講師！";
     exit;
 }
 
-$course_id = intval($_GET['id']);
+$teacher_id = intval($_GET['id']);
 
 // 查詢課程詳細資料
 $sql = "SELECT 
-            course.*, 
+            teacher.*, 
             course_image.name AS image_name,
             teacher.name AS teacher_name
-        FROM course
-        LEFT JOIN course_image ON course.course_image_id = course_image.id
-        LEFT JOIN teacher ON course.teacher_id = teacher.id
-        WHERE course.id = ? AND course.is_visible = 1";
+        FROM teacher
+        LEFT JOIN course_image ON teacher.course_image_id = course_image.id
+        WHERE teacher.id = ? AND teacher.is_visible = 1";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $course_id);
+$stmt->bind_param("i", $teacher_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
-    echo "找不到課程！";
+    echo "找不到講師！";
     exit;
 }
 
-$course = $result->fetch_assoc();
+$teacher = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +62,7 @@ $course = $result->fetch_assoc();
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>課程詳細資訊</title>
+    <title>講師資訊</title>
     <!--     Fonts and icons     -->
     <link
         rel="stylesheet"
@@ -92,43 +90,65 @@ $course = $result->fetch_assoc();
         integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="course.css">
+    <link rel="stylesheet" href="teacher.css">
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
-    <?php $page = 'course'; ?>
+    <?php $page = 'teacher'; ?>
     <?php include 'sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php $page = 'course'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php $page = 'teacher'; ?>
+        <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'teacher' => '師資管理',
+            'teacher_list' => '師資列表',
+            'teacher_info' => '講師資訊',
+        ];
+
+        //當前頁面
+        $page = 'teacher_info';
+
+        $pageTitle = isset($breadcrumbs[$page]) ? $breadcrumbs[$page] : '';
+        $list = isset($breadcrumbs['teacher_list']) ? $breadcrumbs['teacher_list'] : '';
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'teacher' => 'teacher.php',
+            'teacher_list' => 'teacher.php',
+            'teacher_info' => 'teacher_info.php',
+        ];
+
+        include 'navbar.php';
+        ?>
         <!-- Navbar -->
 
 
         <div class="container mt-5">
             <div class="row">
-                <div class="col-md-6">
-                    <img src="../course_images/course_cover/<?php echo $course['image_name']; ?>" alt="課程封面" class="img-fluid">
+                <!-- 圖片欄位 -->
+                <div class="col-md-6 d-flex justify-content-center">
+                    <img src="../course_images/teacher/<?php echo $teacher['image_name']; ?>" alt="講師照片" class="img-fluid teacher-info-img">
                 </div>
-                <div class="col-md-6">
-                    <h2><?php echo $course['title']; ?></h2>
-                    <p><strong>講師：</strong> <?php echo $course['teacher_name']; ?></p>
-                    <p><strong>售價：</strong> NT$ <?php echo number_format($course['price']); ?></p>
-                    <p><strong>報名時間：</strong> <?php echo $course['apply_start']; ?> 至 <?php echo $course['apply_end']; ?></p>
-                    <p><strong>課程時間：</strong> <?php echo $course['course_start']; ?> 至 <?php echo $course['course_end']; ?></p>
-                    <p><strong>狀態：</strong> <?php echo $course['status'] == 1 ? '上架中' : '已下架'; ?></p>
-                    <p><?php echo nl2br($course['description']); ?></p>
-                    <div class="">
-                        <a href="course.php" class="btn btn-secondary mt-3">回到課程列表</a>
-                        <a href="course_edit.php?id=<?php echo $course['id']; ?>" class="btn btn-secondary mt-3">編輯</a>
-                    </div>
 
+                <!-- 文字欄位 -->
+                <div class="col-md-6">
+                    <h2><?php echo $teacher['name']; ?></h2>
+                    <p class="mt-4"><strong>信箱：</strong> <?php echo $teacher['email']; ?></p>
+                    <p><strong>電話：</strong> <?php echo $teacher['phone']; ?></p>
+                    <p><?php echo nl2br($teacher['info']); ?></p>
+
+
+                    <div>
+                        <a href="teacher.php" class="btn btn-secondary mt-3">回到師資列表</a>
+                        <a href="teacher_edit.php?id=<?php echo $teacher['id']; ?>" class="btn btn-secondary mt-3">編輯</a>
+                    </div>
                 </div>
             </div>
         </div>
-
 
 
         <!--   Core JS Files   -->

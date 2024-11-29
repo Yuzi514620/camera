@@ -16,6 +16,9 @@
 <?php
 require_once("../db_connect.php");
 
+$pageName = basename($_SERVER['PHP_SELF'], ".php");
+$title = "編輯課程";
+
 if (!isset($_GET['id'])) {
     die("未指定課程 ID");
 }
@@ -48,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $apply_end = $_POST['apply_end'];
     $course_start = $_POST['course_start'];
     $course_end = $_POST['course_end'];
+    $description = $_POST['description'];
 
     // 更新圖片
     if ($_FILES['image']['error'] == 0) {
@@ -66,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // 更新課程資料
     $sql_update = "UPDATE course 
-                   SET title = ?, price = ?, teacher_id = ?, category_id = ?, apply_start = ?, apply_end = ?, course_start = ?, course_end = ? 
-                   WHERE id = ?";
+    SET title = ?, price = ?, teacher_id = ?, category_id = ?, apply_start = ?, apply_end = ?, course_start = ?, course_end = ?, description = ? 
+    WHERE id = ?";
     $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param("siiissssi", $title, $price, $teacher_id, $category_id, $apply_start, $apply_end, $course_start, $course_end, $course_id);
+    $stmt_update->bind_param("siiisssssi", $title, $price, $teacher_id, $category_id, $apply_start, $apply_end, $course_start, $course_end, $description, $course_id);
 
     if ($stmt_update->execute()) {
         header("Location: course.php?message=更新成功");
@@ -194,21 +198,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     ?>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label for="apply_start" class="form-label">報名開始時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="apply_start" name="apply_start" value="<?php echo htmlspecialchars($course['apply_start']); ?>" required>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="apply_start" class="form-label">報名開始時間</label>
+                                    <input type="datetime-local" class="form-control px-2" id="apply_start" name="apply_start" value="<?php echo htmlspecialchars($course['apply_start']); ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apply_end" class="form-label">報名結束時間</label>
+                                    <input type="datetime-local" class="form-control px-2" id="apply_end" name="apply_end" value="<?php echo htmlspecialchars($course['apply_end']); ?>" required>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="apply_end" class="form-label">報名結束時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="apply_end" name="apply_end" value="<?php echo htmlspecialchars($course['apply_end']); ?>" required>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="course_start" class="form-label">課程開始時間</label>
+                                    <input type="datetime-local" class="form-control px-2" id="course_start" name="course_start" value="<?php echo htmlspecialchars($course['course_start']); ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="course_end" class="form-label">課程結束時間</label>
+                                    <input type="datetime-local" class="form-control px-2" id="course_end" name="course_end" value="<?php echo htmlspecialchars($course['course_end']); ?>" required>
+                                </div>
                             </div>
+
+                            <!-- 課程簡介 -->
                             <div class="mb-3">
-                                <label for="course_start" class="form-label">課程開始時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="course_start" name="course_start" value="<?php echo htmlspecialchars($course['course_start']); ?>" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="course_end" class="form-label">課程結束時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="course_end" name="course_end" value="<?php echo htmlspecialchars($course['course_end']); ?>" required>
+                                <label for="description" class="form-label">課程簡介</label>
+                                <textarea class="form-control px-2" id="description" name="description" rows="4" required><?php echo htmlspecialchars($course['description']); ?></textarea>
                             </div>
                             <button type="submit" class="btn btn-secondary">儲存變更</button>
                             <a href="course.php" class="btn btn-outline-secondary">取消</a>

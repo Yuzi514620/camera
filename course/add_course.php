@@ -17,12 +17,8 @@
 // 引入資料庫連線檔案
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "新增課程";
-
 // 處理新增課程的邏輯
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 取得表單資料
     $title = $_POST['title'];
     $category_id = $_POST['category_id'];
     $price = $_POST['price'];
@@ -30,12 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $apply_end = $_POST['apply_end'];
     $course_start = $_POST['course_start'];
     $course_end = $_POST['course_end'];
-    $description = $_POST['description']; // 新增簡介
     $is_primary = isset($_POST['is_primary']) ? 1 : 0;
     $status = 1;
     $is_visible = 1;
-    $teacher_name = $_POST['teacher_name'];
-    $teacher_id = $_POST['teacher_id'];
+}
+
+// 處理新增課程的邏輯
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $title = $_POST['title'];
+    $category_id = $_POST['category_id'];
+    $price = $_POST['price'];
+    $teacher_name = $_POST['teacher_name'];  // 講師名稱
+    $teacher_id = $_POST['teacher_id'];  // 如果有選擇講師 ID
 
     // 如果沒有選擇講師 ID，且有輸入講師名稱，則插入新的講師資料
     if (empty($teacher_id) && !empty($teacher_name)) {
@@ -43,12 +45,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_teacher = $conn->prepare($sql_teacher);
         $stmt_teacher->bind_param("s", $teacher_name);
         if ($stmt_teacher->execute()) {
-            $teacher_id = $stmt_teacher->insert_id;
+            $teacher_id = $stmt_teacher->insert_id; // 獲取新插入的 teacher_id
         } else {
             echo "Error: " . $stmt_teacher->error;
             exit();
         }
     }
+
+    // 以下是課程插入的邏輯
+    $apply_start = $_POST['apply_start'];
+    $apply_end = $_POST['apply_end'];
+    $course_start = $_POST['course_start'];
+    $course_end = $_POST['course_end'];
+    $is_primary = isset($_POST['is_primary']) ? 1 : 0;
+    $status = 1;
+    $is_visible = 1;
 
     // 處理圖片上傳
     if (isset($_FILES['image'])) {
@@ -59,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $image_path = "../course_images/course_cover/" . $image_name;
             if (move_uploaded_file($image_tmp, $image_path)) {
                 // 插入課程資料
-                $sql = "INSERT INTO course (title, category_id, price, teacher_id, apply_start, apply_end, course_start, course_end, is_visible, status, description) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO course (title, category_id, price, teacher_id, apply_start, apply_end, course_start, course_end, is_visible, status) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("siissssiiis", $title, $category_id, $price, $teacher_id, $apply_start, $apply_end, $course_start, $course_end, $is_visible, $status, $description);
+                $stmt->bind_param("siissssiii", $title, $category_id, $price, $teacher_id, $apply_start, $apply_end, $course_start, $course_end, $is_visible, $status);
 
                 if ($stmt->execute()) {
                     // 插入圖片資料
@@ -78,8 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $stmt_update->bind_param("ii", $image_id, $course_id);
                         $stmt_update->execute();
 
-                        header("Location: course.php?message=success");
-                        exit();
+                        header("Location: course.php");
                         exit();
                     } else {
                         $error = "圖片儲存失敗！";
@@ -174,7 +184,7 @@ if ($result->num_rows > 0) {
                 </div>
             <?php endif; ?>
 
-            <form action="course_add.php" method="POST" enctype="multipart/form-data">
+            <form action="add_course.php" method="POST" enctype="multipart/form-data">
                 <div class="form-container">
                     <!-- 左邊預覽區 -->
                     <div class="form-column">
@@ -184,12 +194,12 @@ if ($result->num_rows > 0) {
 
                     <!-- 右邊表單區 -->
                     <div class="form-column">
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label for="title" class="form-label">課程名稱</label>
                             <input type="text" class="form-control px-2" id="title" name="title" required>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label for="category_id" class="form-label">分類</label>
                             <select class="form-control px-2" id="category_id" name="category_id" required>
                                 <option value="" selected disabled>請選擇分類</option>
@@ -199,13 +209,14 @@ if ($result->num_rows > 0) {
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label for="price" class="form-label">價格</label>
                             <input type="number" class="form-control px-2" id="price" name="price" required>
                         </div>
+
                         <div class="mb-2">
                             <label for="teacher_id" class="form-label">講師</label>
-                            <select class="form-control px-2" id="teacher_id" name="teacher_id" required>
+                            <select class="form-select" id="teacher_id" name="teacher_id" required>
                                 <option value="" disabled selected>請選擇講師</option>
                                 <?php
                                 // 從資料庫取得所有講師
@@ -219,52 +230,38 @@ if ($result->num_rows > 0) {
                                 ?>
                             </select>
                         </div>
-                        <div class="row">
-                            <!-- 報名開始時間 -->
-                            <div class="col-md-6 mb-3">
-                                <label for="apply_start" class="form-label">報名開始時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="apply_start" name="apply_start" required>
-                            </div>
 
-                            <!-- 報名結束時間 -->
-                            <div class="col-md-6 mb-3">
-                                <label for="apply_end" class="form-label">報名結束時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="apply_end" name="apply_end" required>
-                            </div>
+                        <div class="mb-2">
+                            <label for="apply_start" class="form-label">報名開始時間</label>
+                            <input type="datetime-local" class="form-control px-2" id="apply_start" name="apply_start" required>
                         </div>
 
-                        <div class="row">
-                            <!-- 課程開始時間 -->
-                            <div class="col-md-6 mb-3">
-                                <label for="course_start" class="form-label">課程開始時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="course_start" name="course_start" required>
-                            </div>
-
-                            <!-- 課程結束時間 -->
-                            <div class="col-md-6 mb-3">
-                                <label for="course_end" class="form-label">課程結束時間</label>
-                                <input type="datetime-local" class="form-control px-2" id="course_end" name="course_end" required>
-                            </div>
+                        <div class="mb-2">
+                            <label for="apply_end" class="form-label">報名結束時間</label>
+                            <input type="datetime-local" class="form-control px-2" id="apply_end" name="apply_end" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="description" class="form-label">課程簡介</label>
-                            <textarea class="form-control px-2" id="description" name="description" rows="4" required></textarea>
+                        <div class="mb-2">
+                            <label for="course_start" class="form-label">課程開始時間</label>
+                            <input type="datetime-local" class="form-control px-2" id="course_start" name="course_start" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="image" class="custom-form-label">課程圖片</label>
-                            <input type="file" class="custom-form-control" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                        <div class="mb-2">
+                            <label for="course_end" class="form-label">課程結束時間</label>
+                            <input type="datetime-local" class="form-control px-2" id="course_end" name="course_end" required>
                         </div>
 
+                        <div class="mb-2">
+                            <label for="image" class="form-label">課程圖片</label>
+                            <input type="file" class="form-control" id="formFile" name="image" accept="image/*" require onchange="previewImage(event)">
+                        </div>
 
                         <!-- <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="is_primary" name="is_primary">
                         <label class="form-check-label" for="is_primary">設為主圖</label>
                     </div> -->
 
-                        <button type="submit" class="btn btn-secondary mt-2">提交</button>
-                        <a href="course.php" class="btn btn-outline-secondary mt-2">取消</a>
+                        <button type="submit" class="btn btn-secondary mt-3">提交</button>
                     </div>
                 </div>
             </form>
