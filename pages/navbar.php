@@ -6,18 +6,13 @@
           <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
         </li>
         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-          Tables
+          <?= $title ?>
         </li>
       </ol>
     </nav>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
       <!-- 添加 ms-auto 將內容推向右側 -->
       <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-        <li class="mt-1">
-          <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard"
-            data-icon="octicon-star" data-size="large" data-show-count="true"
-            aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
-        </li>
         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
           <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
             <div class="sidenav-toggler-inner">

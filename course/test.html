@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      /* 自定義圖片預覽區域 */
+      .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      /* 自定義圖片上傳框樣式 */
+      .upload-container {
+        margin-bottom: 20px;
+        padding: 20px; /* 增加一些間距來看效果 */
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+
+      .upload-label {
+        display: block;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      .upload-input {
+        display: none; /* 隱藏原本的文件選擇框 */
+      }
+
+      .upload-button {
+        display: inline-block;
+        background-color: #f8f9fa;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .upload-button:hover {
+        background-color: #e2e6ea;
+      }
+
+      .upload-container:hover .upload-button {
+        background-color: #e2e6ea;
+      }
+
+      /* 預覽區域 */
+      .image-preview {
+        margin-top: 10px;
+        text-align: center; /* 讓圖片置中顯示 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="upload-container">
+      <label for="formFile" class="upload-label">課程圖片</label>
+      <input
+        type="file"
+        class="upload-input"
+        id="formFile"
+        name="image"
+        accept="image/*"
+        onchange="previewImage(event)"
+      />
+      <div id="imagePreview" class="image-preview mt-3"></div>
+    </div>
+
+    <script>
+      function previewImage(event) {
+        const output = document.getElementById("imagePreview");
+        output.innerHTML = ""; // 清除上次的預覽
+
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            output.appendChild(img);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
+  </body>
+</html>

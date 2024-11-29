@@ -1,0 +1,71 @@
+:root {
+  --gradient-dark: linear-gradient(195deg, #42424a 0%, #191919 100%);
+}
+
+.teacher-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.teacher-info-img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+/* 隱藏多的簡介文字 */
+.text-ellipsis {
+  white-space: nowrap; /* 防止文字換行 */
+  overflow: hidden; /* 隱藏溢出的文字 */
+  text-overflow: ellipsis; /* 顯示省略號 (...) */
+  max-width: 200px; /* 設定最大寬度，依據需求可以調整 */
+}
+
+.page-link.active,
+.active > .page-link {
+  z-index: 3;
+  color: var(--gradient-dark);
+  background-color: var(--gradient-dark);
+  border-color: var(--gradient-dark);
+}
+
+.preview-img {
+  width: 400px;
+  max-width: 400px;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  padding: 10px;
+}
+.form-container {
+  display: flex;
+}
+.form-container .form-column {
+  width: 50%;
+  padding: 15px;
+}
+
+input[type="datetime-local"] {
+  color: #bdbdbd;
+}
+
+.btn-secondary {
+  background-color: rgb(36, 36, 36);
+}
+
+.form-control {
+  background-color: white !important;
+}
+
+.img-fluid {
+  border-radius: 1rem;
+}
+
+.custom-form-control {
+  display: block;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
