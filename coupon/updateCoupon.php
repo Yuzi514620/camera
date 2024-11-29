@@ -1,7 +1,8 @@
 <?php
-session_start();
-$id = $_SESSION["id"];
 require_once("pdo_connect.php");
+
+$id = $_POST["id"];
+
 $pdoSql = "SELECT * FROM coupon WHERE `coupon`.`id` = ?";
 
 $stmt = $db_host->prepare($pdoSql);
@@ -53,12 +54,14 @@ try {
                 justify-content: center;
             }
 
-            input {
+            input,
+            select {
                 border: 2px solid gray;
                 color: black;
             }
 
-            input:focus {
+            input:focus,
+            select:focus {
                 color: black;
                 border: 2px solid black;
                 transition: 0.4s;
@@ -87,6 +90,29 @@ try {
                                 <div class=" p-0 rounded-top">
                                     <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
                                         <h6 class="text-white text-capitalize ps-3">修改優惠券</h6>
+                                    </div>
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <span>品牌</span>
+                                        </div>
+                                        <div class="col-2">
+                                            <select name="coupon-select" class="coupon-select form-select " aria-label="Default select example">
+                                                <option value="" selected disabled>請選擇</option>
+                                                <option value="0">全館</option>
+                                                <option value="1">sony</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-1">
+                                            <span>配件</span>
+                                        </div>
+                                        <div class="col-2">
+                                            <select name="coupon-subselect" class="coupon-subselect form-select" aria-label="Default select example">
+                                                <option value="" selected disabled>請選擇</option>
+                                                <option value="0">全館</option>
+                                                <option value="1">相機</option>
+                                                <option value="2">包包</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="input-box row-auto g-2 mt-2">
                                         <div class="col-1">
@@ -121,7 +147,7 @@ try {
                                         </div>
                                     </div>
                                     <div class="btn-box position-relative mt-3 ">
-                                        <button class="btn btn-info btn-update me-3">完成</button>
+                                        <button class="btn btn-success btn-update me-3">完成</button>
                                         <a href="../pages/coupon.php" class="btn btn-info">返回</a>
                                     </div>
                                 </div>
@@ -157,7 +183,10 @@ try {
         const lower_purchase = document.querySelector("#lower_purchase");
         const quantity = document.querySelector("#quantity");
         const id = <?= $id ?>;
+
         $(".btn-update").click(function() {
+            const brand = $("select[name='coupon-select']").val();
+            const accessories = $("select[name='coupon-subselect']").val();
             $.ajax({
                     method: "POST",
                     url: "doUpdateCoupon.php",
@@ -167,7 +196,9 @@ try {
                         name: name.value,
                         discount: discount.value,
                         lower_purchase: lower_purchase.value,
-                        quantity: quantity.value
+                        quantity: quantity.value,
+                        brand: brand,
+                        accessories:accessories
                     }
                 })
                 .done(function(response) {
