@@ -1,9 +1,6 @@
 <?php
 require_once("pdo_connect.php");
 
-if(empty($name)){
-    exit ('未填名字或請循正常管道進入此頁面');
-}
 $name = (empty($_REQUEST['name']))?"":$_REQUEST['name']; 
 $discount = (empty($_REQUEST['discount']))?"":$_REQUEST['discount'];
 $lower_purchase = (empty($_REQUEST['lower_purchase']))?"":$_REQUEST['lower_purchase'];
@@ -32,10 +29,23 @@ $uploadImg = $_FILES['file']['name'];
 $timeNow = date("Y-m-d H:i:s");
 $timeEnd = date("Y-m-d H:i:s",strtotime("+$days day"));
 
+
+$couponCodeSql = "SELECT `id` FROM coupon order by id DESC";
+$stmt = $db_host->prepare($couponCodeSql);
+$stmt->execute();
+$code = $stmt->rowCount();
+
+
+for($i=1;$i<=6;$i++){
+    $random .= rand(1,9);
+}
+$cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
+
+
 $pdoSql = "INSERT INTO `coupon`(`name`, `coupon_code`, `start_date`, `end_date`, `discount`, `lower_purchase`, `quantity`, `img`, `brand`, `accessories`, `is_deleted`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 $stmt = $db_host->prepare($pdoSql);
 try{
-    $stmt->execute([$name,'test001',$timeNow,$timeEnd,$discount,$lower_purchase,$quantity,$uploadImg,$brand,$accessories,0]);
+    $stmt->execute([$name,$cpnCode,$timeNow,$timeEnd,$discount,$lower_purchase,$quantity,$uploadImg,$brand,$accessories,0]);
 }catch(PDOException $e){
     echo json_encode("預處理陳述式執行失敗！ <br/>");
     echo json_encode("Error: " . $e->getMessage() . "<br/>");

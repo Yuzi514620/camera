@@ -74,12 +74,27 @@ try {
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'coupon'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php $page = 'coupon'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php 
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'coupon' => '優惠券列表', // 第一層的文字
+            'updateCoupon' =>"修改優惠券"
+        ];
+
+        $page = 'updateCoupon';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'coupon' => '../pages/coupon.php', // 第一層的連結
+            'updateCoupon' => 'updateCoupon.php'
+        ];
+
+        include '../navbar.php';
+        ?>
         <!-- Navbar -->
         <div class="container-fluid py-2">
             <div class="container-fluid py-2">
