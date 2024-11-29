@@ -1,7 +1,6 @@
 <?php
-session_start();
 require_once("../coupon/pdo_connect.php");
-
+$title = 'coupon';
 $pdoSqlALl = "SELECT * FROM coupon ";
 $stmt = $db_host->prepare($pdoSqlALl);
 $stmt->execute();
@@ -194,11 +193,14 @@ try {
                           <td>
                             <div class="d-flex justify-content-center">
                               <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>">上架</button>
-                              <button class="btn btn-info mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>">下架</button>
-                              <a class="btn btn-warning mb-2 mt-2" href="../coupon/updateCoupon.php">
-                                <?php $_SESSION["id"] = $row["id"]; ?>
-                                修改
-                              </a>
+                              <button class="btn btn-warning mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>">下架</button>
+                              <form action="../coupon/updateCoupon.php" method="POST">
+                                <input type="hidden" name="id" value="<?= $row["id"] ?>">
+                                <button class="btn btn-info mb-2 mt-2 btn-updated" type="submit">
+                                  修改
+                                </button>
+                              </form>
+
                               <button class="btn btn-danger mb-2 mt-2" data-toggle="modal" data-target="#exampleModal">
                                 刪除
                               </button>
@@ -214,13 +216,25 @@ try {
             <div class="d-flex justify-content-center">
               <nav aria-label="Page navigation example">
                 <ul class="pagination">
+                  
                   <?php if (isset($_GET["p"])): ?>
+                    <li class="page-item">
+                    <a class="page-link" href="coupon.php?p=<?= ($p != 1) ? $p - 1 : $p = 1; ?>&sort=1" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
                     <?php for ($i = 1; $i <= $total_page; $i++): ?>
                       <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
                         <a class="page-link" href="coupon.php?p=<?= $i ?>&sort=1"><?= $i ?></a>
                       </li>
                     <?php endfor; ?>
+                    <li class="page-item">
+                    <a class="page-link" href="coupon.php?p=<?= ($p != $total_page) ? $p + 1 : $p = $total_page; ?>&sort=1" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
                   <?php endif; ?>
+                  
                 </ul>
               </nav>
             </div>
@@ -266,6 +280,7 @@ try {
   <?php include_once("../../js.php") ?>
 
   <script>
+    const status = document.querySelector(".status");
     $(".btn-upDownLoad").click(function() {
       let transData = $(this).data();
       $.ajax({
@@ -278,6 +293,7 @@ try {
           }
         })
         .done(function(response) {
+
           document.location.reload();
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
