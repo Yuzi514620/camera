@@ -12,8 +12,7 @@ $brand_id = $_POST['brand_id'];
 $category_id = $_POST['category_id'];
 $stock = $_POST['stock'];
 $spec = $_POST['spec'];
-$state = isset($_POST['state']) ? intval($_POST['state']) : 0; // 默認下架
-$is_deleted = ($state === 1) ? 0 : 1; // 根據 state 更新 is_deleted 值
+$state = $_POST["state"];   // 默認下架
 $updated_at = date("Y-m-d H:i:s");
 
 // 更新商品資料
@@ -24,7 +23,7 @@ $sql = "UPDATE product
             category_id = $category_id, 
             stock = $stock, 
             spec = '$spec', 
-            is_deleted = $is_deleted, 
+            state = '$state',
             updated_at = '$updated_at' 
         WHERE id = $id";
 

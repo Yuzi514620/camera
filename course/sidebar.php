@@ -48,6 +48,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?= $page === 'teacher' ? 'active bg-white text-dark' : 'text-white' ?>" href="../teacher/teacher.php">
+                    <i class="fa-regular fa-address-book opacity-5" style="font-size: 15px"></i>
+                    <span class="nav-link-text ms-1">師資管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?= $page === 'article' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/article.php">
                     <i class="fa-regular fa-newspaper opacity-5" style="font-size: 14px"></i>
                     <span class="nav-link-text ms-1">文章管理</span>

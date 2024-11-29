@@ -1,12 +1,27 @@
+<?php
+$pageTitles = [
+  'users' => '會員管理',
+  'order' => '訂單管理',
+  'product' => '商品管理',
+  'course' => '課程管理',
+  'teacher' => '師資管理',
+  'article' => '文章管理',
+  'coupon' => '優惠券管理',
+  'rental' => '租借商品管理',
+];
+
+$breadcrumbTitle = isset($pageTitles[$page]) ? $pageTitles[$page] : '';
+?>
+
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
   <div class="container-fluid py-1 px-3 justify-content-end">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
         <li class="breadcrumb-item text-sm">
-          <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+          <a class="opacity-5 text-dark" href="javascript:;"> <a class="opacity-5 text-dark" href="javascript:;"><?= $breadcrumbTitle ?></a> </a>
         </li>
         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-          Tables
+          <a href="<?= $_SERVER['PHP_SELF']; ?>" class="text-dark"><?= $title ?></a>
         </li>
       </ol>
     </nav>
@@ -37,8 +52,8 @@
             <i class="material-symbols-rounded">notifications</i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton"> -->
-            <!-- 通知內容 -->
-          <!-- </ul>
+        <!-- 通知內容 -->
+        <!-- </ul>
         </li> -->
         <li class="nav-item d-flex align-items-center">
           <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">

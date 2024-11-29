@@ -5,6 +5,7 @@
 .course-img {
   width: 150px;
   aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .page-link.active,
@@ -17,6 +18,7 @@
 
 .preview-img {
   width: 500px;
+  max-width: 500px;
   height: auto;
   object-fit: contain;
   border: 1px solid #ccc;
@@ -33,4 +35,23 @@
 
 input[type="datetime-local"] {
   color: #bdbdbd;
+}
+
+.btn-secondary {
+  background-color: rgb(36, 36, 36);
+}
+
+.form-control {
+  background-color: white !important;
+}
+
+.img-fluid {
+  border-radius: 1rem;
+}
+
+.custom-form-control {
+  display: block;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 }

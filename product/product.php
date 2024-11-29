@@ -56,11 +56,9 @@ if (!empty($search)) {
 }
 
 $start_item = ($p - 1) * $per_page; // 計算當前頁面的起始記錄
-$sql .= " ORDER BY p.id ASC LIMIT $start_item, $per_page"; // 添加 LIMIT
-
-
-
-
+$order = $_GET['order'] ?? 'asc'; // 預設為升序
+$order = ($order === 'desc') ? 'desc' : 'asc'; // 只允許 asc 或 desc
+$sql .= " ORDER BY p.id $order LIMIT $start_item, $per_page"; // 根據排序參數排序
 
 $result = $conn->query($sql);
 $products = $result->fetch_all(MYSQLI_ASSOC);
@@ -115,72 +113,37 @@ $conn->close();
 
   <!-- 側邊欄 -->
   <?php $page = 'product'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
-      <div class="container-fluid py-1 px-3 justify-content-end">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm">
-              <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
-            </li>
-            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-              商品管理
-            </li>
-          </ol>
-        </nav>
-        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <!-- 添加 ms-auto 將內容推向右側 -->
-          <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
- 
-            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                <div class="sidenav-toggler-inner">
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                </div>
-              </a>
-            </li>
-            <li class="nav-item px-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0">
-                <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
-              </a>
-            </li>
-            <li class="nav-item dropdown pe-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="material-symbols-rounded">notifications</i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                <!-- 通知內容 -->
-              </ul>
-            </li>
-            <li class="nav-item d-flex align-items-center">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </li>
-            <li class="nav-item d-flex align-items-center ms-3">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-right-from-bracket"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+          'teacher' => '首頁', // 第一層的文字
+          'teacher_list' => '商品管理', // 第一層的文字
+          ];
+
+        $page = 'teacher_list';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'teacher' => 'product.php',           // 第一層的連結
+            'teacher_list' => 'product.php',      // 第二層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
     <!-- Navbar -->
     <div class="container-fluid py-2">
       <div class="d-flex justify-content-between align-items-center">
         <form action="" method="get">
-          <div class="input-group">
-            <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm" name="search" value="<?= $_GET["search"] ?? "" ?>" style="height: 38px;">
+          <div class="input-group d-flex">
+            <input type="search" cla  ss="form-control border border-secondary rounded-end-0 form-control-sm" name="search" value="<?= $_GET["search"] ?? "" ?>" style="height: 38px;">
             <button class="btn btn-dark" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
           </div>
         </form>
-        <a class="btn btn-dark ms-3 " href="addProduct.php" ><i class="fa-solid fa-plus  "></i></a>
+        <a class="btn btn-dark ms-3 " href="addProduct.php"><i class="fa-solid fa-plus  "></i></a>
       </div>
       <div class="row">
         <div class="col-12">
@@ -190,9 +153,16 @@ $conn->close();
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gradient-dark">
                     <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        編號
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="?p=<?= $p ?>&search=<?= $search ?>&order=<?= ($order === 'asc') ? 'desc' : 'asc' ?>"
+                          class="text-white text-decoration-none">
+                          編號
+                          <?php if ($order === 'asc'): ?>
+                            <i class="fa-solid fa-arrow-up"></i>
+                          <?php else: ?>
+                            <i class="fa-solid fa-arrow-down"></i>
+                          <?php endif; ?>
+                        </a>
                       </th>
                       <th
                         class="text-uppercase text-secondary text-xxs opacity-7 text-white">
@@ -293,7 +263,7 @@ $conn->close();
                         <!-- 狀態 -->
                         <td>
                           <p class="text-xs font-weight-bold mb-0">
-                            <?= $product["is_deleted"] == 0 ? "上架" : "下架" ?>
+                            <?= htmlspecialchars($product["state"]) ?>
                           </p>
                         </td>
                         <!-- 編輯 -->
@@ -341,7 +311,7 @@ $conn->close();
                     </li>
                     <?php for ($i = 1; $i <= $totalPage; $i++): ?>
                       <li class="page-item <?= ($i == $p) ? 'active' : '' ?>">
-                        <a  class="page-link" href="product.php?p=<?= $i ?>&search=<?= $search ?>"><?= $i ?></a>
+                        <a class="page-link" href="product.php?p=<?= $i ?>&search=<?= $search ?>"><?= $i ?></a>
                       </li>
                     <?php endfor; ?>
                     <li class="page-item <?= ($p == $totalPage) ? 'disabled' : '' ?>">
@@ -383,4 +353,4 @@ $conn->close();
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 </body>
 
-</html>
+</html>  

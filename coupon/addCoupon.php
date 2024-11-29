@@ -53,12 +53,27 @@
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'coupon'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php $page = 'coupon'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php 
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'coupon' => '優惠券列表', // 第一層的文字
+            'addCoupon' =>"新增優惠券"
+        ];
+
+        $page = 'addCoupon';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'coupon' => '../pages/coupon.php', // 第一層的連結
+            'addCoupon' => 'addCoupon.php'
+        ];
+
+        include '../navbar.php';
+        ?>
         <!-- Navbar -->
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
             <div class="container-fluid py-2">
@@ -72,6 +87,29 @@
                                             <h6 class="text-white text-capitalize ps-3">新增優惠券</h6>
                                         </div>
                                         <div class="textbox card-body px-0 pb-2 position-relative">
+                                                <div class="row d-flex justify-content-center">
+                                                    <div class="col-1">
+                                                        <span>品牌</span>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <select name="coupon-select" class="coupon-select form-select " aria-label="Default select example">
+                                                            <option value="" selected disabled>請選擇</option>
+                                                            <option value="0">全館</option>
+                                                            <option value="1">sony</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <span>配件</span>
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <select name="coupon-subselect" class="coupon-subselect form-select" aria-label="Default select example">
+                                                            <option value="" selected disabled>請選擇</option>
+                                                            <option value="0">全館</option>
+                                                            <option value="1">相機</option>
+                                                            <option value="2">包包</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
                                                 <div class="col-1">
                                                     <span>名稱</span>
@@ -120,8 +158,11 @@
                                                     <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
                                                 </div>
                                             </div>
+                                            <div class="d-flex justify-content-center">
+                                                <span class="imgError"></span>
+                                            </div>
                                             <div class="btn-box position-relative mt-3 ">
-                                                <button class="btn btn-info btn-update me-3">完成</button>
+                                                <button class="btn btn-success btn-add me-3">完成</button>
                                                 <a href="../pages/coupon.php" class="btn btn-info">返回</a>
                                             </div>
                                         </div>
@@ -158,34 +199,45 @@
             const lower_purchase = document.querySelector("#lower_purchase");
             const quantity = document.querySelector("#quantity");
             const days = document.querySelector("#days");
+            const imgError = document.querySelector(".imgError");
+
             
-            $(".btn-update").click(function() {
+
+            $(".btn-add").click(function() {
+                const brand = $("select[name='coupon-select']").val();
+                const accessories = $("select[name='coupon-subselect']").val();
                 let file_data = $('#uploadImg').prop('files')[0];
                 let form_data = new FormData();
 
-                form_data.append('file',file_data);
-                form_data.append('name',name.value);
-                form_data.append('discount',discount.value);
-                form_data.append('lower_purchase',lower_purchase.value);
-                form_data.append('quantity',quantity.value);
-                form_data.append('days',days.value);
+                if (file_data != null) {
+                    form_data.append('file', file_data);
+                    form_data.append('name', name.value);
+                    form_data.append('discount', discount.value);
+                    form_data.append('lower_purchase', lower_purchase.value);
+                    form_data.append('quantity', quantity.value);
+                    form_data.append('days', days.value);
+                    form_data.append('brand', brand);
+                    form_data.append('accessories', accessories);
 
-                $.ajax({
-                        method: "POST",
-                        url: "doAddCoupon.php",
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data:form_data
-                
-                    })
-                    .done(function(response) {
-                        console.log(response);
-                        window.location.replace("../pages/coupon.php");
-                    })
-                    .fail(function(jqXHR, textStatus) {
-                        console.log(textStatus);
-                    })
+                    $.ajax({
+                            method: "POST",
+                            url: "doAddCoupon.php",
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: form_data
+
+                        })
+                        .done(function(response) {
+                            window.location.replace("../pages/coupon.php");
+                        })
+                        .fail(function(jqXHR, textStatus) {
+                            console.log(textStatus);
+                        })
+                } else {
+                    imgError.textContent = "請上傳圖片";
+                    imgError.style.color = "red";
+                }
             })
         </script>
 </body>

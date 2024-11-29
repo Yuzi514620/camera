@@ -1,3 +1,9 @@
+<?php
+session_start();
+
+?>
+
+
 <!--
 =========================================================
 * Material Dashboard 3 - v3.2.0
@@ -97,7 +103,7 @@
   </div>
   <main class="main-content  mt-0">
     <div class="page-header align-items-start min-vh-100" style="background-image: url(../assets/img/photo/camera6.avif);">
-      <span class="mask  opacity-6"></span>  <!-- bg-gradient-dark !-->
+      <span class="mask  opacity-6"></span> <!-- bg-gradient-dark !-->
       <div class="container my-auto ">
         <div class="row">
           <div class="col-lg-4 col-md-8 col-12 mx-auto mb-5">
@@ -124,28 +130,36 @@
                   </div>
                 </div>
               </div>
+              <?php if(isset($_SESSION["error"]["times"])&& $_SESSION["error"]["times"]>5):?>
+                    <h3 class="text-danger">你已經登入失敗超過5次,請等五分鐘後再試"></h3>
+                    <?php else: ?>
               <div class="card-body">
-                <form role="form" class="text-start">
+                <form action="doSignin.php" role="form" method="post" class="text-start">
                   <div class="input-group input-group-outline my-3">
                     <label class="form-label">帳號</label>
-                    <input type="email" class="form-control">
+                    <input type="account" class="form-control" name="account">
                   </div>
                   <div class="input-group input-group-outline mb-3">
                     <label class="form-label">密碼</label>
-                    <input type="password" class="form-control">
+                    <input type="password" class="form-control" name="password">
                   </div>
                   <div class="form-check form-switch d-flex align-items-center mb-3">
                     <input class="form-check-input" type="checkbox" id="rememberMe" checked>
                     <label class="form-check-label mb-0 ms-3" for="rememberMe">記住我</label>
                   </div>
                   <div class="text-center">
-                    <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign in</button>
+                    <button type="submit" name="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">登入</button>
                   </div>
+                  <?php if(isset($_SESSION["error"]["message"])):?>
+                  <div class="p-1 mb-2 text-danger text-center"><?=$_SESSION["error"]["message"]?></div>
+                  <?php unset($_SESSION["error"]["message"]); ?>
+                  <?php endif; ?>
                   <p class="mt-4 text-sm text-center">
                     沒有帳號嗎 ?
                     <a href="../pages/sign-up.html" class="text-primary text-gradient font-weight-bold">註冊</a>
                   </p>
                 </form>
+                <?php endif; ?>
               </div>
             </div>
           </div>
