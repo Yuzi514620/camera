@@ -1,41 +1,34 @@
 <?php
-require_once("./pdo_connect_camera.php");
-try {
-  if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = (int)$_GET['id'];
+require_once("./pdo_connect_camera.php");  
 
-    // 準備 SQL 語句來根據 id 讀取文章
-    $sql = "SELECT * FROM article WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$id]);
+try {  
+    // 撈取 article_category 資料表的資料  
+    $sql = "SELECT id, name FROM article_category";  
+    $stmt = $pdo->query($sql);  
+    $categories = $stmt->fetchAll();  
+} catch (PDOException $e) {  
+    echo "資料撈取失敗: " . $e->getMessage();  
+}  
 
-    // 取得文章資料
-    $article = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
+    $title = trim($_POST['title']);  
+    $content = trim($_POST['content']);  
+    $category_id = (int)$_POST['category_id'];  
 
-    if ($article) {
-      $cleanContent = strip_tags($article['content']); // 移除 HTML 標籤
-    } else {
-      die("找不到這篇文章。");
-    }
-  } else {
-      die("無效的文章 ID。");
+    try {
+      // 插入新文章  
+      $sql = "INSERT INTO article (title, content, category_id) VALUES (?, ?, ?)";  
+      $stmt = $pdo->prepare($sql);  
+      $stmt->execute([$title, $content, $category_id]);  
+
+      header("Location: article.php");
+      exit();
+  } catch (PDOException $e) {
+      echo "文章新增失敗: " . $e->getMessage();
   }
+}  
+?>  
 
-} catch (PDOException $e) {
-  die("資料庫連接失敗: " . $e->getMessage());
-}
-
-
-try {
-  // 撈取 article_category 資料表的資料
-  $sql = "SELECT id, name FROM article_category";
-  $stmt = $pdo->query($sql);
-  $categories = $stmt->fetchAll();
-} catch (PDOException $e) {
-  echo "資料撈取失敗: " . $e->getMessage();
-}
-
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +55,7 @@ try {
       
     }
   </style>
-  <title>camera_articleEdit</title>
+  <title>camera_articleAdd</title>
   <!--     Fonts and icons     -->
   <link
     rel="stylesheet"
@@ -71,10 +64,6 @@ try {
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script
-    src="https://kit.fontawesome.com/42d5adcbca.js"
-    crossorigin="anonymous"></script>
   <!-- Material Icons -->
   <link
     rel="stylesheet"
@@ -90,7 +79,6 @@ try {
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./style.css">
 		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
 </head>
 
@@ -112,7 +100,7 @@ try {
               <a class="opacity-5 text-dark" href="article.php">文章列表</a>
             </li>
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-              編輯文章
+              新增文章
             </li>
           </ol>
         </nav>
@@ -127,19 +115,6 @@ try {
                   <i class="sidenav-toggler-line"></i>
                 </div>
               </a>
-            </li>
-            <li class="nav-item px-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0">
-                <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
-              </a>
-            </li>
-            <li class="nav-item dropdown pe-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="material-symbols-rounded">notifications</i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                <!-- 通知內容 -->
-              </ul>
             </li>
             <li class="nav-item d-flex align-items-center">
               <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
@@ -166,13 +141,13 @@ try {
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gradient-dark">
                     <tr>
-                      <th class="text-left text-uppercase text-xl opacity-7 text-white"  colspan="8">
-                        編輯內容
+                      <th class="text-left text-uppercase text-xl text-white"  colspan="8">
+                        新增文章
                       </th>
                     </tr>
                   </thead>
                 </table>
-                  <form action="doEdit.php" method="post">
+                  <form action="doAdd.php" method="post">
                     <!-- 隱藏的 ID 欄位 -->
                     <input type="hidden" name="id" value="<?= htmlspecialchars($article['id']) ?>">
 
@@ -180,10 +155,10 @@ try {
                         <!-- 文章類別選擇 -->
                         <div class="d-flex my-3">
                             <h5 class="mt-2">文章類別 :</h5>
-                            <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" onchange="updateCategory(this.value)" required>
-                                <option value="">選擇分類</option>
+                            <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" required>
+                                <option value="0">選擇分類</option>
                                 <?php foreach ($categories as $category): ?>
-                                    <option value="<?= htmlspecialchars($category['id']) ?>" <?= $category['id'] == $article['category_id'] ? 'selected' : '' ?>>
+                                    <option value="<?= htmlspecialchars($category['id']) ?>">
                                         <?= htmlspecialchars($category['name']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -193,22 +168,22 @@ try {
                         <!-- 標題輸入 -->
                         <div class="input-group mb-1">
                             <div class="input-group-text pe-4">標題</div>
-                            <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="<?= htmlspecialchars($article["title"]) ?>" required>
+                            <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="" required>
                         </div>
 
                         <!-- 內容編輯器 -->
                         <div class="mb-3">
                             <label for="content">內容</label>
-                            <textarea name="content" id="content" class="form-control" required><?= htmlspecialchars($article["content"]) ?></textarea>
+                            <textarea name="content" id="content" class="form-control" required></textarea>
                         </div>
 
                         <!-- 送出和返回按鈕 -->
                         <div class="d-flex mt-3">
-                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center" style="height:45px; border-radius:15px;">送出</button>
+                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send" style="height:45px; border-radius:15px;">送出</button>
                             <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>
                         </div>
                     </div>
-                </form>
+                  </form>
               </div>
             </div>
           </div>
@@ -219,8 +194,8 @@ try {
 
 <!-- CKEditor 初始化 -->
 <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/classic/ckeditor.js"></script>
-<script type="module" src="path/to/main.js"></script>
 <script>
+  
     class MyUploadAdapter {
         constructor(loader) {
             this.loader = loader;
@@ -333,68 +308,19 @@ try {
   <script>
     let editorInstance;
     const btnSend = document.querySelector(".btn-send");
-    const saveURL = "./doEdit.php";
+    const saveURL = "./doAdd.php";
     const inputTitle = document.querySelector("[name=title]");
     const input1 = document.querySelector("form input");
-    const form = document.querySelector("form");
-    
-    
+const form = document.querySelector("form");  
 
-    btnSend.addEventListener("click", function() {  
-      const contentInput = document.querySelector("textarea[name='content']");  // 獲取隱藏字段
-      contentInput.value = editorInstance.getData(); // 將編輯器內容填入隱藏字段  
-      form.submit(); // 提交表單  
-    });  
-
-    class MyUploadAdapter {
-      constructor(loader) {
-        this.loader = loader;
-      }
-
-      upload() {
-        return this.loader.file
-          .then(file => new Promise((resolve, reject) => {
-            const data = new FormData();
-            data.append('upload', file);
-
-            fetch('upload.php', {
-              method: 'POST',
-              body: data
-            })
-              .then(response => response.json())
-              .then(data => {
-                resolve({
-                  default: data.url
-                });
-              })
-              .catch(err => {
-                reject(err);
-              });
-          }));
-      }
-
-      abort() {
-        // If the user aborts the upload, this method is called.
-      }
-    }
-
-    function MyCustomUploadAdapterPlugin(editor) {
-      editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-        return new MyUploadAdapter(loader);
-      };
-    }
-
-    ClassicEditor
-      .create(document.querySelector('#editor'), {
-        extraPlugins: [MyCustomUploadAdapterPlugin]
-      })
-      .then(editor => {
-        editorInstance = editor;
-      })
-      .catch(error => {
-        console.error(error);
+if (btnSend) {
+      btnSend.addEventListener("click", function(event) {  
+        event.preventDefault(); // 防止表單默認提交
+        const contentInput = document.querySelector("textarea[name='content']");  // 獲取隱藏字段
+        contentInput.value = window.editor.getData(); // 將編輯器內容填入隱藏字段  
+        form.submit(); // 提交表單  
       });
-
+    }
   </script>
 <script>
     document.querySelectorAll('.content p').forEach(function(p) {  
@@ -404,3 +330,4 @@ try {
 </body>
 
 </html>
+
