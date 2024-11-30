@@ -107,31 +107,25 @@ $result = $conn->query($sql);
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'teacher'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <?php $page = 'teacher'; ?>
     <?php
-    // 設定麵包屑的層級
     $breadcrumbs = [
+      'users' => '首頁',
       'teacher' => '師資管理',
-      'teacher_list' => '師資列表',
     ];
 
-    //當前頁面
-    $page = 'teacher_list';
+    $page = 'teacher';
 
-    $pageTitle = isset($breadcrumbs[$page]) ? $breadcrumbs[$page] : '';
-    $list = isset($breadcrumbs['teacher_list']) ? $breadcrumbs['teacher_list'] : '';
-
-    // 設定麵包屑的連結
     $breadcrumbLinks = [
-      'teacher' => 'teacher.php',           // 第一層的連結
-      'teacher_list' => 'teacher.php',      // 第二層的連結
+      'users' => '../users.php',
+      'teacher' => 'teacher.php',
     ];
 
-    include 'navbar.php';
+    include '../navbar.php';
     ?>
 
 

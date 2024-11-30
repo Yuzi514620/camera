@@ -138,28 +138,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'teacher'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <?php
-        // 設定麵包屑的層級
         $breadcrumbs = [
+            'users' => '首頁',
             'teacher' => '師資管理',
-            'teacher_list' => '師資列表',
-            'teacher_add' => '新增講師',
+            'teacher_add' => '新增師資',
         ];
 
         $page = 'teacher_add';
 
-        // 設定麵包屑的連結
         $breadcrumbLinks = [
-            'teacher' => 'teacher.php',           // 第一層的連結
-            'teacher_list' => 'teacher.php',      // 第二層的連結
-            'teacher_add' => 'teacher_add.php',   // 第三層的連結
+            'users' => '../users.php',
+            'teacher' => 'teacher.php',
+            'teacher_add' => 'teacher_add.php',
         ];
 
-        include 'navbar.php';
+        include '../navbar.php';
         ?>
 
 

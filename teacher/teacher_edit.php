@@ -16,7 +16,6 @@
 <?php
 require_once("../db_connect.php");
 
-$title = "編輯講師";
 
 // 驗證是否有傳入 ID
 if (!isset($_GET['id'])) {
@@ -128,31 +127,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'teacher'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <?php $page = 'teacher'; ?>
         <?php $page = 'teacher'; ?>
         <?php
-        // 設定麵包屑的層級
         $breadcrumbs = [
+            'users' => '首頁',
             'teacher' => '師資管理',
-            'teacher_list' => '師資列表',
             'teacher_edit' => '編輯講師資訊',
         ];
 
-        //當前頁面
         $page = 'teacher_edit';
 
-        // 設定麵包屑的連結
         $breadcrumbLinks = [
+            'users' => '../users.php',
             'teacher' => 'teacher.php',
-            'teacher_list' => 'teacher.php',
             'teacher_edit' => 'teacher_edit.php',
         ];
 
-        include 'navbar.php';
+        include '../navbar.php';
         ?>
         <!-- Navbar -->
 
