@@ -27,7 +27,7 @@ if ($result && $camera = $result->fetch_assoc()) {
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <!-- 相機名稱 -->
                 <h5 class="modal-title"><?=$title?></h5>
-                <button type="button" class="close-modal btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
+                <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
                 <span aria-hidden="true ">&times;</span>
                 </button>
             </div>
@@ -68,7 +68,7 @@ if ($result && $camera = $result->fetch_assoc()) {
    
                 <!-- 按鈕用於打開 camera_edit.php -->
                 <button type="button" 
-                        class="btn btn-primary next-modal" 
+                        class="btn btn-primary modalChange" 
                         data-id="<?= $id ?>" 
                         data-target="camera_edit.php">編輯
                 </button>

@@ -92,7 +92,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <h5 class="modal-title"><?= htmlspecialchars($title) ?></h5>
-                <button type="button" class="close-modal btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
+                <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
                     <span aria-hidden="true ">&times;</span>
                 </button>
             </div>
