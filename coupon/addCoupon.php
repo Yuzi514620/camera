@@ -59,20 +59,20 @@
         <!-- Navbar -->
         <?php 
         // 設定麵包屑的層級
-        $breadcrumbs = [
-            'coupon' => '優惠券列表', // 第一層的文字
-            'addCoupon' =>"新增優惠券"
-        ];
+            $breadcrumbs = [
+                'coupon' => '優惠券列表', // 第一層的文字
+                'addCoupon' =>"新增優惠券"
+            ];
 
-        $page = 'addCoupon';//當前的頁面
+            $page = 'addCoupon';//當前的頁面
 
-        // 設定麵包屑的連結
-        $breadcrumbLinks = [
-            'coupon' => '../pages/coupon.php', // 第一層的連結
-            'addCoupon' => 'addCoupon.php'
-        ];
+            // 設定麵包屑的連結
+            $breadcrumbLinks = [
+                'coupon' => '../pages/coupon.php', // 第一層的連結
+                'addCoupon' => 'addCoupon.php'
+            ];
 
-        include '../navbar.php';
+            include '../navbar.php';
         ?>
         <!-- Navbar -->
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -204,11 +204,20 @@
             
 
             $(".btn-add").click(function() {
-                const brand = $("select[name='coupon-select']").val();
-                const accessories = $("select[name='coupon-subselect']").val();
+                const select = $("select[name='coupon-select']");
+                const subSelect = $("select[name='coupon-subselect']")
+                const brand = select.val();
+                const accessories = subSelect.val();
+                
+
+                const option = $(".coupon-select option:selected")
+                const subOption = $(".coupon-subselect option:selected")
+                const brandText = option.text();
+                const accessoriesText = subOption.text();
+                
                 let file_data = $('#uploadImg').prop('files')[0];
                 let form_data = new FormData();
-
+                
                 if (file_data != null) {
                     form_data.append('file', file_data);
                     form_data.append('name', name.value);
@@ -218,6 +227,8 @@
                     form_data.append('days', days.value);
                     form_data.append('brand', brand);
                     form_data.append('accessories', accessories);
+                    form_data.append('brandText', brandText);
+                    form_data.append('accessoriesText', accessoriesText);
 
                     $.ajax({
                             method: "POST",
@@ -239,6 +250,7 @@
                     imgError.style.color = "red";
                 }
             })
+            
         </script>
 </body>
 
