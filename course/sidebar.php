@@ -7,16 +7,15 @@
             aria-hidden="true"
             id="iconSidenav"></i>
         <a
-            class="navbar-brand px-4 py-3 m-0"
+            class=" px-4 py-2 m-0"
             href="#"
             target="_blank">
-            <!-- <img
-                src="../assets/img/logo-ct-dark.png"
-                class="navbar-brand-img"
-                width="26"
-                height="26"
+            <img
+            src="../assets/img/camera_logo-01.png"
+                class=""
+                style="width: 100px; height: 100px;" 
                 alt="main_logo"
-              /> -->
+              />
             <span class="ms-1 text-sm text-white">Camera</span>
         </a>
     </div>

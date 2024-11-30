@@ -17,8 +17,6 @@
 // 引入資料庫連線
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "課程資訊";
 
 // 檢查是否有傳入 course_id
 if (!isset($_GET['id'])) {
@@ -64,7 +62,7 @@ $course = $result->fetch_assoc();
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>課程詳細資訊</title>
+    <title>課程資訊</title>
     <!--     Fonts and icons     -->
     <link
         rel="stylesheet"
@@ -102,8 +100,24 @@ $course = $result->fetch_assoc();
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php $page = 'course'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php
+        $breadcrumbs = [
+            'users' => '首頁',
+            'course' => '課程管理',
+            'course_info' => '課程資訊',
+        ];
+
+        $page = 'course_info';
+
+        $breadcrumbLinks = [
+            'users' => '../users.php',
+            'course' => 'course.php',
+            'course_info' => 'course_info.php',
+        ];
+
+        include '../navbar.php';
+        ?>
+
         <!-- Navbar -->
 
 

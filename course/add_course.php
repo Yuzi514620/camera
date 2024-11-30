@@ -29,9 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $is_primary = isset($_POST['is_primary']) ? 1 : 0;
     $status = 1;
     $is_visible = 1;
-}
 
-// 處理新增課程的邏輯
+  // 處理新增課程的邏輯
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
     $category_id = $_POST['category_id'];
@@ -215,21 +214,21 @@ if ($result->num_rows > 0) {
                         </div>
 
                         <div class="mb-2">
-                            <label for="teacher_id" class="form-label">講師</label>
-                            <select class="form-select" id="teacher_id" name="teacher_id" required>
-                                <option value="" disabled selected>請選擇講師</option>
-                                <?php
-                                // 從資料庫取得所有講師
-                                $sql_teachers = "SELECT * FROM teacher";
-                                $result_teachers = $conn->query($sql_teachers);
-                                if ($result_teachers->num_rows > 0) {
-                                    while ($teacher = $result_teachers->fetch_assoc()) {
-                                        echo "<option value='" . $teacher['id'] . "'>" . $teacher['name'] . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
+    <label for="teacher_id" class="form-label">講師</label>
+    <select class="form-select" id="teacher_id" name="teacher_id" required>
+        <option value="" disabled selected>請選擇講師</option>
+        <?php
+        // 從資料庫取得所有講師
+        $sql_teachers = "SELECT * FROM teacher";
+        $result_teachers = $conn->query($sql_teachers);
+        if ($result_teachers->num_rows > 0) {
+            while ($teacher = $result_teachers->fetch_assoc()) {
+                echo "<option value='" . $teacher['id'] . "'>" . $teacher['name'] . "</option>";
+            }
+        }
+        ?>
+    </select>
+</div>
 
                         <div class="mb-2">
                             <label for="apply_start" class="form-label">報名開始時間</label>
