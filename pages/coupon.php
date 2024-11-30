@@ -213,7 +213,6 @@ try {
                                   修改
                                 </button>
                               </form>
-
                               <button class="btn btn-danger mb-2 mt-2" data-toggle="modal" data-target="#exampleModal">
                                 刪除
                               </button>

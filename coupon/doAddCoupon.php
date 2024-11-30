@@ -8,8 +8,9 @@ $quantity = (empty($_REQUEST['quantity']))?"":$_REQUEST['quantity'];
 $days = (empty($_REQUEST['days']))?"":$_REQUEST['days'];
 $brand = (empty($_REQUEST['brand']))?"":$_REQUEST['brand'];
 $accessories = (empty($_REQUEST['accessories']))?"":$_REQUEST['accessories'];
-
-
+$brandText = (empty($_REQUEST['brandText']))?"":$_REQUEST['brandText'];
+$accessoriesText = (empty($_REQUEST['accessoriesText']))?"":$_REQUEST['accessoriesText'];
+$concatStr = '';
 if($_FILES["file"]["error"] == 0){
 
     $imageName = time();
@@ -41,11 +42,15 @@ for($i=1;$i<=6;$i++){
 }
 $cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
 
+$concatStr = $brandText.$name;
+if($brandText != $accessoriesText){
+    $concatStr = $brandText.$accessoriesText.$name;
+}
 
 $pdoSql = "INSERT INTO `coupon`(`name`, `coupon_code`, `start_date`, `end_date`, `discount`, `lower_purchase`, `quantity`, `img`, `brand`, `accessories`, `is_deleted`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 $stmt = $db_host->prepare($pdoSql);
 try{
-    $stmt->execute([$name,$cpnCode,$timeNow,$timeEnd,$discount,$lower_purchase,$quantity,$uploadImg,$brand,$accessories,0]);
+    $stmt->execute([$concatStr,$cpnCode,$timeNow,$timeEnd,$discount,$lower_purchase,$quantity,$uploadImg,$brand,$accessories,0]);
 }catch(PDOException $e){
     echo json_encode("預處理陳述式執行失敗！ <br/>");
     echo json_encode("Error: " . $e->getMessage() . "<br/>");
