@@ -161,6 +161,22 @@ try {
                                             <input type="text" class="form-control " name="quantity" id="quantity" value="<?= $result["quantity"] ?>">
                                         </div>
                                     </div>
+                                    <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
+                                        <div class="col-1">
+                                            <span>有效天數</span>
+                                        </div>
+                                        <div class="col-5">
+                                            <input type="number" class="form-control " name="quantity" id="days">
+                                        </div>
+                                    </div>
+                                    <div class="input-box row-auto g-2 mt-2 align-items-center">
+                                        <div class="col-1">
+                                            <span>上傳圖片</span>
+                                        </div>
+                                        <div class="col-5">
+                                            <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
+                                        </div>
+                                    </div>
                                     <div class="btn-box position-relative mt-3 ">
                                         <button class="btn btn-success btn-update me-3">完成</button>
                                         <a href="../pages/coupon.php" class="btn btn-info">返回</a>
@@ -197,31 +213,53 @@ try {
         const discount = document.querySelector("#discount");
         const lower_purchase = document.querySelector("#lower_purchase");
         const quantity = document.querySelector("#quantity");
+        const days = document.querySelector("#days");
         const id = <?= $id ?>;
 
-        $(".btn-update").click(function() {
-            const brand = $("select[name='coupon-select']").val();
-            const accessories = $("select[name='coupon-subselect']").val();
-            $.ajax({
-                    method: "POST",
-                    url: "doUpdateCoupon.php",
+       
 
-                    data: {
-                        id: id,
-                        name: name.value,
-                        discount: discount.value,
-                        lower_purchase: lower_purchase.value,
-                        quantity: quantity.value,
-                        brand: brand,
-                        accessories:accessories
-                    }
-                })
-                .done(function(response) {
-                    window.location.replace("../pages/coupon.php");
-                })
-                .fail(function(jqXHR, textStatus) {
-                    console.log(textStatus);
-                })
+        $(".btn-update").click(function() {
+            const select = $("select[name='coupon-select']");
+            const subSelect = $("select[name='coupon-subselect']")
+            const brand = select.val();
+            const accessories = subSelect.val();
+                
+
+            const option = $(".coupon-select option:selected")
+            const subOption = $(".coupon-subselect option:selected")
+            const brandText = option.text();
+            const accessoriesText = subOption.text();
+
+            let file_data = $('#uploadImg').prop('files')[0];
+            let form_data = new FormData();
+            if (file_data != null) {
+                form_data.append('file', file_data);
+                form_data.append('id', id);
+                form_data.append('name', name.value);
+                form_data.append('discount', discount.value);
+                form_data.append('lower_purchase', lower_purchase.value);
+                form_data.append('quantity', quantity.value);
+                form_data.append('days', days.value);
+                form_data.append('brand', brand);
+                form_data.append('accessories', accessories);
+                form_data.append('brandText', brandText);
+                form_data.append('accessoriesText', accessoriesText);
+
+                $.ajax({
+                        method: "POST",
+                        url: "doUpdateCoupon.php",
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: form_data
+                    })
+                    .done(function(response) {
+                        window.location.replace("../pages/coupon.php");
+                    })
+                    .fail(function(jqXHR, textStatus) {
+                        console.log(textStatus);
+                    })
+            }
         })
     </script>
 </body>

@@ -96,30 +96,27 @@ $teacher = $result->fetch_assoc();
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'teacher'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <?php $page = 'teacher'; ?>
         <?php
-        // 設定麵包屑的層級
         $breadcrumbs = [
+            'users' => '首頁',
             'teacher' => '師資管理',
-            'teacher_list' => '師資列表',
             'teacher_info' => '講師資訊',
         ];
 
-        //當前頁面
         $page = 'teacher_info';
 
-        // 設定麵包屑的連結
         $breadcrumbLinks = [
+            'users' => '../users.php',
             'teacher' => 'teacher.php',
-            'teacher_list' => 'teacher.php',
             'teacher_info' => 'teacher_info.php',
         ];
 
-        include 'navbar.php';
+        include '../navbar.php';
         ?>
         <!-- Navbar -->
 

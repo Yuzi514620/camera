@@ -49,7 +49,7 @@ if ($result && $camera = $result->fetch_assoc()) {
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <!-- 相機名稱 -->
                 <h5 class="modal-title"><?=$title?></h5>
-                <button type="button" class="close-modal btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
+                <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
                     <span aria-hidden="true ">&times;</span>
                 </button>
             </div>
@@ -102,7 +102,7 @@ if ($result && $camera = $result->fetch_assoc()) {
                     <div>                        
                         <button type="submit" class="btn btn-primary">儲存</button>
                         <button type="button" 
-                                class="btn btn-primary next-modal"
+                                class="btn btn-primary modalChange"
                                 data-id="<?= $id ?>" 
                                 data-target="camera.php">返回
                         </button>
@@ -112,10 +112,44 @@ if ($result && $camera = $result->fetch_assoc()) {
         </div>
     </div>
 </div>
+
+<script>
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_image') {
+    $image_id = $_POST['image_id'];
+    $camera_id = $_POST['camera_id'];
+
+    // 查詢圖片的相關資料
+    $sql = "SELECT image_url, image_type, image_name FROM images WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $image_id);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
+    if ($result) {
+        $image_url = $result['image_url'];
+        $image_type = $result['image_type'];
+        $image_name = $result['image_name'];
+
+        // 更新 camera 資料
+        $update_sql = "UPDATE cameras SET image_url = ?, image_type = ?, image_name = ? WHERE id = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param('sssi', $image_url, $image_type, $image_name, $camera_id);
+        if ($update_stmt->execute()) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => '更新失敗']);
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => '無法找到圖片']);
+    }
+    exit;
+}
+</script>
+
+
+
 <?php
 } else {
     echo "找不到相機資料";
 }
 ?>
-
-

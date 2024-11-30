@@ -213,10 +213,23 @@ try {
                                   修改
                                 </button>
                               </form>
-
-                              <button class="btn btn-danger mb-2 mt-2" data-toggle="modal" data-target="#exampleModal">
+                              <button type="button" class="btn btn-primary mb-2 mt-2 btn-deletedData" data-id="<?= $row["id"] ?>" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 刪除
                               </button>
+                              <!-- Modal -->
+                              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-body">
+                                      確定要刪除
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>
+                                      <button type="button" class="btn btn-primary btn-deleted">刪除</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </td>
                         </tr>
@@ -255,22 +268,10 @@ try {
         </div>
       </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-body">
-            確定要刪除嗎
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">返回</button>
-            <button class="btn btn-primary btn-deleted" data-id="<?= $row["id"] ?>">刪除</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </main>
+  <!-- Button trigger modal -->
 
+</body>
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
@@ -290,10 +291,15 @@ try {
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
-  <?php include_once("../../js.php") ?>
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.js" 
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" 
+        crossorigin="anonymous">
+</script>
 
   <script>
     const status = document.querySelector(".status");
+    let deleteId = 0;
     $(".btn-upDownLoad").click(function() {
       let transData = $(this).data();
       $.ajax({
@@ -314,14 +320,17 @@ try {
         })
     })
 
-    $(".btn-deleted").click(function() {
-      let transData = $(this).data();
-      $.ajax({
+    $(".btn-deletedData").click(function() {
+      deleteId = $(this).data();
+      
+    })
+    $(".btn-deleted").click(function(){
+        $.ajax({
           method: "POST",
           url: "../coupon/doDeleteCoupon.php",
           dataType: "json",
           data: {
-            id: transData.id
+            id: deleteId.id
           }
         })
         .done(function(response) {
@@ -330,7 +339,7 @@ try {
         .fail(function(jqXHR, textStatus, errorThrown) {
           console.log(textStatus);
         })
-    })
+      })
 
     $(".btn-search").click(function() {
       const search = document.querySelector(".btn-searcg")
@@ -350,6 +359,4 @@ try {
         })
     })
   </script>
-</body>
-
 </html>

@@ -17,8 +17,6 @@
 // 引入資料庫連線檔案
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "新增課程";
 
 // 處理新增課程的邏輯
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -160,8 +158,24 @@ if ($result->num_rows > 0) {
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php $page = 'course'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php
+        $breadcrumbs = [
+            'users' => '首頁',
+            'course' => '課程管理',
+            'course_add' => '新增課程',
+        ];
+
+        $page = 'course_add';
+
+        $breadcrumbLinks = [
+            'users' => '../users.php',
+            'course' => 'course.php',
+            'course_add' => 'course_add.php',
+        ];
+
+        include '../navbar.php';
+        ?>
+
         <!-- Navbar -->
 
 

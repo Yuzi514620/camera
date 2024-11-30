@@ -54,13 +54,19 @@ if ($endPage - $startPage + 1 < $visiblePages) {
 
 
 ?>
+
+<style>
+    .checkCard.selected {
+    outline: 2px solid #E91E63;
+}
+</style>
 <div class="modal-xl modal fade" id="cameraModal<?= $id ?>" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <!-- 相機名稱 -->
                 <h5 class="modal-title"><?=$title?></h5>
-                <button type="button" class="close-modal btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
+                <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
                     <span aria-hidden="true ">&times;</span>
                 </button>
             </div>
@@ -99,7 +105,7 @@ if ($endPage - $startPage + 1 < $visiblePages) {
                         <?php else: ?>
                             <?php foreach ($rows as $row): ?>
                             <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-                            <div class="card p-1" style="height: 190px;">
+                            <div class="checkCard card p-1" style="height: 190px;">
                                 <img src="../album/upload/<?= htmlspecialchars($row['image_url']) ?>"                 
                                     style="max-height:100px; width: 100%; object-fit: contain;" 
                                     class="card-img-top p-1" 
@@ -117,7 +123,7 @@ if ($endPage - $startPage + 1 < $visiblePages) {
 
                     <!-- 分頁導航 -->
                     <nav aria-label="Page navigation">
-                        <ul class="tinyPages pagination justify-content-center">
+                        <ul class="pagination justify-content-center" id="tinyPages">
                             <!-- 首頁 -->
                             <li class="page-item <?= $modalPage == 1 ? 'disabled' : '' ?>">
                                 <a class="page-link" href="album.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
@@ -157,13 +163,14 @@ if ($endPage - $startPage + 1 < $visiblePages) {
                 </div>
 
 
-                <div class="modal-footer d-flex justify-content-between align-items-center">
+                <div class="modal-footer">
                     <div>                        
                         <button type="submit" class="btn btn-primary">儲存</button>
                         <button type="button" 
-                                class="btn btn-primary next-modal"
-                                data-id="<?= $id ?>" 
-                                data-target="camera_edit.php">返回
+                                class="btn btn-primary modalChange"
+                                data-id="<?= $camera_id ?>" 
+                                data-target="camera_edit.php">
+                            返回
                         </button>
                     </div>
                 </div>                    
@@ -173,13 +180,10 @@ if ($endPage - $startPage + 1 < $visiblePages) {
 </div>
 
 
-   <div id="albumModalContainer"></div>
+   <!-- <div id="albumModalContainer"></div> -->
 
   </main>
   
-
-
-
 
 
   <script>
@@ -198,7 +202,7 @@ if ($endPage - $startPage + 1 < $visiblePages) {
         success: function (data) {
             // 更新列表內容
             $('#listContainer').html($(data).find('#listContainer').html());
-            $('.tinyPages').html($(data).find('.tinyPages').html());
+            $('#tinyPages').html($(data).find('#tinyPages').html());
         },
         error: function () {
             alert('搜尋失敗，請稍後再試。');
@@ -222,7 +226,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
             // 清空搜尋欄位並刷新內容
             $('#searchForm input[name="search"]').val('');
             $('#listContainer').html($(data).find('#listContainer').html());
-            $('.tinyPages').html($(data).find('.tinyPages').html());
+            $('#tinyPages').html($(data).find('#tinyPages').html());
         },
         error: function () {
             alert('清空搜尋失敗，請稍後再試。');
@@ -248,7 +252,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
                 success: function (data) {
                     // 更新圖片容器與分頁導航
                     $('#imageContainer').html($(data).find('#imageContainer').html());
-                    $('.tinyPages').html($(data).find('.tinyPages').html());
+                    $('#tinyPages').html($(data).find('#tinyPages').html());
                 },
                 error: function () {
                     alert('搜尋失敗，請稍後再試。');
@@ -258,7 +262,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
 </script>
 
 <script>
-    $(document).on('click', '.tinyPages a', function (e) {
+    $(document).on('click', '#tinyPages a', function (e) {
     e.preventDefault(); // 防止默認行為
     const url = $(this).attr('href'); // 獲取分頁的 URL
 
@@ -269,7 +273,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
         success: function (data) {
             // 用返回的 HTML 更新內容
             $('#imageContainer').html($(data).find('#imageContainer').html());
-            $('.tinyPages').html($(data).find('.tinyPages').html());
+            $('#tinyPages').html($(data).find('#tinyPages').html());
         },
         error: function () {
             alert('分頁載入失敗，請稍後再試。');
@@ -291,7 +295,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
                 // 清空搜尋欄位並刷新內容
                 $('#searchForm input[name="search"]').val('');
                 $('#imageContainer').html($(data).find('#imageContainer').html());
-                $('.tinyPages').html($(data).find('.tinyPages').html());
+                $('#tinyPages').html($(data).find('#tinyPages').html());
             },
             error: function () {
                 alert('清空搜尋失敗，請稍後再試。');
@@ -321,7 +325,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
         });
     </script>
 <script>
-    $(document).on('click', '.tinyPages a', function (e) {
+    $(document).on('click', '#tinyPages a', function (e) {
     e.preventDefault(); // 阻止默認行為
     const url = $(this).attr('href'); // 獲取分頁的 URL
 
@@ -332,7 +336,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
         success: function (data) {
             // 更新圖片容器和分頁導航
             $('#imageContainer').html($(data).find('#imageContainer').html());
-            $('.tinyPages').html($(data).find('.tinyPages').html());
+            $('#tinyPages').html($(data).find('#tinyPages').html());
         },
         error: function () {
             alert('分頁載入失敗，請稍後再試。');
@@ -342,7 +346,7 @@ $(document).on('click', '.btn-clear-search', function (e) {
 </script>
 <script>
     // 自定義關閉模態框
-    $(document).on('click', '.close-modal', function () {
+    $(document).on('click', '.modalClose', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框
 
       // 使用 Bootstrap 的方法關閉模態框
@@ -355,6 +359,47 @@ $(document).on('click', '.btn-clear-search', function (e) {
       });
   });
   </script>
+
+<script>
+    // 點擊 checkCard 添加選中效果
+    $(document).on('click', '.checkCard', function () {
+        $('.checkCard').removeClass('selected'); // 移除所有選中的框線
+        $(this).addClass('selected');           // 為當前選中添加框線
+    });
+
+    // 切換分頁或搜尋時移除所有選中框
+    $(document).on('click', '#tinyPages a, #searchForm button', function () {
+        $('.checkCard').removeClass('selected');
+    });
+
+    // 儲存按鈕邏輯
+    $(document).on('click', '.saveButton', function () {
+        const selectedImageId = $('.checkCard.selected').data('id'); // 取得選中的 image_id
+        const cameraId = $(this).data('camera-id'); // 取得 camera_id
+
+        if (!selectedImageId) {
+            alert('請選擇一張圖片！');
+            return;
+        }
+
+        $.ajax({
+            url: 'camera_edit.php',
+            method: 'POST',
+            data: {
+                action: 'update_image',
+                image_id: selectedImageId,
+                camera_id: cameraId
+            },
+            success: function (response) {
+                alert('圖片已更新！');
+                window.location.reload(); // 根據需求刷新頁面
+            },
+            error: function () {
+                alert('圖片更新失敗，請稍後再試！');
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
