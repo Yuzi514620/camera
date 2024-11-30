@@ -1,32 +1,31 @@
-<?php
-$pageTitles = [
-  'users' => '會員管理',
-  'order' => '訂單管理',
-  'product' => '商品管理',
-  'course' => '課程管理',
-  'teacher' => '師資管理',
-  'article' => '文章管理',
-  'coupon' => '優惠券管理',
-  'rental' => '租借商品管理',
-];
-
-$breadcrumbTitle = isset($pageTitles[$page]) ? $pageTitles[$page] : '';
-?>
-
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
   <div class="container-fluid py-1 px-3 justify-content-end">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-        <li class="breadcrumb-item text-sm">
-          <a class="opacity-5 text-dark" href="javascript:;"> <a class="opacity-5 text-dark" href="javascript:;"><?= $breadcrumbTitle ?></a> </a>
-        </li>
-        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-          <a href="<?= $_SERVER['PHP_SELF']; ?>" class="text-dark"><?= $title ?></a>
-        </li>
+        <?php
+        // 初始化上一層的連結
+        $previousPage = '';
+
+        // 遍歷所有麵包屑
+        foreach ($breadcrumbs as $key => $title) {
+          // 顯示上一層頁面
+          if ($previousPage) {
+            echo '<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="' . $breadcrumbLinks[$previousPage] . '">' . $breadcrumbs[$previousPage] . '</a></li>';
+          }
+
+          // 顯示當前頁面，並標註為活動頁面
+          if ($page === $key) {
+            echo '<li class="breadcrumb-item text-sm text-dark active" aria-current="page">' . $title . '</li>';
+          }
+
+          // 設置當前頁面為上一頁
+          $previousPage = $key;
+        }
+        ?>
       </ol>
     </nav>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-      <!-- 添加 ms-auto 將內容推向右側 -->
+      <!-- 添加 ms-auto 將內容`推向右側 -->
       <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
         <!-- <li class="mt-1">
           <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard"

@@ -16,8 +16,6 @@
 <?php
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "編輯課程";
 
 if (!isset($_GET['id'])) {
     die("未指定課程 ID");
@@ -136,7 +134,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <?php $page = 'course'; ?>
-        <?php include 'navbar.php'; ?>
+        <?php
+        $breadcrumbs = [
+            'users' => '首頁',
+            'course' => '課程管理',
+            'course_edit' => '編輯課程',
+        ];
+
+        $page = 'course_edit';
+
+        $breadcrumbLinks = [
+            'users' => '../users.php',
+            'course' => 'course.php',
+            'course_edit' => 'course_edit.php',
+        ];
+
+        include '../navbar.php';
+        ?>
         <!-- Navbar -->
 
         <div class="container mt-5" style="margin-left: auto">
