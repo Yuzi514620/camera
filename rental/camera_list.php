@@ -284,7 +284,7 @@ foreach ($images as $image) {
     });
 
     // 專屬於 open-edit-modal 的按鈕點擊事件
-    $(document).on('click', '.next-modal', function () {
+    $(document).on('click', '.modalChange', function () {
         var targetUrl = $(this).data('target'); // 獲取目標 URL
         var dataId = $(this).data('id');       // 獲取數據 ID
         var currentModal = $(this).closest('.modal'); // 當前模態框
@@ -351,7 +351,7 @@ foreach ($images as $image) {
 
 <script>
     // 自定義關閉模態框
-    $(document).on('click', '.close-modal', function () {
+    $(document).on('click', '.modalClose', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框
 
       // 使用 Bootstrap 的方法關閉模態框
