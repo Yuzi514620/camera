@@ -119,9 +119,9 @@ $category_id = isset($_GET['category_id']) ? $_GET['category_id'] : null;
 $p = isset($_GET['p']) ? (int)$_GET['p'] : 1;
 
 // 2. 驗證排序欄位白名單
-$allowed_sort_fields = ['category_id', 'title', 'content', 'update_time'];
+$allowed_sort_fields = ['category_id', 'title', 'content', 'update_time', 'is_deleted'];
 if (!in_array($sort, $allowed_sort_fields)) {
-    $sort = 'update_time';
+    $sort = 'update_time';// 默認按更新時間排序
 }
 
 // 3. 驗證排序方向
@@ -144,28 +144,40 @@ function buildSortUrl($field) {
 }
 
 try {  
-    // 構建 SQL 語句，僅包含分類、排序及分頁
-    $sql = "SELECT a.*, c.name as category_name  
-            FROM article a  
-            JOIN article_category c ON a.category_id = c.id";  
-    if ($current_category_id !== null) {  
-        $sql .= " WHERE a.category_id = :category_id";  
-    }  
-    $sql .= " $order_by LIMIT :limit OFFSET :offset";  
-    $stmt = $pdo->prepare($sql);  
+  // 構建 SQL 語句，僅包含分類、排序及分頁
+  $sql = "SELECT a.*, c.name as category_name  
+          FROM article a  
+          JOIN article_category c ON a.category_id = c.id 
+          WHERE 1=1";  
 
-    if ($current_category_id !== null) {  
-        $stmt->bindValue(':category_id', $current_category_id, PDO::PARAM_INT);  
-    }  
+  if ($current_category_id !== null) {  
+      $sql .= " AND a.category_id = :category_id";  
+  }  
 
-    // 計算起始項目  
-    $start_item = ($p - 1) * $per_page;  
-    $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);  
-    $stmt->bindValue(':offset', $start_item, PDO::PARAM_INT);  
-    $stmt->execute();  
-    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+  if (isset($_GET['is_deleted'])) {
+    $sql .= " AND a.is_deleted = 1 ";
+} elseif (!isset($_GET['category_id']) && !isset($_GET['search'])) {
+    // 不添加 is_deleted 條件，顯示所有項目
+} else {
+    $sql .= " AND a.is_deleted = 0 ";
+}
+
+  $sql .= " $order_by LIMIT :limit OFFSET :offset";  
+  
+  $stmt = $pdo->prepare($sql);  
+
+  if ($current_category_id !== null) {  
+      $stmt->bindValue(':category_id', $current_category_id, PDO::PARAM_INT);  
+  }  
+
+  // 計算起始項目  
+  $start_item = ($p - 1) * $per_page;  
+  $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);  
+  $stmt->bindValue(':offset', $start_item, PDO::PARAM_INT);  
+  $stmt->execute();  
+  $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);  
 } catch (PDOException $e) {  
-    echo "資料撈取失敗: " . $e->getMessage();  
+  echo "資料撈取失敗: " . $e->getMessage();  
 }  
 
 // 5. 修改SQL查詢語句
@@ -180,6 +192,7 @@ if ($category_id) {
 if ($search) {
     $sql .= " AND (a.title LIKE ? OR a.content LIKE ?) ";
 }
+
 
 $sql .= " ORDER BY a.$sort $order 
           LIMIT ? OFFSET ?";
@@ -202,6 +215,11 @@ try {
     $articleCount = 0; // 預設為0
 }
 $total_pages = ceil($articleCount / $per_page); // 計算總頁數
+
+// 計算下架文章數量
+$query = $pdo->query("SELECT COUNT(*) FROM article WHERE is_deleted = 1");
+$archived_count = $query->fetchColumn();
+
 
 // 設定麵包屑的層級
 $breadcrumbs = [
@@ -431,13 +449,25 @@ $breadcrumbLinks = [
           </div>
           <div class="d-flex justify-content-between">
             <div class="px-2 mb-2">目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章</div>
-            <div class="btn-group pe-5">  
-              <a href="article.php" class="btn btn-primary <?= $current_category_id === null ? 'active' : '' ?>">全部</a>
+            <div class="btn-group">  
+              <a href="article.php?" class="btn btn-dark <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
               <?php foreach ($categories as $id => $name): ?>  
-                  <a href="?category_id=<?= $id ?>" class="btn btn-primary <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
-              <?php endforeach; ?>  
-            </div>  
+                  <a href="?category_id=<?= $id ?>" class="btn btn-dark <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
+              <?php endforeach; ?>
+              <a href="?is_deleted=1" class="btn btn-dark <?= isset($_GET['is_deleted']) ? 'active' : '' ?>">
+                  下架文章 <span class="badge bg-white text-danger border rounded-circle"><?= $archived_count ?></span>
+              </a>
+            </div>
           </div>
+
+
+
+          <!-- 文章列 -->
+          <?php if (isset($_GET['is_deleted']) && $archived_count == 0): ?>
+              <div class="alert alert-danger text-center text-white mt-3" role="alert">
+                  目前沒有下架文章
+              </div>
+          <?php endif; ?>
           <div class="card ">
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
@@ -447,14 +477,14 @@ $breadcrumbLinks = [
                       <th class="text-center text-uppercase text-sm text-white" style="width:5%;">
                         分類
                         <a href="<?= buildSortUrl('category_id') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'category_id' ? ($order === 'asc' ? 'text-info' : 'text-warning') : '' ?>"></i>
+                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'category_id' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
                       </th>
 
                       <th class="text-uppercase text-sm text-white" style="width:25%;">
                         標題
                         <a href="<?= buildSortUrl('title') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'title' ? ($order === 'asc' ? 'text-info' : 'text-warning') : '' ?>"></i>
+                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'title' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
                       </th>
 
@@ -465,14 +495,14 @@ $breadcrumbLinks = [
                       <th class="text-uppercase text-sm font-weight-bolder ps-2 text-white" colspan="2" style="width:35%">
                         內文
                         <a href="<?= buildSortUrl('content') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'content' ? ($order === 'asc' ? 'text-info' : 'text-warning') : '' ?>"></i>
+                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'content' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
                       </th>
 
                       <th class="text-uppercase text-sm font-weight-bolder text-center ps-2 text-white" style="width:10%">
                         最後更新時間
                         <a href="<?= buildSortUrl('update_time') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'text-info' : 'text-warning') : '' ?>"></i>
+                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
                       </th>
                       <th
@@ -486,8 +516,9 @@ $breadcrumbLinks = [
                       <th
                         class="text-center text-uppercase text-sm text-white" style="width:5%">
                         文章狀態
-                        <a href="article.php?sort=is_deleted&order=<?= $order === 'asc' ? 'desc' : 'asc' ?>&search=<?= htmlspecialchars($search) ?>">
-                        <i class="fa-solid fa-sort ps-2 "></i>
+                        <a href="<?= buildSortUrl('is_deleted') ?>" class="text-white">
+                          <i class="fa-solid fa-sort ps-2 <?= $sort === 'is_deleted' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                        </a>
                       </th>
                     </tr>
                   </thead>
