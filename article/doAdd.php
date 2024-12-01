@@ -1,41 +1,58 @@
 <?php  
+session_start();
 require_once("./pdo_connect_camera.php");  
 $result = [];  
 
 // 取得標題和內容  
-$category_id = $_POST['category_id'] ?? null; // 使用 ?? 來處理未設置的情況  
+$category_id = $_POST['category_id'] ?? null;  
 $title = $_POST['title'] ?? null;   
 $content = $_POST['content'] ?? null;   
 
-// 在進行新增之前進行基本的資料驗證  
-if (empty($category_id) || empty($title) || empty($content)) {  
-    $result["status"] = "fail";  
-    $result["message"] = "所有字段都必須填寫。";  
-    echo json_encode($result);  
-    exit; // 結束執行  
-}  
+// 初始化錯誤陣列
+$errors = [];
 
-try {  
-    // 準備 SQL 語句，使用 ? 作為佔位符  
-    $sql = "INSERT INTO article (category_id, title, content) VALUES (?, ?, ?)";  
-    $stmt = $pdo->prepare($sql);  
+// 基本資料驗證
+if (empty($category_id)) {
+    $errors['category_id'] = "文章類別必須選擇。";
+}
+if (empty($title)) {
+    $errors['title'] = "標題必須填寫。";
+}
+if (empty($content)) {
+    $errors['content'] = "內容必須填寫。";
+}
 
-    // 綁定參數並執行語句  
-    if ($stmt->execute([$category_id, $title, $content])) {  
-        $result["status"] = "success";  
-        $result["message"] = "文章已成功新增。";  
+if (!empty($errors)) {
+    // 將錯誤訊息和之前輸入的數據存入 Session
+    $_SESSION['errors'] = $errors;
+    $_SESSION['old'] = $_POST;
+    header('Location: articleAdd.php');
+    exit;
+}
+
+try {
+    // 準備 SQL 語句，使用 ? 作為佔位符
+    $sql = "INSERT INTO article (category_id, title, content) VALUES (?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+
+    // 綁定參數並執行語句
+    if ($stmt->execute([$category_id, $title, $content])) {
+        $_SESSION['status'] = "success";
+        $_SESSION['message'] = "文章已成功新增。";
         
         // 新增成功後重定向到文章列表頁面  
         header('Location: article.php');  
         exit;  
     } else {  
-        $result["status"] = "fail";  
-        $result["message"] = "新增文章時發生錯誤。";  
-        echo json_encode($result);  
+        $_SESSION['errors'] = ['general' => "新增文章時發生錯誤。"];
+        $_SESSION['old'] = $_POST;
+        header('Location: articleAdd.php');  
+        exit;
     }  
 } catch (PDOException $e) {  
-    $result["status"] = "error";  
-    $result["message"] = "資料庫操作失敗: " . $e->getMessage();  
-    echo json_encode($result);  
+    $_SESSION['errors'] = ['general' => "資料庫操作失敗: " . $e->getMessage()];
+    $_SESSION['old'] = $_POST;
+    header('Location: articleAdd.php');  
+    exit;
 }  
-?>  
+?>

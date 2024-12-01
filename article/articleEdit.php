@@ -166,7 +166,7 @@ try {
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gradient-dark">
                     <tr>
-                      <th class="text-left text-uppercase text-xl opacity-7 text-white"  colspan="8">
+                      <th class="text-left text-uppercase text-xl text-white"  colspan="8">
                         編輯內容
                       </th>
                     </tr>
@@ -208,7 +208,7 @@ try {
                             <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>
                         </div>
                     </div>
-                </form>
+                  </form>
               </div>
             </div>
           </div>

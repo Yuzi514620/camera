@@ -46,8 +46,6 @@ function time_elapsed_string($datetime, $full = false)
   return $string ? reset($string) : '剛剛'; //reset()函數返回陣列中的第一個元素的值
 }
 
-
-
 // 每頁顯示的文章數量  
 $per_page = 10;  
 
@@ -163,10 +161,6 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script
-    src="https://kit.fontawesome.com/42d5adcbca.js"
-    crossorigin="anonymous"></script>
   <!-- Material Icons -->
   <link
     rel="stylesheet"
@@ -183,9 +177,13 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/dist/boxicons.js" integrity="sha512-Dm5UxqUSgNd93XG7eseoOrScyM1BVs65GrwmavP0D0DujOA8mjiBfyj71wmI2VQZKnnZQsSWWsxDKNiQIqk8sQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <style>
+    .pagination{
+      --bs-pagination-active-bg: #000;
+      --bs-pagination-active-border-color: #000;
+      --bs-pagination-focus-box-shadow: #ff0000;
+    }
     .content {
       word-wrap: break-word;
       /* 自動換行 */
@@ -201,7 +199,7 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
       background: #FFF;
       color: #000;
     }
-    .btn-addAeticle {
+    .btn-addArticle {
       width: 35px;
       height: 35px;
     }
@@ -220,7 +218,51 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
     white-space: normal; /* 允許正常的空白符號和換行 */  
     word-wrap: break-word; /* 允許在單詞內換行 */  
     height: auto; /* 自動調整高度 */  
-}  
+  }
+  .pagination .page-item.active .page-link {
+    color: #fff;
+    background-color: #000; 
+    border-color: #000;
+  }
+
+  /* 切換按鈕樣式 */
+  .form-switch .form-check-input {
+    width: 50px;
+    height: 19px;
+    border-radius: 20px;
+    position: relative;
+    background-color: green;
+    transition: background-color 0.4s, box-shadow 0.4s, transform 0.4s;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-switch .form-check-input::before {
+    content: '';
+    position: absolute;
+    top: 1.5px;
+    left: 1.5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #FF4D40;
+    box-shadow: 0 0 10px rgba(255, 77, 64, 0.5);
+}
+
+.form-switch .form-check-input:checked::before {
+    transform: translateX(30px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.form-switch .form-check-input::after {
+    content: "";
+    display: none;
+}
   </style>
 </head>
 
@@ -299,7 +341,7 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
                 <button class="btn btn-dark btn-search" type="submit"><i class="fa-solid fa-magnifying-glass" ></i></button>
               </form>
             </div>
-            <button class="btn btn-dark text-white btn-addAeticle px-2">
+            <button class="btn btn-dark text-white px-2 btn-addArticle">
             <a
               href="articleAdd.php"
               class="text-white font-weight-bold text-sm"
@@ -413,15 +455,19 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
                           </a>
                         </td>
                         <!-- 刪除 -->
-                        <td class="align-middle text-center">
-                          <a
-                            href="javascript:;"
-                            class="text-danger font-weight-bold text-sm"
-                            data-toggle="tooltip"
-                            data-original-title="Edit">
-                            <i class="fa-regular fa-trash-can"></i>
-                          </a>
-                        </td>
+                        <td class="text-center align-middle">  
+                          <div class="form-check form-switch d-flex justify-content-center align-items-center">  
+                            <input   
+                              class="form-check-input toggle-delete"  
+                              type="checkbox"   
+                              role="switch"  
+                              id="toggleSwitch<?= $article['id'] ?>"   
+                              data-id="<?= $article['id'] ?>"  
+                              <?= $article['is_deleted'] ? 'checked' : '' ?>  
+                            >  
+                            <label class="form-check-label" for="toggleSwitch<?= $article['id'] ?>"></label>  
+                          </div>  
+                        </td>  
                       <?php endforeach; ?>
                   </tbody>
                 </table>
@@ -464,7 +510,41 @@ $total_pages = ceil($articleCount / $per_page); // 計算總頁數
       };
       Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
     }
-  </script>
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleSwitches = document.querySelectorAll('.toggle-delete');
+
+  toggleSwitches.forEach(function(toggleSwitch) {
+    toggleSwitch.addEventListener('change', function() {//監聽change事件
+      const id = this.getAttribute('data-id');//取得data-id的值
+      const is_deleted = this.checked ? 1 : 0;//如果被選取，is_deleted為1，否則為0
+
+      fetch('update_article.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id, is_deleted: is_deleted })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          alert('更新失敗: ' + data.message);
+          // 如果更新失敗，恢復原來的狀態
+          this.checked = !this.checked;
+        }
+      })
+      .catch(error => {
+        console.error('錯誤:', error);
+        alert('伺服器錯誤');
+        // 如果發生錯誤，恢復原來的狀態
+        this.checked = !this.checked;//如果被選取，取消選取，否則選取
+      });
+    });
+  });
+});
+</script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->

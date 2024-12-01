@@ -15,8 +15,11 @@ try {
     );
 
     $pdo = new PDO($dsn, $username, $password, $options);       // 建立 PDO 連線
-    session_start();                                           // 啟動會話
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }                                                           // 啟用 Session
 } catch (PDOException $e) {
     die("連線失敗: " . $e->getMessage());                    // 錯誤處理
 }
+
 ?>
