@@ -4,9 +4,6 @@
   height: 100%;
   width: 100%;
 }
-.fa-sort-down{
-  transform: translateX (-2px);
-}
 </style>
 <!--     Fonts and icons     -->
   <link
