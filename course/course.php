@@ -15,9 +15,6 @@
 <?php
 require_once("../db_connect.php");
 
-$pageName = basename($_SERVER['PHP_SELF'], ".php");
-$title = "課程列表";
-
 // 每頁顯示五筆資料
 $limit = 5;
 
@@ -110,12 +107,27 @@ $result = $conn->query($sql);
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'course'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <?php $page = 'course'; ?>
-    <?php include 'navbar.php'; ?>
+    <?php
+    $breadcrumbs = [
+      'users' => '首頁',
+      'course' => '課程管理',
+    ];
+
+    $page = 'course';
+
+    $breadcrumbLinks = [
+      'users' => '../users.php',
+      'course' => 'course.php',
+    ];
+
+    include '../navbar.php';
+    ?>
+
     <!-- Navbar -->
 
 
