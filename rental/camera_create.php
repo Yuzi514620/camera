@@ -1,36 +1,114 @@
 <?php
-require_once("../db_connect.php");  // 資料庫連接
+// 連接資料庫
+require_once("../db_connect.php");
 
-$title="媒體庫管理";
+$title = "新增相機";
 
-// 確認資料庫連接是否成功
+// 檢查資料庫連接是否成功
+if (!$conn) {
+    die("資料庫連接失敗: " . mysqli_connect_error());
+}
 
-// 撈資料庫
-$sql = "SELECT * FROM images";
-$result = $conn->query($sql);
+// 取得所有 image 資料
+$sql_images = "SELECT id, name, type, description, image_url FROM images";
+$result_images = $conn->query($sql_images);
 
-include("/link.php");
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // 獲取來自表單的資料
+    $fee = intval($_POST['fee']);
+    $deposit = intval($_POST['deposit']);
+    $stock = intval($_POST['stock']);
+    $image_id = intval($_POST['image_id']);
+
+    // 插入新的 camera 資料，並設置 is_deleted 為 1
+    $sql_insert = "INSERT INTO camera (fee, deposit, stock, image_id, is_deleted) VALUES (?, ?, ?, ?, 1)";
+    $stmt = $conn->prepare($sql_insert);
+    if ($stmt) {
+        $stmt->bind_param("iiii", $fee, $deposit, $stock, $image_id);
+
+        if ($stmt->execute()) {
+            echo "Camera 資料新增成功";
+            header("Location: camera_list.php");
+        } else {
+            echo "錯誤: " . $stmt->error;
+        }
+
+        $stmt->close();
+    } else {
+        echo "錯誤: 無法準備 SQL 語句 - " . $conn->error;
+    }
+
+    $conn->close();
+    exit;
+}
 ?>
+<!-- 模態框 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title" id="exampleModalLabel"><?=$title?></h5>
+                    <button type="button" class="btn-close btn btn-borderless text-secondary text-lg m-0" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 這裡的內容可以是不同的 -->
+                    <?php if ($_SERVER['REQUEST_METHOD'] != 'POST') { ?>
+                    <form method="POST" action="camera_create.php">
+                    <table class="table table-bordered">
+                            <tr>
+                                <th><label for="image_id">選擇圖片</label></th>
+                                <td>
+                                    <select id="image_id" name="image_id" style="width:100%" onchange="showImage()" required>
+                                        <?php
+                                        if ($result_images && $result_images->num_rows > 0) {
+                                            while ($row = $result_images->fetch_assoc()) {
+                                                echo "<option value='" . $row['id'] . "'>" . $row['name'] . " (" . $row['type'] . ") ". "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value=''>沒有可用的圖片</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label for="fee">租金</label></th>
+                                <td><input type="number" id="fee" name="fee" class="form-control p-0" required></td>
+                            </tr>
+                            <tr>
+                                <th><label for="deposit">押金</label></th>
+                                <td><input type="number" id="deposit" name="deposit" class="form-control p-0" required></td>
+                            </tr>
+                            <tr>
+                                <th><label for="stock">庫存</label></th>
+                                <td><input type="number" id="stock" name="stock" class="form-control p-0" required></td>
+                            </tr>  
+                        </table>
+                        <div class="modal-footer pb-0">
+                            <button type="submit" class="btn btn-primary">新增</button>
+                        </div>
+                    </form>
+                <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-        <h1>上傳多張圖片</h1>  
-        <form id="uploadForm" action="doUpload2.php" method="post" enctype="multipart/form-data">  
-            <div class="mb-2">  
-                <label for="type" class="form-label">類型</label>  
-                <input type="text" class="form-control" name="type" required>  
-            </div>  
-            <div class="mb-2">  
-                <label for="description" class="form-label">描述</label>  
-                <textarea class="form-control" name="description" rows="3"></textarea>  
-            </div>  
-            <div id="fileInputsContainer" class="mb-2">  
-                <div class="row mb-2">  
-                    <div class="col">  
-                        <label for="myFile" class="form-label">選擇檔案</label>  
-                        <input type="file" class="form-control" name="myFile[]" accept="image/*" required multiple>  
-                    </div>  
-                </div>  
-            </div>  
-            <button type="button" id="addFileInput" class="btn btn-secondary">新增檔案名稱</button>  
-            <button class="btn btn-primary" type="submit">送出</button>  
-        </form>  
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var myModal = document.getElementById('exampleModal');
+    myModal.addEventListener('show.bs.modal', function (event) {
+        // 在這裡你可以用 AJAX 從伺服器獲取資料並顯示在模態框中
+        fetch('camera_details.php')
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('#exampleModal .modal-content').innerHTML = data;
+            });
+    });
+});
+</script>

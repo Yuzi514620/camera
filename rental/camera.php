@@ -21,14 +21,14 @@ if ($result && $camera = $result->fetch_assoc()) {
 
 ?>
 
-<div class="modal fade" id="cameraModal<?= $id ?>" tabindex="-1" role="dialog">
+<div class="modal fade" id="cameraModal<?= $id ?>" data-id="<?= $camera['id'] ?>" tabindex="-1" role="dialog">
     <div div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <!-- 相機名稱 -->
                 <h5 class="modal-title"><?=$title?></h5>
                 <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
-                <span aria-hidden="true ">&times;</span>
+                <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -69,7 +69,7 @@ if ($result && $camera = $result->fetch_assoc()) {
                 <!-- 按鈕用於打開 camera_edit.php -->
                 <button type="button" 
                         class="btn btn-primary modalChange" 
-                        data-id="<?= $id ?>" 
+                        data-id="<?= $camera['id'] ?>" 
                         data-target="camera_edit.php">編輯
                 </button>
             </div>

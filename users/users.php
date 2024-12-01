@@ -1,54 +1,5 @@
 <?php require_once("../db_connect.php");
 
-
-// $per_page = 10;
-// $sqlAll = "SELECT * FROM users WHERE is_deleted=0";
-// $resultAll = $conn->query($sqlAll);
-// $userAllCount = $resultAll->num_rows;
-
-// if (isset($_GET["search"])) {
-//   $search = $_GET["search"];
-//   $sql = "SELECT * FROM users WHERE name LIKE '%$search%' AND is_deleted=0";
-// } else if (isset($_GET["p"])) {
-//   $p = $_GET["p"];
-//   if (!isset($_GET["order"])) {
-//       header("location: users.php?p=1&order=1");
-//   }
-//   $order = $_GET["order"];
-//   $start_item = ($p - 1) * $per_page;
-//   $total_page = ceil($userAllCount / $per_page);
-//   $whereClause="";
-//   switch($order){
-//       case 1:
-//           $whereClause="ORDER BY id ASC";
-//           break;
-//       case 2:
-//           $whereClause="ORDER BY id DESC";
-//           break;
-//       case 3:
-//           $whereClause="ORDER BY account ASC";
-//           break;
-//       case 4:
-//           $whereClause="ORDER BY account DESC";
-//           break;
-//   }
-//   $sql = "SELECT * FROM users WHERE is_deleted=0 
-//       $whereClause
-//       LIMIT $start_item, $per_page";
-
-// } else {
-//   header("location: users.php?p=1&order=1");
-// }
-// $result = $conn->query($sql);
-// if (isset($_GET["search"])) {
-//   $user_count = $result->num_rows;
-// } else {
-//   $user_count = $userAllCount;
-// }
-
-// $rows = $result->fetch_all(MYSQLI_ASSOC);
-// 
-
 // 搜尋 //
 $per_page = 8;
 $sqlAll = "SELECT * FROM users WHERE is_deleted=0";
@@ -76,15 +27,7 @@ if (isset($_GET["search"])) {
   $start_item = ($p - 1) * $per_page;
   $total_page = ceil($userAllCount / $per_page);
 
-  // if ($order == 1) {
-  //   $sql = "SELECT * FROM users WHERE is_deleted=0
-  //  ORDER BY id ASC
-  //  LIMIT $start_item, $per_page";
-  // } else if ($order == 2) {
-  //   $sql = "SELECT * FROM users WHERE is_deleted=0
-  //  ORDER BY id DESC 
-  //  LIMIT $start_item, $per_page";
-  // }
+
   switch ($order) {
     case 1:
       $whereClause = "ORDER BY id ASC";
@@ -194,25 +137,23 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 <body class="g-sidenav-show bg-gray-100">
 
-  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          確認刪除該帳號?
-        </div>
-        <div class="modal-footer">
-
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-          <a href="doDeleted.php?id=<?= $row["id"] ?> " class="btn btn-danger">確認</a>
-
-        </div>
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        確認刪除該帳號?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">確認</a>
       </div>
     </div>
   </div>
+</div>
 
   <!-- 側邊欄 -->
   <?php $page = 'users'; ?>
@@ -544,6 +485,20 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.fa-trash-can');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const userId = this.closest('tr').querySelector('.text-xs.font-weight-bold').textContent;
+        confirmDeleteBtn.href = `doDeleted.php?id=${userId}`;
+      });
+    });
+  });
+</script>
 </body>
 
 </html>

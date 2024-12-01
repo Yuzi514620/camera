@@ -39,18 +39,42 @@ $sql = "SELECT camera.*, images.name AS image_name, images.description AS image_
         WHERE camera.id = $id";
 
 $result = $conn->query($sql);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_image') {
+    $cameraId = intval($_POST['camera_id']);
+    $imageId = intval($_POST['image_id']);
+
+    if ($cameraId > 0 && $imageId > 0) {
+        $sql = "UPDATE camera SET image_id = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ii', $imageId, $cameraId);
+
+        if ($stmt->execute()) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => '更新失敗']);
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => '無效的 camera_id 或 image_id']);
+    }
+    exit;
+}
+
+$camera_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+
 if ($result && $camera = $result->fetch_assoc()) {
 
 ?>
 
-<div class="modal fade" id="cameraModal<?= $id ?>" tabindex="-1" role="dialog">
+<div class="modal fade" id="cameraEditModal<?= $id ?>" data-id="<?= $camera['id'] ?>" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
-                <!-- 相機名稱 -->
+
                 <h5 class="modal-title"><?=$title?></h5>
                 <button type="button" class="modalClose btn btn-borderless text-secondary text-lg m-0" aria-label="Close">
-                    <span aria-hidden="true ">&times;</span>
+                    <span>&times;</span>
                 </button>
             </div>
             <form id="updateForm" method="POST">
@@ -90,63 +114,38 @@ if ($result && $camera = $result->fetch_assoc()) {
                             </table>
                     </div>
                 </div>
-                <div class="modal-footer d-flex justify-content-between align-items-center">
-                    <div>
-                        <button type="button" 
-                                class="btn btn-info" 
-                                data-toggle="modal" 
-                                data-id="<?= $albumId ?>" 
-                                data-target="album.php">更換圖片
-                        </button>
-                    </div>
-                    <div>                        
+                <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">儲存</button>
                         <button type="button" 
-                                class="btn btn-primary modalChange"
-                                data-id="<?= $id ?>" 
+                                class="btn btn-secondary modalChange"
+                                data-id="<?= $camera['id'] ?>" 
                                 data-target="camera.php">返回
                         </button>
-                    </div>
                 </div>                    
             </form>
         </div>
     </div>
 </div>
 
-<script>
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_image') {
-    $image_id = $_POST['image_id'];
-    $camera_id = $_POST['camera_id'];
 
-    // 查詢圖片的相關資料
-    $sql = "SELECT image_url, image_type, image_name FROM images WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $image_id);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
+<?php
 
-    if ($result) {
-        $image_url = $result['image_url'];
-        $image_type = $result['image_type'];
-        $image_name = $result['image_name'];
+// if ($_POST['action'] == 'save_data') {
+//     $camera_id = $_POST['camera_id'];
+//     // 處理儲存邏輯，例如更新資料庫
+//     $update_sql = "UPDATE cameras SET updated_at = NOW() WHERE id = ?";
+//     $stmt = $conn->prepare($update_sql);
+//     $stmt->bind_param('i', $camera_id);
+//     $stmt->execute();
 
-        // 更新 camera 資料
-        $update_sql = "UPDATE cameras SET image_url = ?, image_type = ?, image_name = ? WHERE id = ?";
-        $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->bind_param('sssi', $image_url, $image_type, $image_name, $camera_id);
-        if ($update_stmt->execute()) {
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => '更新失敗']);
-        }
-    } else {
-        echo json_encode(['status' => 'error', 'message' => '無法找到圖片']);
-    }
-    exit;
-}
-</script>
-
-
+//     if ($stmt->affected_rows > 0) {
+//         echo json_encode(['status' => 'success']);
+//     } else {
+//         echo json_encode(['status' => 'error']);
+//     }
+//     exit;
+// }
+?>
 
 <?php
 } else {
