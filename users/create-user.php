@@ -5,54 +5,6 @@ $sql = "SELECT * FROM users WHERE is_deleted=0";
 $result=$conn->query($sql);
 $row=$result->fetch_assoc();
 
-// $per_page = 10;
-// $sqlAll = "SELECT * FROM users WHERE is_deleted=0";
-// $resultAll = $conn->query($sqlAll);
-// $userAllCount = $resultAll->num_rows;
-
-// if (isset($_GET["search"])) {
-//   $search = $_GET["search"];
-//   $sql = "SELECT * FROM users WHERE name LIKE '%$search%' AND is_deleted=0";
-// } else if (isset($_GET["p"])) {
-//   $p = $_GET["p"];
-//   if (!isset($_GET["order"])) {
-//       header("location: users.php?p=1&order=1");
-//   }
-//   $order = $_GET["order"];
-//   $start_item = ($p - 1) * $per_page;
-//   $total_page = ceil($userAllCount / $per_page);
-//   $whereClause="";
-//   switch($order){
-//       case 1:
-//           $whereClause="ORDER BY id ASC";
-//           break;
-//       case 2:
-//           $whereClause="ORDER BY id DESC";
-//           break;
-//       case 3:
-//           $whereClause="ORDER BY account ASC";
-//           break;
-//       case 4:
-//           $whereClause="ORDER BY account DESC";
-//           break;
-//   }
-//   $sql = "SELECT * FROM users WHERE is_deleted=0 
-//       $whereClause
-//       LIMIT $start_item, $per_page";
-
-// } else {
-//   header("location: users.php?p=1&order=1");
-// }
-// $result = $conn->query($sql);
-// if (isset($_GET["search"])) {
-//   $user_count = $result->num_rows;
-// } else {
-//   $user_count = $userAllCount;
-// }
-
-// $rows = $result->fetch_all(MYSQLI_ASSOC);
-// 
-
 
 $sql = "SELECT * FROM users";
 $result = $conn->query($sql);

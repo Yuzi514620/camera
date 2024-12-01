@@ -216,7 +216,7 @@ include("../rental/link.php");
             $('#loadModalButton').click(function () {
                 // 使用 AJAX 加載模態框內容
                 $.ajax({
-                    url: 'images_create.php', // 請求目標
+                    url: '../album/images_create.php', // 請求目標
                     method: 'GET', // 請求方法
                     success: function (data) {
                         $('#albumModalContainer').html(data); // 將回應的 HTML 插入到容器中

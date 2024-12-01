@@ -4,12 +4,44 @@ require_once("../db_connect.php");
 $title = isset($_GET["search"]) ? "搜尋結果：" . htmlspecialchars($_GET["search"]) : "租借列表";
 
 // 搜尋條件
-$whereClause = "1=1";
+$is_deleted = isset($_GET['is_deleted']) ? $_GET['is_deleted'] : 0;
+
+if ($is_deleted == 1) {
+    $whereClause = "is_deleted = 1";
+    $buttonText = "顯示上架商品";
+} else {
+    $whereClause = "is_deleted = 0";
+    $buttonText = "顯示下架商品";
+}
+
+// 搜尋欄位處理
 $search = isset($_GET["search"]) ? trim($_GET["search"]) : '';
 if (!empty($search)) {
     $search_escaped = $conn->real_escape_string($search);
     $whereClause .= " AND (images.name LIKE '%$search_escaped%' OR images.description LIKE '%$search_escaped%')";
 }
+
+// 排序邏輯 - 新增 order 參數控制排序方向
+$order = isset($_GET["order"]) ? $_GET["order"] : 'i1'; // 默認為按 id 降序排序
+// 設定排序欄位和方向
+switch ($order) {
+  case 'i0':
+      $order_by = 'camera.id ASC';
+      break;
+  case 'i1':
+      $order_by = 'camera.id DESC';
+      break;
+  case 's0':
+      $order_by = 'camera.stock ASC';
+      break;
+  case 's1':
+      $order_by = 'camera.stock DESC';
+      break;
+  default:
+      $order_by = 'camera.id DESC'; // 默認為 id 降序排序
+      break;
+}
+
 
 // 設定分頁
 $items_per_page = 10;
@@ -29,7 +61,7 @@ $sql = "SELECT camera.*, images.name AS image_name, images.description AS image_
         FROM camera
         JOIN images ON camera.image_id = images.id
         WHERE $whereClause
-        ORDER BY camera.id DESC
+        ORDER BY $order_by
         LIMIT $items_per_page OFFSET $offset";
 $result = $conn->query($sql);
 $cameras = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
@@ -42,7 +74,12 @@ $imageArr = [];
 foreach ($images as $image) {
     $imageArr[$image["id"]] = $image["name"];
 }
+
+$new_order = ($order === 'asc') ? 'desc' : 'asc';
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -88,12 +125,15 @@ foreach ($images as $image) {
           </form>          
           <!-- 新增 -->
           <div>
+            <button class="btn btn-secondary" 
+                    id="toggleButton" 
+                    onclick="toggleDeleted(<?php echo $newIsDeletedValue; ?>)"><?= $buttonText ?>
+            </button>
             <button type="button" 
                     class="btn btn-success" 
                     data-toggle="modal" 
                     data-target="camera_create.php">新增相機
             </button>
-            <a class="btn btn-dark" href="create-user.php" title="新增使用者"><i class="fa-solid fa-fw fa-user-plus"></i></a>
           </div>
         </div>
 
@@ -106,32 +146,38 @@ foreach ($images as $image) {
           <table class="table align-items-center mb-0">
             <thead class="bg-gradient-dark">
               <tr>
-                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  選擇</th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 text-white">
-                  圖片</th>
+                  出租商品
+                  <?php if ($order === 'i1'): ?>
+                      <a href="camera_list.php?order=i0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="camera_list.php?order=i1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>                  
+                </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   規格</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white">
                   租金 / 押金</th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
-                  庫存</th>
+                  庫存
+                  <?php if ($order === 's1'): ?>
+                      <a href="camera_list.php?order=s0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="camera_list.php?order=s1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>
+                </th>
                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
                   狀態</th>
                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
                   編輯</th>
                 <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  刪除</th>
+                  上架</th>
               </tr>
             </thead> 
             <tbody>
             <?php foreach($cameras as $camera): ?>
               <tr>
-                <!-- 選擇 check box -->
-                <td class="text-center">
-                  <input type="checkbox" name="selected[]" value="<?= $camera['id'] ?>">
-                </td>
-                <!-- 圖片 -->
+                <!-- 商品 -->
                 <td>                        
                   <div class="d-flex px-2 py-1">
                     <div>
@@ -177,15 +223,27 @@ foreach ($images as $image) {
                       <i class="fa-regular fa-pen-to-square"></i>
                   </button>
                 </td>
-                <!-- 刪除 -->
                 <td class="align-middle text-center">
-                  <a href="delete.php?id=<?= $camera['id'] ?>"
-                    class="text-secondary font-weight-bold text-xs"
-                    data-toggle="tooltip"
-                    data-original-title="Delete">
-                    <i class="fa-regular fa-trash-can"></i>
-                  </a>
-                </td>
+                  <?php if ($camera['is_deleted'] == 0): ?>
+                      <!-- 顯示刪除按鈕 -->
+                      <button type="button" 
+                              class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#deleteModal" 
+                              data-id="<?= $camera['id'] ?>">                        
+                          <i class="fa-regular fa-trash-can"></i> <!-- 刪除圖標 -->
+                      </button>
+                  <?php else: ?>
+                      <!-- 顯示還原按鈕 -->
+                      <button type="button" 
+                              class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#revertModal" 
+                              data-id="<?= $camera['id'] ?>">                        
+                          <i class="fa-solid fa-rotate-left"></i> <!-- 還原圖標 -->
+                      </button>
+                  <?php endif; ?>
+              </td>
               </tr>
               <?php endforeach; ?>
             </tbody>
@@ -247,6 +305,46 @@ foreach ($images as $image) {
   <div id="cameraModalContainer"></div>
   <div id="albumModalContainer"></div>
 
+<!-- 刪除專用 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">商品下架</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                你確定要下架嗎？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmDelete" class="btn btn-danger">下架</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 復原專用 -->
+<div class="modal fade" id="revertModal" tabindex="-1" aria-labelledby="revertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">商品上架</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                你確定要上架嗎？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmRevert" class="btn btn-danger">上架</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  
   </main>
   
   <?php include("script.php") ?>
@@ -256,114 +354,188 @@ foreach ($images as $image) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- jQuery -->
   <script>
-    // 通用model按鈕點擊事件
-    $(document).on('click', '[data-toggle="modal"]', function () {
-        var targetUrl = $(this).data('target'); // 獲取目標 URL
-        var dataId = $(this).data('id') || null; // 獲取數據 ID（如果有）
+// 全局輔助函數
+function isValidHTML(html) {
+    const doc = document.createElement('div');
+    doc.innerHTML = html;
+    return doc.children.length > 0;
+}
 
-        // 發送 AJAX 請求
-        $.ajax({
-            url: targetUrl,
-            type: 'GET',
-            data: { id: dataId }, // 如果沒有 ID，傳遞空值
-            success: function (response) {
-                // 將返回的模態框 HTML 插入容器中
+// 通用模態框按鈕點擊事件
+$(document).on('click', '[data-toggle="modal"]', function () {
+    const targetUrl = $(this).data('target'); // 獲取目標 URL
+    const dataId = $(this).data('id');
+    const cameraId = dataId;
+
+    // 發送 AJAX 請求
+    $.ajax({
+        url: targetUrl,
+        type: 'GET',
+        data: { id: dataId }, // 如果沒有 ID，傳遞空值
+        success: function (response) {
+            if (isValidHTML(response)) {
                 $('#cameraModalContainer').html(response);
-                // 顯示模態框
-                var modal = $('#cameraModalContainer .modal');
+
+                const modal = $('#cameraModalContainer .modal');
                 modal.modal('show');
-                // 清理舊事件以避免多次綁定
-                modal.on('hidden.bs.modal', function () {
-                  modal.remove(); // 移除模態框的 DOM 元素，防止累積
+
+                // 清理模態框內容，防止累積
+                modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                    $('#cameraModalContainer').empty();
                 });
-            },
-            error: function () {
-                alert('無法加載內容，請稍後再試！');
-            },
-        });
+            } else {
+                console.error('無效的 HTML:', response);
+            }
+        },
+        error: function () {
+            alert('無法加載內容，請稍後再試！');
+        },
     });
+});
 
-    // 專屬於 open-edit-modal 的按鈕點擊事件
-    $(document).on('click', '.modalChange', function () {
-        var targetUrl = $(this).data('target'); // 獲取目標 URL
-        var dataId = $(this).data('id');       // 獲取數據 ID
-        var currentModal = $(this).closest('.modal'); // 當前模態框
+// 切換模態框的按鈕點擊事件
+$(document).on('click', '.modalChange', function () {
+    const targetUrl = $(this).data('target');
+    const dataId = $(this).data('id');
+    const cameraId = dataId;
+    const currentModal = $(this).closest('.modal');
 
-        // 關閉當前模態框
-        currentModal.modal('hide');
+    currentModal.modal('hide'); // 關閉當前模態框
 
-        // AJAX 請求加載目標模態框
-        $.ajax({
-            url: targetUrl,
-            type: 'GET',
-            data: { id: dataId },
-            success: function (response) {
-                // 插入返回的模態框 HTML
+    // AJAX 請求加載新模態框
+    $.ajax({
+        url: targetUrl,
+        type: 'GET',
+        data: { id: dataId },
+        success: function (response) {
+            if (isValidHTML(response)) {
                 $('#cameraModalContainer').html(response);
 
-                // 顯示新的模態框
-                var newModal = $('#cameraModalContainer .modal');
+                const newModal = $('#cameraModalContainer .modal');
                 newModal.modal('show');
 
-                // 清理舊事件，避免重複綁定
-                newModal.on('hidden.bs.modal', function () {
-                    newModal.remove(); // 移除 DOM，防止累積
+                // 清理新模態框內容
+                newModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                    $('#cameraModalContainer').empty();
                 });
-            },
-            error: function () {
-                alert('無法加載內容，請稍後再試！');
-            },
-        });
+            } else {
+                console.error('無效的 HTML:', response);
+            }
+        },
+        error: function () {
+            alert('無法加載內容，請稍後再試！');
+        },
     });
+});
 
-    // 更新提示
-    $(document).on('submit', '#updateForm', function (e) {
-        e.preventDefault(); // 防止默認表單提交行為
+// 提交表單（如更新）
+$(document).on('submit', '#updateForm', function (e) {
+    e.preventDefault();
 
-        $.ajax({
-            url: 'camera_edit.php',
-            type: 'POST',
-            data: $(this).serialize(), // 序列化表單數據
-        });
+    $.ajax({
+        url: 'camera_edit.php',
+        type: 'POST',
+        data: $(this).serialize(), // 序列化表單數據
+        success: function (response) {
+            alert('更新成功！');
+            location.reload(); // 刷新頁面
+        },
+        error: function () {
+            alert('更新失敗，請稍後再試！');
+        },
     });
-</script>
+});
 
-<script>
-  document.addEventListener('click', function (e) {
+// 分頁超鏈接點擊事件
+document.addEventListener('click', function (e) {
     if (e.target.classList.contains('album-page-link')) {
-        e.preventDefault(); // 阻止默認的超鏈接行為
+        e.preventDefault();
 
-        // 取得分頁目標 URL
         const url = e.target.href;
 
-        // 通過 AJAX 請求更新 album 區域的內容
         fetch(url)
             .then(response => response.text())
             .then(data => {
-                // 將響應內容插入到 album 的容器中
-                document.getElementById('albumContainer').innerHTML = data;
+                if (isValidHTML(data)) {
+                    document.getElementById('albumContainer').innerHTML = data;
+                } else {
+                    console.error('無效的 HTML:', data);
+                }
+            })
+            .catch(() => {
+                alert('分頁加載失敗，請稍後再試！');
             });
     }
 });
+
+// 自定義關閉模態框按鈕
+$(document).on('click', '.modalClose', function () {
+    const modal = $(this).closest('.modal');
+    modal.modal('hide'); // 隱藏模態框
+
+    // 隱藏後刷新頁面
+    modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        location.reload();
+    });
+});
+  </script>
+
+<!-- 刪除專用 -->
+<script>
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        // 取得觸發按鈕
+        var button = event.relatedTarget;
+        // 從按鈕的 data-id 屬性中取得相機 ID
+        var cameraId = button.getAttribute('data-id');
+        // 更新模態框中的刪除連結
+        var confirmDelete = deleteModal.querySelector('#confirmDelete');
+        confirmDelete.href = 'doDelete.php?id=' + cameraId;
+    });
 </script>
 
+<!-- 復原專用 -->
+<script>
+    var revertModal = document.getElementById('revertModal');
+    revertModal.addEventListener('show.bs.modal', function (event) {
+        // 取得觸發按鈕
+        var button = event.relatedTarget;
+        // 從按鈕的 data-id 屬性中取得相機 ID
+        var cameraId = button.getAttribute('data-id');
+        // 更新模態框中的刪除連結
+        var confirmRevert = revertModal.querySelector('#confirmRevert');
+        confirmRevert.href = 'doRevert.php?id=' + cameraId;
+    });
+</script>
 
+<!-- 切換刪除/沒有刪除 -->
+<script>
+    document.getElementById("toggleButton").addEventListener("click", function () {
+        // 判斷 URL 中是否有 is_deleted 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        let is_deleted = urlParams.get('is_deleted');
+        
+        // 切換 is_deleted 值
+        if (is_deleted == 1) {
+            is_deleted = 0; // 切換回顯示未刪除
+        } else {
+            is_deleted = 1; // 切換成顯示已刪除
+        }
+
+        // 更新 URL 並重新載入頁面
+        urlParams.set('is_deleted', is_deleted);
+        window.location.search = urlParams.toString();
+    });
+</script>
 
 <script>
-    // 自定義關閉模態框
-    $(document).on('click', '.modalClose', function () {
-      var modal = $(this).closest('.modal'); // 獲取當前模態框
-
-      // 使用 Bootstrap 的方法關閉模態框
-      modal.modal('hide'); // 正確隱藏模態框
-
-      // 在模態框完全隱藏後移除 HTML，防止累積
-      modal.on('hidden.bs.modal', function () {
-          // modal.remove();
-          location.reload();
-      });
-  });
-  </script>
+    function toggleDeleted(newIsDeletedValue) {
+        // 更新 URL 的 is_deleted 參數，並重新載入頁面
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('is_deleted', newIsDeletedValue);
+        window.location.search = urlParams.toString();
+    }
+</script>
 </body>
 
 </html>
