@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt_update->bind_param("siiisssssi", $title, $price, $teacher_id, $category_id, $apply_start, $apply_end, $course_start, $course_end, $description, $course_id);
 
     if ($stmt_update->execute()) {
-        header("Location: course.php?message=更新成功");
+        header("Location: course_info.php?id=$course_id&message=更新成功");
         exit();
     } else {
         echo "更新失敗: " . $conn->error;
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'course'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->

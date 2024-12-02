@@ -137,7 +137,7 @@ $result = $conn->query($sql);
     ?>
 
 
-    <div class="container-fluid pt-2 mt-3">
+    <div class="container-fluid pt-2 mt-5">
 
       <!-- 搜尋欄位 -->
       <div class="d-flex justify-content-between align-items-center p-0">

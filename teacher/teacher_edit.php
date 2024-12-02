@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt_update->bind_param("ssssi", $name, $info, $email, $phone, $teacher_id);
 
     if ($stmt_update->execute()) {
-        header("Location: teacher.php?message=更新成功");
+        header("Location: teacher_info.php?id=$teacher_id&message=更新成功");
         exit();
     } else {
         echo "更新失敗: " . $conn->error;

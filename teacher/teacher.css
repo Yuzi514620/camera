@@ -69,3 +69,33 @@ input[type="datetime-local"] {
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
+/* bootstrap按鈕顏色 */
+.page-item.active .page-link {
+  background-color: #787878;
+  border: #787878;
+}
+
+.card-body {
+  padding: 0;
+}
+
+a:hover {
+  text-decoration: none !important;
+}
+
+.card {
+  border-radius: 0.5rem;
+}
+
+.card-header {
+  border-radius: 0.5rem !important;
+}
+
+.table thead {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.table thead th {
+  border: none;
+}

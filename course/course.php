@@ -140,7 +140,7 @@ $result = $conn->query($sql);
     <!-- Navbar -->
 
 
-    <div class="container-fluid pt-2 mt-6">
+    <div class="container-fluid pt-2 mt-5">
       <!-- 搜尋欄位 -->
       <div class="d-flex justify-content-between align-items-center p-0">
         <div class="d-flex">
@@ -406,29 +406,15 @@ $result = $conn->query($sql);
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var deleteButtons = document.querySelectorAll('.delete-btn');
-
-      deleteButtons.forEach(function(button) {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          var row = e.target.closest("tr");
-          if (row) {
-            row.parentNode.removeChild(row);
-          }
+      document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          document.getElementById('confirmDeleteBtn').href = `course_delete.php?id=${id}`;
         });
       });
     });
   </script>
 
-  <script>
-    $(document).ready(function() {
-      // 當點擊刪除按鈕時，設定要刪除的課程ID
-      $('.delete-btn').on('click', function() {
-        var courseId = $(this).data('id');
-        $('#confirmDeleteBtn').attr('href', 'course_delete.php?id=' + courseId);
-      });
-    });
-  </script>
 
   <!-- <?php if (isset($_GET['message']) && $_GET['message'] === 'success'): ?>
     <script>
