@@ -91,13 +91,13 @@ $categories_result = $conn->query($sql_categories);
         <?php
         // 設定麵包屑的層級
         $breadcrumbs = [
-          'teacher' => '首頁', // 第一層的文字
-          'teacher_list' => '商品管理', // 第一層的文字
-          'teacher_add' => '編輯商品', // 第二層的文字
+            'teacher' => '首頁', // 第一層的文字
+            'teacher_list' => '商品管理', // 第一層的文字
+            'teacher_add' => '編輯商品', // 第二層的文字
 
-          ];
+        ];
 
-        $page = 'teacher_add';//當前的頁面
+        $page = 'teacher_add'; //當前的頁面
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
@@ -111,8 +111,6 @@ $categories_result = $conn->query($sql_categories);
         <!-- Navbar -->
 
         <div class="container-fluid py-2">
-            <a href="product.php" class="btn btn-dark"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
-
             <div class="row">
                 <div class="col-12">
                     <div class="card my-4">
@@ -126,39 +124,28 @@ $categories_result = $conn->query($sql_categories);
                                                 編輯商品
                                             </th>
                                         </tr>
-
                                     </thead>
                                     <tbody>
-                                        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        確認刪除該帳號
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                        <a href="doDelete.php?id=<?= $row["id"] ?>" class="btn btn-danger">確認</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="container">
                                             <?php if ($result->num_rows > 0): ?>
                                                 <form action="updateProduct.php" method="post">
                                                     <table class="table table-bordered">
                                                         <input type="hidden" name="id" value="<?= $row["id"] ?>">
                                                         <tr>
-                                                            <th>id</th>
-                                                            <td><?= $row["id"] ?></td>
-                                                        </tr>
-                                                        <tr>
                                                             <th>商品名稱</th>
                                                             <td>
                                                                 <input type="text" class="form-control" name="name" value="<?= $row["name"] ?>">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>編輯圖片</th>
+                                                            <td>
+                                                                <?php if (!empty($row["image"])): ?>
+                                                                    <img src="../uploads/<?= htmlspecialchars($row["image"]) ?>" alt="商品圖片" style="max-width: 150px; margin-bottom: 10px;">
+                                                                <?php else: ?>
+                                                                    <p>尚未上傳圖片</p>
+                                                                <?php endif; ?>
+                                                                <input type="file" class="form-control" name="image">
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -170,14 +157,12 @@ $categories_result = $conn->query($sql_categories);
                                                         <tr>
                                                             <th>品牌</th>
                                                             <td>
-                                                                <!-- <label for="brand_id" class="form-label">品牌：</label> -->
                                                                 <select name="brand_id" id="brand_id" class="form-select ps-2">
-                                                                    <option value="0">-請選擇品牌-</option>
-                                                                    <option value="1">Leica</option>
-                                                                    <option value="2">Nikon</option>
-                                                                    <option value="3">Sony</option>
-                                                                    <option value="4">Hasselblad</option>
-                                                                    <option value="5">Canon</option>
+                                                                    <?php while ($brand = $brands_result->fetch_assoc()): ?>
+                                                                        <option value="<?= $brand['brand_id'] ?>" <?= $row["brand_id"] == $brand['brand_id'] ? "selected" : "" ?>>
+                                                                            <?= htmlspecialchars($brand['brand_name']) ?>
+                                                                        </option>
+                                                                    <?php endwhile; ?>
                                                                 </select>
                                                             </td>
                                                         </tr>
@@ -185,10 +170,11 @@ $categories_result = $conn->query($sql_categories);
                                                             <th>種類</th>
                                                             <td>
                                                                 <select name="category_id" id="category_id" class="form-select ps-2">
-                                                                    <option value="0">-請選擇種類-</option>
-                                                                    <option value="1">相機</option>
-                                                                    <option value="2">鏡頭</option>
-                                                                    <option value="3">配件</option>
+                                                                    <?php while ($category = $categories_result->fetch_assoc()): ?>
+                                                                        <option value="<?= $category['category_id'] ?>" <?= $row["category_id"] == $category['category_id'] ? "selected" : "" ?>>
+                                                                            <?= htmlspecialchars($category['category_name']) ?>
+                                                                        </option>
+                                                                    <?php endwhile; ?>
                                                                 </select>
                                                             </td>
                                                         </tr>
