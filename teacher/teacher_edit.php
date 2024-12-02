@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $page = 'teacher_edit';
 
         $breadcrumbLinks = [
-            'users' => '../users.php',
+            'users' => '../users/users.php',
             'teacher' => 'teacher.php',
             'teacher_edit' => 'teacher_edit.php',
         ];

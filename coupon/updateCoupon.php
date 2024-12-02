@@ -264,7 +264,6 @@ try {
             form_data.append('accessories', accessories);
             form_data.append('brandText', brandText);
             form_data.append('accessoriesText', accessoriesText);
-
             return form_data;
         }
     </script>

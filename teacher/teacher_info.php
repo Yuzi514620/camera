@@ -111,7 +111,7 @@ $teacher = $result->fetch_assoc();
         $page = 'teacher_info';
 
         $breadcrumbLinks = [
-            'users' => '../users.php',
+            'users' => '../users/users.php',
             'teacher' => 'teacher.php',
             'teacher_info' => 'teacher_info.php',
         ];
