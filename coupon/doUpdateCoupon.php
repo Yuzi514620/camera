@@ -37,14 +37,17 @@
         exit;
     }
     $uploadImg = $_FILES['file']['name'];
-    $concatStr = $accessoriesText.$name;
-    if($brandText != $accessoriesText){
-        $concatStr = $brandText.$accessoriesText.$name;
+    
+    $concatStr = $name;
+    if($brandText != '' && $accessoriesText != ''){
+        $str = strrchr($name, (String)($discount*100));
+        $concatStr = $brandText.$accessoriesText.$str;
     }
     $pdoSql = "UPDATE `coupon`
-                SET `name` = ?, `end_date`,`discount` = ?, `lower_purchase` = ?, `quantity` = ?, `img` = ?, `brand` = ?, `accessories`=?
+                SET `name` = ?, `end_date` = ?, `discount` = ?, `lower_purchase` = ?, `quantity` = ?, `img` = ?, `brand` = ?, `accessories`=?
                 WHERE `coupon`.`id` = ?";
- 
+    
+
     $stmt = $db_host->prepare($pdoSql);
     try{
         $stmt->execute([$concatStr,$newTimeEnd,$discount,$lower_purchase,$quantity,$uploadImg,$brand,$accessories,$id]);
