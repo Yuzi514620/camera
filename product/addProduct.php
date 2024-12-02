@@ -1,17 +1,3 @@
-<!--
-=========================================================
-* Material Dashboard 3 - v3.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <?php
 require_once("../db_connect.php");
 
@@ -37,7 +23,6 @@ INNER JOIN
     image i ON p.name = i.name  -- 條件：product 的 name 必須匹配 image 的 name  
 WHERE  
     p.is_deleted = 0";
-
 
 $result = $conn->query($sql);
 $products = $result->fetch_all(MYSQLI_ASSOC);
@@ -86,7 +71,37 @@ $conn->close();
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous" />
 </head>
+<style>
+  .custom-header th {
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #1a1a1a, #333);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.9;
+    border-bottom: none !important;
+    /* 移除底部邊框 */
+    padding-bottom: 0;
+    /* 確保內邊距不導致間距 */
+  }
+
+  .table {
+    margin-top: 0 !important;
+    /* 移除可能的頂部間距 */
+  }
+
+  .card-body {
+    padding: 0 !important;
+    /* 確保父容器無內間距 */
+  }
+</style>
 
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
@@ -123,13 +138,10 @@ $conn->close();
           <div class="card my-4">
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
-                <table class="table table-bordered">
-                  <thead class="bg-gradient-dark">
+                <table class="table align-items-center mb-0">
+                  <thead class="custom-header">
                     <tr>
-                      <th
-                        class=" text-uppercase text-secondary text-xl opacity-7 text-white" colspan="10">
-                        新增商品
-                      </th>
+                      <th colspan="10">新增商品</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -161,7 +173,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="brand_id" class="form-label">品牌：</label>
-                          <select name="brand_id" id="brand_id" class="form-select border border-dark ps-2">
+                          <select name="brand_id" id="brand_id" class="form-select ps-2">
                             <option value="0">-請選擇品牌-</option>
                             <option value="1">Leica</option>
                             <option value="2">Nikon</option>
@@ -175,7 +187,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="category_id" class="form-label">種類：</label>
-                          <select name="category_id" id="category_id" class="form-select border border-dark ps-2">
+                          <select name="category_id" id="category_id" class="form-select ps-2">
                             <option value="0">-請選擇種類-</option>
                             <option value="1">相機</option>
                             <option value="2">鏡頭</option>
@@ -194,7 +206,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="spec" class="form-label">規格：</label>
-                          <textarea class="form-control" name="spec" placeholder="輸入規格"></textarea>
+                          <textarea style="height: 250px;" class="form-control" name="spec" placeholder="輸入規格"></textarea>
                         </td>
                       </tr>
                       <!-- 狀態 -->
@@ -308,5 +320,3 @@ $conn->close();
 </body>
 
 </html>
-
-

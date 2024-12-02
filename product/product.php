@@ -1,17 +1,3 @@
-<!--
-=========================================================
-* Material Dashboard 3 - v3.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <?php
 require_once("../db_connect.php");
 
@@ -181,7 +167,6 @@ $conn->close();
 </style>
 
 <body class="g-sidenav-show bg-gray-100">
-
   <!-- 側邊欄 -->
   <?php $page = 'product'; ?>
   <?php include '../sidebar.php'; ?>
@@ -219,48 +204,48 @@ $conn->close();
 
     </div>
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-  <!-- 商品總數 -->
-  <h6 class="mt-3">共 <?= $totalData ?> 件商品</h6>
+      <!-- 商品總數 -->
+      <h6 class="mt-3">共 <?= $totalData ?> 件商品</h6>
 
-  <!-- 篩選表單 -->
-  <form action="" method="get" class="d-flex flex-wrap align-items-center gap-3">
-    <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
-    <input type="hidden" name="p" value="<?= htmlspecialchars($p) ?>">
+      <!-- 篩選表單 -->
+      <form action="" method="get" class="d-flex flex-wrap align-items-center gap-3">
+        <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
+        <input type="hidden" name="p" value="<?= htmlspecialchars($p) ?>">
 
-    <!-- 排序選單 -->
-    <select name="order" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
-      <option value="asc" <?= ($order === 'asc') ? 'selected' : '' ?>>編號由上到下</option>
-      <option value="desc" <?= ($order === 'desc') ? 'selected' : '' ?>>編號由下到上</option>
-    </select>
+        <!-- 排序選單 -->
+        <select name="order" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
+          <option value="asc" <?= ($order === 'asc') ? 'selected' : '' ?>>編號由上到下</option>
+          <option value="desc" <?= ($order === 'desc') ? 'selected' : '' ?>>編號由下到上</option>
+        </select>
 
-    <!-- 品牌選單 -->
-    <select name="brand" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
-      <option value="">全部品牌</option>
-      <?php foreach ($brands as $brand): ?>
-        <option value="<?= $brand['brand_id'] ?>" <?= ($selectedBrand == $brand['brand_id']) ? 'selected' : '' ?>>
-          <?= htmlspecialchars($brand['brand_name']) ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
+        <!-- 品牌選單 -->
+        <select name="brand" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
+          <option value="">全部品牌</option>
+          <?php foreach ($brands as $brand): ?>
+            <option value="<?= $brand['brand_id'] ?>" <?= ($selectedBrand == $brand['brand_id']) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($brand['brand_name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
 
-    <!-- 種類選單 -->
-    <select name="category" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
-      <option value="">全部種類</option>
-      <?php foreach ($categories as $category): ?>
-        <option value="<?= $category['category_id'] ?>" <?= ($selectedCategory == $category['category_id']) ? 'selected' : '' ?>>
-          <?= htmlspecialchars($category['category_name']) ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
+        <!-- 種類選單 -->
+        <select name="category" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
+          <option value="">全部種類</option>
+          <?php foreach ($categories as $category): ?>
+            <option value="<?= $category['category_id'] ?>" <?= ($selectedCategory == $category['category_id']) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($category['category_name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
 
-    <!-- 狀態選單 -->
-    <select name="state" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
-      <option value="">全部狀態</option>
-      <option value="上架" <?= ($selectedState == '上架') ? 'selected' : '' ?>>上架</option>
-      <option value="下架" <?= ($selectedState == '下架') ? 'selected' : '' ?>>下架</option>
-    </select>
-  </form>
-</div>
+        <!-- 狀態選單 -->
+        <select name="state" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
+          <option value="">全部狀態</option>
+          <option value="上架" <?= ($selectedState == '上架') ? 'selected' : '' ?>>上架</option>
+          <option value="下架" <?= ($selectedState == '下架') ? 'selected' : '' ?>>下架</option>
+        </select>
+      </form>
+    </div>
 
     <div class="row">
       <div class="col-12">
@@ -317,101 +302,89 @@ $conn->close();
                   </tr>
                 </thead>
                 <tbody>
-                  <?php foreach ($products as $product): ?>
+                  <?php if (empty($products)): ?>
                     <tr>
-                      <td class="text-center">
-                        <!-- ID -->
-                        <p class="text-xs font-weight-bold mb-0"><?= $product["id"] ?></p>
-                      </td>
-                      <td>
-                        <!-- 圖片 -->
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                              <img
-                                src="../album/upload/<?= $product["image_url"] ?>"
-                                class="avatar avatar-xxl me-3 border-radius-lg object-fit-contain"
-                                alt="">
-                            </a>
-                          </div>
-                          <div
-                            class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><?= htmlspecialchars($product["image_name"]) ?></h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <!-- 價格 -->
-                        <p class="text-xs font-weight-bold mb-0"><?= number_format($product["price"]) ?> </p>
-                      </td>
-                      <!-- 品牌 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          <?= htmlspecialchars($product["brand_name"]) ?>
-                        </p>
-                      </td>
-
-                      <!-- 電話 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          <?= htmlspecialchars($product["category_name"]) ?>
-                        </p>
-                      </td>
-                      <!-- 更新時間 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          <?= $product["updated_at"] ?>
-                        </p>
-                      </td>
-                      <!-- 庫存 -->
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">
-                          <?= $product["stock"] ?>
-                        </p>
-                      </td>
-                      <!-- 狀態 -->
-                      <td class="text-center">
-                        <span
-                          class="text-xs font-weight-bold mb-0"
-                          style="
-            padding: 2px 8px; 
-            border-radius: 4px;
-            background-color: <?= $product['state'] === '上架' ? '#d4edda' : ($product['state'] === '下架' ? '#f8d7da' : 'transparent') ?>;
-            color: <?= $product['state'] === '上架' ? '#155724' : ($product['state'] === '下架' ? '#721c24' : '#000') ?>;">
-                          <?= htmlspecialchars($product["state"]) ?>
-                        </span>
-                      </td>
-                      <!-- 編輯 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="product-edit.php?id=<?= $product['id'] ?>"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                      </td>
-                      <!-- 檢視 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="product-content.php?id=<?= $product['id'] ?>"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-eye"></i>
-                        </a>
-                      </td>
-                      <!-- 刪除 -->
-                      <td class="align-middle text-center">
-                        <a
-                          href="doDelete.php?id=<?= $product['id'] ?>"
-                          class="text-secondary font-weight-bold text-xs"
-                          data-toggle="tooltip"
-                          data-original-title="Edit user">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </a>
-                      </td>
+                      <td colspan="11" class="text-center text-danger fs-5">查無此商品</td>
                     </tr>
-                  <?php endforeach; ?>
+                  <?php else: ?>
+                    <?php foreach ($products as $product): ?>
+                      <tr>
+                        <td class="text-center">
+                          <!-- ID -->
+                          <p class="text-xs font-weight-bold mb-0"><?= $product["id"] ?></p>
+                        </td>
+                        <td>
+                          <!-- 圖片 -->
+                          <div class="d-flex px-2 py-1">
+                            <div>
+                              <img src="../album/upload/<?= $product["image_url"] ?>" class="avatar avatar-xxl me-3 border-radius-lg object-fit-contain" alt="">
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm"><?= htmlspecialchars($product["image_name"]) ?></h6>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <!-- 價格 -->
+                          <p class="text-xs font-weight-bold mb-0"><?= number_format($product["price"]) ?> </p>
+                        </td>
+                        <!-- 品牌 -->
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">
+                            <?= htmlspecialchars($product["brand_name"]) ?>
+                          </p>
+                        </td>
+                        <!-- 類別 -->
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">
+                            <?= htmlspecialchars($product["category_name"]) ?>
+                          </p>
+                        </td>
+                        <!-- 更新時間 -->
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">
+                            <?= $product["updated_at"] ?>
+                          </p>
+                        </td>
+                        <!-- 庫存 -->
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">
+                            <?= $product["stock"] ?>
+                          </p>
+                        </td>
+                        <!-- 狀態 -->
+                        <td class="text-center">
+                          <span
+                            class="text-xs font-weight-bold mb-0"
+                            style="
+              padding: 2px 8px; 
+              border-radius: 4px;
+              background-color: <?= $product['state'] === '上架' ? '#d4edda' : ($product['state'] === '下架' ? '#f8d7da' : 'transparent') ?>;
+              color: <?= $product['state'] === '上架' ? '#155724' : ($product['state'] === '下架' ? '#721c24' : '#000') ?>;">
+                            <?= htmlspecialchars($product["state"]) ?>
+                          </span>
+                        </td>
+                        <!-- 編輯 -->
+                        <td class="align-middle text-center">
+                          <a href="product-edit.php?id=<?= $product['id'] ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                          </a>
+                        </td>
+                        <!-- 檢視 -->
+                        <td class="align-middle text-center">
+                          <a href="product-content.php?id=<?= $product['id'] ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            <i class="fa-regular fa-eye"></i>
+                          </a>
+                        </td>
+                        <!-- 刪除 -->
+                        <td class="align-middle text-center">
+                          <a href="doDelete.php?id=<?= $product['id'] ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            <i class="fa-regular fa-trash-can"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
                 </tbody>
               </table>
             </div>
@@ -423,15 +396,15 @@ $conn->close();
                 $start = max(1, $p - $range); // 計算顯示的起始頁碼
                 $end = min($totalPage, $p + $range); // 計算顯示的結束頁碼
 
-                // 上一頁按鈕
+                // 首頁按鈕
                 if ($p > 1) {
                   echo '<li class="page-item">
-                <a class="page-link" href="product.php?p=' . ($p - 1) . '&search=' . htmlspecialchars($search) . '&brand=' . htmlspecialchars($selectedBrand) . '&category=' . htmlspecialchars($selectedCategory) . '&state=' . htmlspecialchars($selectedState) . '&order=' . htmlspecialchars($order) . '">&laquo;</a>
-              </li>';
+        <a class="page-link" href="product.php?p=1&search=' . htmlspecialchars($search) . '&brand=' . htmlspecialchars($selectedBrand) . '&category=' . htmlspecialchars($selectedCategory) . '&state=' . htmlspecialchars($selectedState) . '&order=' . htmlspecialchars($order) . '"><<</a>
+      </li>';
                 } else {
                   echo '<li class="page-item disabled">
-                <a class="page-link" href="#">&laquo;</a>
-              </li>';
+        <a class="page-link" href="#"><<</a>
+      </li>';
                 }
 
                 // 第一頁及省略
@@ -475,15 +448,15 @@ $conn->close();
               </li>';
                 }
 
-                // 下一頁按鈕
+                // 末頁按鈕
                 if ($p < $totalPage) {
                   echo '<li class="page-item">
-                <a class="page-link" href="product.php?p=' . ($p + 1) . '&search=' . htmlspecialchars($search) . '&brand=' . htmlspecialchars($selectedBrand) . '&category=' . htmlspecialchars($selectedCategory) . '&state=' . htmlspecialchars($selectedState) . '&order=' . htmlspecialchars($order) . '">&raquo;</a>
-              </li>';
+        <a class="page-link" href="product.php?p=' . $totalPage . '&search=' . htmlspecialchars($search) . '&brand=' . htmlspecialchars($selectedBrand) . '&category=' . htmlspecialchars($selectedCategory) . '&state=' . htmlspecialchars($selectedState) . '&order=' . htmlspecialchars($order) . '">>></a>
+      </li>';
                 } else {
                   echo '<li class="page-item disabled">
-                <a class="page-link" href="#">&raquo;</a>
-              </li>';
+        <a class="page-link" href="#">>></a>
+      </li>';
                 }
                 ?>
               </ul>
@@ -491,7 +464,6 @@ $conn->close();
           </div>
         </div>
       </div>
-    </div>
     </div>
   </main>
   <!--   Core JS Files   -->
@@ -515,22 +487,3 @@ $conn->close();
 </body>
 
 </html>
-
-
-<!-- <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        確認刪除該帳號
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                        <a href="doDelete.php?id=<?= $row["id"] ?>" class="btn btn-danger">確認</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> -->
