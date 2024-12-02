@@ -25,7 +25,7 @@ $categories = [
     6 => '訊息公告'  
 ];  
 
-// 只在函數不存在時定義 time_elapsed_string()，避免重複宣告
+// 日期中文顯示
 if (!function_exists('time_elapsed_string')) {
     function time_elapsed_string($datetime, $full = false)
     {
@@ -104,63 +104,126 @@ switch ($sort_by) {
         break;
 }
 
-// 在PHP部分加入以下變數定義
-$sort = $_GET['sort'] ?? 'update_time'; // 默認按更新時間排序
-$order = $_GET['order'] ?? 'desc'; // 默認降序
-$category_id = $_GET['category_id'] ?? null;
-$search = $_GET['search'] ?? '';
 
-// 建立輔助函數生成排序URL
-function getSortUrl($field) {
-    global $sort, $order, $category_id, $search;
-    $newOrder = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
-    $params = [
-        'sort' => $field,
-        'order' => $newOrder,
-        'search' => $search,
-        'category_id' => $category_id
-    ];
-    // 移除空值參數
-    $params = array_filter($params, function($value) {
-      return $value !== '' && $value !== null;
-   });
-    return 'article.php?' . http_build_query($params);
+
+// 在PHP文件頂部加入參數處理
+$sort = $_GET['sort'] ?? 'update_time';
+$order = $_GET['order'] ?? 'desc';
+$search = $_GET['search'] ?? '';
+$category_id = $_GET['category_id'] ?? null;
+$p = isset($_GET['p']) ? (int)$_GET['p'] : 1;
+$per_page = 10;
+$offset = ($p - 1) * $per_page;
+
+// 驗證排序欄位白名單
+$allowed_sort_fields = ['category_id', 'title', 'content', 'update_time', 'is_deleted'];
+if (!in_array($sort, $allowed_sort_fields)) {
+    $sort = 'update_time';
+}
+
+// 驗證排序方向
+$order = strtolower($order) === 'asc' ? 'asc' : 'desc';
+
+// 建立排序URL生成函數
+if (!function_exists('buildSortUrl')) {
+    function buildSortUrl($field) {
+        global $sort, $order, $search, $category_id;
+        $newOrder = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
+        
+        $params = [
+            'sort' => $field,
+            'order' => $newOrder
+        ];
+        
+        if ($search) $params['search'] = $search;
+        if ($category_id) $params['category_id'] = $category_id;
+        
+        return 'article.php?' . http_build_query($params);
+    }
 }
 
 
+
+//搜尋功能
+
+// 初始化變數，確保在所有情況下都有定義
+$articles_page = [];
+$articleCount = 0;
+$total_pages = 1;
+
+// 在PHP文件頂部加入參數處理
+$sort = $_GET['sort'] ?? 'update_time';
+$order = $_GET['order'] ?? 'desc';
+$search = $_GET['search'] ?? '';
+$category_id = $_GET['category_id'] ?? null;
+$p = isset($_GET['p']) ? (int)$_GET['p'] : 1;
+$per_page = 10;
+$offset = ($p - 1) * $per_page;
+
+// 驗證排序欄位白名單
+$allowed_sort_fields = ['category_id', 'title', 'content', 'update_time', 'is_deleted'];
+if (!in_array($sort, $allowed_sort_fields)) {
+    $sort = 'update_time';
+}
+
+// 驗證排序方向
+$order = strtolower($order) === 'asc' ? 'asc' : 'desc';
+
+// 建立排序URL生成函數
+if (!function_exists('buildSortUrl')) {
+    function buildSortUrl($field) {
+        global $sort, $order, $search, $category_id;
+        $newOrder = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
+        
+        $params = [
+            'sort' => $field,
+            'order' => $newOrder
+        ];
+        
+        if ($search) $params['search'] = $search;
+        if ($category_id) $params['category_id'] = $category_id;
+        
+        return 'article.php?' . http_build_query($params);
+    }
+}
+
 try {
-  // 基本 SQL 查詢
-  $sql = "SELECT a.*, c.name as category_name  
-          FROM article a  
-          JOIN article_category c ON a.category_id = c.id 
-          WHERE 1=1";
+    // 基本 SQL 查詢
+    $sql = "SELECT a.*, c.name as category_name  
+            FROM article a  
+            JOIN article_category c ON a.category_id = c.id 
+            WHERE 1=1";
 
-  $count_sql = "SELECT COUNT(*) 
-                FROM article a 
-                JOIN article_category c ON a.category_id = c.id 
-                WHERE 1=1";
+    $count_sql = "SELECT COUNT(*) 
+                  FROM article a 
+                  JOIN article_category c ON a.category_id = c.id 
+                  WHERE 1=1";
 
-  // 初始化參數陣列
-  $params = [];
+    // 初始化參數陣列
+    $params = [];
 
-  // 篩選分類
-  if ($category_id !== null) {  
-      $sql .= " AND a.category_id = :category_id";  
-      $count_sql .= " AND a.category_id = :category_id";
-      $params[':category_id'] = $category_id;
-  }
+    // 篩選分類
+    if ($category_id !== null) {  
+        $sql .= " AND a.category_id = :category_id";  
+        $count_sql .= " AND a.category_id = :category_id";
+        $params[':category_id'] = $category_id;
+    }
 
-  // 篩選搜尋關鍵字
-  if (!empty($search)) {
-      $sql .= " AND (a.title LIKE :search OR a.content LIKE :search)";
-      $count_sql .= " AND (a.title LIKE :search OR a.content LIKE :search)";
-      $params[':search'] = '%' . $search . '%';
-  }
+    // 篩選搜尋關鍵字
+    if (!empty($search)) {
+        // 使用不同的參數名稱來避免重複
+        $sql .= " AND (a.title LIKE :search1 OR a.content LIKE :search2)";
+        $count_sql .= " AND (a.title LIKE :search1 OR a.content LIKE :search2)";
+        $params[':search1'] = '%' . $search . '%';
+        $params[':search2'] = '%' . $search . '%';
+    }
 
-  // 篩選刪除狀態
-  if (isset($_GET['is_deleted'])) {
+    // 篩選刪除狀態
+    if (isset($_GET['is_deleted'])) {
       $sql .= " AND a.is_deleted = 1 ";
       $count_sql .= " AND a.is_deleted = 1 ";
+  } elseif (isset($_GET['search'])) {
+      // 搜尋時包含所有文章，不添加 is_deleted 條件
   } elseif (!isset($_GET['category_id']) && !isset($_GET['search'])) {
       // 顯示所有項目，不添加 is_deleted 條件
   } else {
@@ -168,45 +231,55 @@ try {
       $count_sql .= " AND a.is_deleted = 0 ";
   }
 
-  // 添加排序與分頁
-  $sql .= " ORDER BY a.$sort $order LIMIT :limit OFFSET :offset";
+    // 添加排序與分頁
+    $sql .= " ORDER BY a.$sort $order LIMIT :limit OFFSET :offset";
 
-  // 準備 SQL 查詢
-  $stmt = $pdo->prepare($sql);
+    // 準備 SQL 查詢
+    $stmt = $pdo->prepare($sql);
 
-  // 綁定參數
-  foreach ($params as $key => $value) {
-      if ($key === ':category_id') {
-          $stmt->bindValue($key, $value, PDO::PARAM_INT);
-      } else {
-          $stmt->bindValue($key, $value, PDO::PARAM_STR);
-      }
-  }
+    // 綁定參數
+    foreach ($params as $key => $value) {
+        if ($key === ':category_id') {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        } elseif ($key === ':search1' || $key === ':search2') {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+    }
 
-  // 綁定 LIMIT 和 OFFSET
-  $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
-  $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    // 綁定 LIMIT 和 OFFSET
+    $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 
-  // 執行查詢
-  $stmt->execute();
-  $articles_page = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // 執行查詢
+    $stmt->execute();
+    $articles_page = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  // 計算總數量進行分頁
-  $count_stmt = $pdo->prepare($count_sql);
-  foreach ($params as $key => $value) {
-      if ($key === ':category_id') {
-          $count_stmt->bindValue($key, $value, PDO::PARAM_INT);
-      } else {
-          $count_stmt->bindValue($key, $value, PDO::PARAM_STR);
-      }
-  }
-  $count_stmt->execute();
-  $total = $count_stmt->fetchColumn();
-  $total_pages = ceil($total / $per_page);
+    // 計算總數
+    $count_stmt = $pdo->prepare($count_sql);
+    
+    // 只綁定已存在於 $count_sql 的參數
+    foreach ($params as $key => $value) {
+        if ($key === ':category_id') {
+            $count_stmt->bindValue($key, $value, PDO::PARAM_INT);
+        } elseif ($key === ':search1' || $key === ':search2') {
+            $count_stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+    }
+    
+    // 執行計數查詢
+    $count_stmt->execute();
+    $articleCount = $count_stmt->fetchColumn();
+    $total_pages = ceil($articleCount / $per_page);
+
 } catch (PDOException $e) {
-  echo "錯誤: " . $e->getMessage();
-  exit();
+    echo "Error: " . $e->getMessage();
+    $articleCount = 0;
 }
+
+
+
+
+$is_searching = !empty($search);
 
 
 
@@ -315,6 +388,74 @@ try {
 }
 $total_pages = ceil($articleCount / $per_page); // 計算總頁數
 
+
+
+function getSearchResultCount($search) {
+  global $pdo; // 確保可以訪問全局的 PDO 連接
+  try {
+      $searchSql = "SELECT COUNT(*) as count FROM article WHERE title LIKE :search_title OR content LIKE :search_content";
+      $searchStmt = $pdo->prepare($searchSql);//準備查詢
+      $searchStmt->bindValue(':search_title', '%' . $search . '%', PDO::PARAM_STR);//綁定參數
+      $searchStmt->bindValue(':search_content', '%' . $search . '%', PDO::PARAM_STR);
+      $searchStmt->execute();//執行查詢
+      $searchResult = $searchStmt->fetch(PDO::FETCH_ASSOC);
+      return $searchResult['count'] ?? 0;
+  } catch (PDOException $e) {
+      echo "計算搜尋結果數量失敗: " . $e->getMessage();
+      return 0; // 預設為0
+  }
+}
+
+function getTotalArticleCount() {
+  global $pdo; // 確保可以訪問全局的 PDO 連接
+  try {
+      $countSql = "SELECT COUNT(*) as count FROM article";
+      $countStmt = $pdo->prepare($countSql);
+      $countStmt->execute();
+      $countResult = $countStmt->fetch(PDO::FETCH_ASSOC);
+      return $countResult['count'] ?? 0;
+  } catch (PDOException $e) {
+      echo "計算總文章數量失敗: " . $e->getMessage();
+      return 0; // 預設為0
+  }
+}
+
+// 確保在使用之前定義這個函數
+if (!empty($search)) {
+  $articleCount = getSearchResultCount($search);
+} else {
+  $articleCount = getTotalArticleCount();
+}
+
+// Initialize conditions
+$conditions = [];
+$params = [];
+
+// Filter by category_id if set
+if (isset($_GET['category_id'])) {
+    $conditions[] = 'category_id = :category_id';
+    $params[':category_id'] = $_GET['category_id'];
+}
+
+// Filter by is_deleted if set
+if (isset($_GET['is_deleted'])) {
+    $conditions[] = 'is_deleted = 1';
+}
+
+// Build WHERE clause
+$where = '';
+if (!empty($conditions)) {
+    $where = 'WHERE ' . implode(' AND ', $conditions);
+}
+
+// Prepare and execute count query
+$countStmt = $pdo->prepare("SELECT COUNT(*) FROM article $where");
+$countStmt->execute($params);
+$articleCount = $countStmt->fetchColumn();
+
+
+
+
 // 計算下架文章數量
 $query = $pdo->query("SELECT COUNT(*) FROM article WHERE is_deleted = 1");
 $archived_count = $query->fetchColumn();
@@ -401,9 +542,18 @@ $breadcrumbLinks = [
       color: #000;
     }
     .btn-addArticle {
-      width: 35px;
-      height: 35px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
     }
+
+    .btn-addArticle:hover {
+      background: #FFF;
+      i {
+        color: #000;
+      }
+    }
+
     .sort-btn i {
       cursor: pointer;
       color: #FFF;
@@ -535,7 +685,7 @@ $breadcrumbLinks = [
       <div class="row">
         <div class="col-12">
           <!-- 搜尋 -->
-          <div class="d-flex justify-content-between align-items-center pe-5 ps-1">
+          <div class="d-flex justify-content-between align-items-center pe-4 ps-2">
             <div class="input-group" style="width: 20%;">
               <form class="d-flex" method="GET" action="article.php">
                 <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm " placeholder="搜尋文章" name="search" value="<?= htmlspecialchars($search) ?>" style="height: 38px; border-radius:10px 0 0 10px;">
@@ -543,18 +693,24 @@ $breadcrumbLinks = [
               </form>
             </div>
             <button class="btn btn-dark text-white px-2 btn-addArticle">
-            <a
-              href="articleAdd.php"
-              class="text-white font-weight-bold text-sm"
-              data-toggle="tooltip"
-              data-original-title="Add">
-              <i class="fa-solid fa-pen"></i>
-            </a>
+              <a
+                href="articleAdd.php"
+                class="text-white font-weight-bold text-sm"
+                data-toggle="tooltip"
+                data-original-title="Add">
+                <i class="fa-solid fa-pen"><span>+</span></i>
+              </a>
             </button>
           </div>
           <div class="d-flex justify-content-between">
-            <div class="px-2 mb-2">目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章</div>
-            <div class="btn-group">  
+            <div class="px-2 mb-2">
+            <?php if (!empty($search)): ?>
+                搜尋「<?= htmlspecialchars($search) ?>」共有 <?= htmlspecialchars($articleCount) ?> 筆結果
+            <?php else: ?>
+                目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章
+            <?php endif; ?>
+            </div>
+            <div class="btn-group pe-4">  
               <a href="article.php?" class="btn btn-secondary btn-color <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
               <?php foreach ($categories as $id => $name): ?>  
                   <a href="?category_id=<?= $id ?>" class="btn btn-dark btn-color <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
@@ -566,167 +722,296 @@ $breadcrumbLinks = [
           </div>
 
 
+    <?php if ($is_searching): ?>
+      <!-- 搜尋內容 -->
+          <!-- 搜尋結果顯示區塊 -->
+              <div class="row">
+                  <div class="col-12">
+                      <!-- 搜尋結果列 -->
+                      <div class="card">
+                          <div class="card-body px-0 pb-2">
+                              <div class="table-responsive p-0 rounded-top">
+                                  <table class="table align-items-center mb-0">
+                                      <thead class="bg-gradient-dark sort-btn">
+                                          <tr>
+                                              <th class="text-center text-uppercase text-sm text-white" style="width:5%;">分類</th>
+                                              <th class="text-uppercase text-sm text-white" style="width:25%;">標題</th>
+                                              <th class="text-uppercase text-secondary text-center text-sm ps-2 text-white" style="width:10%;">編輯者</th>
+                                              <th class="text-uppercase text-sm font-weight-bolder ps-2 text-white" colspan="2" style="width:35%;">內文</th>
+                                              <th class="text-uppercase text-sm font-weight-bolder text-center ps-2 text-white" style="width:10%;">最後更新時間</th>
+                                              <th class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%;">檢視</th>
+                                              <th class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%;">編輯</th>
+                                              <th class="text-center text-uppercase text-sm text-white" style="width:5%;">狀態
+                                                  <a href="<?= buildSortUrl('is_deleted') ?>" class="text-white">
+                                                      <i class="fa-solid fa-sort ps-2 <?= $sort === 'is_deleted' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                                                  </a>
+                                              </th>
+                                          </tr>
+                                      </thead>
 
-          <!-- 文章列 -->
-          <div class="card ">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0 rounded-top">
-                <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark sort-btn">
-                    <tr>
-                      <th class="text-center text-uppercase text-sm text-white" style="width:5%;">
-                        分類
-                        <a href="<?= buildSortUrl('category_id') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'category_id' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
-                        </a>
-                      </th>
-
-                      <th class="text-uppercase text-sm text-white" style="width:25%;">
-                        標題
-                        <a href="<?= buildSortUrl('title') ?>" class="text-white">
-                          <i class="fa-solid fa-sort ps-2 <?= $sort === 'title' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
-                        </a>
-                      </th>
-
-                      <th
-                        class="text-uppercase text-secondary text-center text-sm ps-2 text-white" style="width:10%">
-                        編輯者
-                      </th>
-                      <th class="text-uppercase text-sm font-weight-bolder ps-2 text-white" colspan="2" style="width:35%">
-                        內文
-                        <a href="<?= buildSortUrl('content') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'content' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
-                        </a>
-                      </th>
-
-                      <th class="text-uppercase text-sm font-weight-bolder text-center ps-2 text-white" style="width:10%">
-                        最後更新時間
-                        <a href="<?= buildSortUrl('update_time') ?>" class="text-white">
-                          <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
-                        </a>
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-sm text-white" style="width:5%">
-                        狀態
-                        <a href="<?= buildSortUrl('is_deleted') ?>" class="text-white">
-                          <i class="fa-solid fa-sort ps-2 <?= $sort === 'is_deleted' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
-                        </a>
-                      </th>
-                    </tr>
-                  </thead>
-                  
-                  <tbody>
-                    <?php foreach ($articles as $article): ?>
-                      <tr>
-                        <!-- 分類 -->
-                        <td class="text-center">
-                          <p class="text-xs font-weight-bold mb-0 text-warning"><?= htmlspecialchars($article['category_name']) ?></p>
-                        </td>
-                        <!-- 標題 -->
-                        <td style="width:25%">
-                          <div class="d-flex px-2 py-1 title-wrap">
-                            <div class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-0 text-sm"><?= htmlspecialchars(strip_tags($article['title'])) ?></h6>
-                            </div>
+                                      <tbody>
+                                          <?php if ($articles_page): ?>
+                                              <?php foreach ($articles_page as $article): ?>
+                                                  <tr>
+                                                      <!-- 分類 -->
+                                                      <td class="text-center">
+                                                          <p class="text-xs font-weight-bold mb-0 text-warning"><?= htmlspecialchars($article['category_name']) ?></p>
+                                                      </td>
+                                                      <!-- 標題 -->
+                                                      <td style="width:25%">
+                                                          <div class="d-flex px-2 py-1 title-wrap">
+                                                              <div class="d-flex flex-column justify-content-center">
+                                                                  <h6 class="mb-0 text-sm"><?= htmlspecialchars(strip_tags($article['title'])) ?></h6>
+                                                              </div>
+                                                          </div>
+                                                      </td>
+                                                      <!-- 編輯者 -->
+                                                      <td style="cursor:pointer;">
+                                                          <p class="text-xs font-weight-bold text-center mb-0">管理員</p>
+                                                      </td>
+                                                      <!-- 內文 -->
+                                                      <td colspan="2" style="width:35%">
+                                                          <p class="text-xs font-weight-bold mb-0 content">
+                                                              <?= htmlspecialchars(truncate(strip_tags($article['content']), 150)) ?>
+                                                          </p>
+                                                      </td>
+                                                      <!-- 更新時間 -->
+                                                      <td style="width:10%; cursor:pointer;" title="<?= isset($article['update_time']) ? htmlspecialchars($article['update_time']) : '未更新' ?>">
+                                                          <p class="text-xs font-weight-bold mb-0 text-center text-success">
+                                                              <?= isset($article['update_time']) ? htmlspecialchars(time_elapsed_string($article['update_time'])) : '未更新' ?>
+                                                          </p>
+                                                      </td>
+                                                      <!-- 檢視 -->
+                                                      <td class="align-middle text-center" >
+                                                          <a href="javascript:;" class="text-secondary font-weight-bold text-sm" data-toggle="tooltip" data-original-title="View">
+                                                              <i class="fa-regular fa-eye"></i>
+                                                          </a>
+                                                      </td>
+                                                      <!-- 編輯 -->
+                                                      <td class="align-middle text-center">
+                                                          <a href="articleEdit.php?id=<?= $article['id'] ?>" class="text-danger font-weight-bold text-sm" data-toggle="tooltip" data-original-title="Edit">
+                                                              <i class="fa-regular fa-pen-to-square"></i>
+                                                          </a>
+                                                      </td>
+                                                      <!-- 文章狀態 -->
+                                                      <td class="text-center align-middle">  
+                                                          <div class="form-check form-switch d-flex justify-content-center align-items-center">  
+                                                              <input class="form-check-input toggle-delete" type="checkbox" role="switch" id="toggleSwitch<?= $article['id'] ?>" data-id="<?= $article['id'] ?>" <?= $article['is_deleted'] ? 'checked' : '' ?>>  
+                                                              <label class="form-check-label" for="toggleSwitch<?= $article['id'] ?>"></label>  
+                                                          </div>  
+                                                      </td>  
+                                                  </tr>
+                                              <?php endforeach; ?>
+                                          <?php else: ?>
+                                              <tr>
+                                                  <td colspan="9" class="text-center">沒有找到相關文章。</td>
+                                              </tr>
+                                          <?php endif; ?>
+                                      </tbody>
+                                  </table>
+                              </div>
                           </div>
-                        </td>
-                        <!-- 編輯者 -->
-                        <td>
-                          <p class="text-xs font-weight-bold text-center mb-0">Manager</p>
-                        </td>
-                        <!-- 內文 -->
-                        <td colspan="2" style="width:35%">
-                          <p class="text-xs font-weight-bold mb-0 content">
-                            <?= htmlspecialchars(truncate(strip_tags($article['content']), 150)) ?>
-                          </p>
-                        </td>
-                        <!--更新時間 -->
-                        <td style="width:10%">
-                          <p class="text-xs font-weight-bold mb-0 text-center text-success"><?= isset($article['update_time']) ? htmlspecialchars(time_elapsed_string($article['update_time'])) : '未更新' ?></p>
-                        </td>
-                        <!-- 檢視-->
-                        <td class="align-middle text-center">
-                          <a
-                            href="javascript:;"
-                            class="text-secondary font-weight-bold text-sm"
-                            data-toggle="tooltip"
-                            data-original-title="Edit user">
-                            <i class="fa-regular fa-eye"></i>
-                          </a>
-                        </td>
-                        <!-- 編輯 -->
-                        <td class="align-middle text-center">
-                          <a
-                            href="articleEdit.php?id=<?= $article['id'] ?>"
-                            class="text-danger font-weight-bold text-sm"
-                            data-toggle="tooltip"
-                            data-original-title="Edit user">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                          </a>
-                        </td>
-                        <!-- 文章狀態 -->
-                        <td class="text-center align-middle">  
-                          <div class="form-check form-switch d-flex justify-content-center align-items-center">  
-                            <input   
-                              class="form-check-input toggle-delete"  
-                              type="checkbox"   
-                              role="switch"  
-                              id="toggleSwitch<?= $article['id'] ?>"   
-                              data-id="<?= $article['id'] ?>"  
-                              <?= $article['is_deleted'] ? 'checked' : '' ?>  
-                            >  
-                            <label class="form-check-label" for="toggleSwitch<?= $article['id'] ?>"></label>  
-                          </div>  
-                        </td>  
-                      <?php endforeach; ?>
-                    </tr>
-                  </tbody>
-                </table>
+                          <?php if (isset($_GET['is_deleted']) && $articleCount == 0): ?>
+                              <div class="alert alert-danger text-center text-white mt-3" role="alert">
+                                  目前沒有下架文章
+                              </div>
+                          <?php endif; ?>
+                      </div>
+                  </div>
+              </div>
+              <!-- 分頁按鈕 -->
+              <?php if (($p == 1 && $articleCount > 10) || ($p > 1 && $total_pages > 0)): ?>
+                    <nav class="mt-5" aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <?php
+                            // 構建基礎URL
+                            $base_url = 'article.php?';
+                            $params = $_GET;
+                            unset($params['p']); // 移除當前頁數參數
+                            $query_string = http_build_query($params);
+                            $base_url .= $query_string ? $query_string . '&' : '';
+                            ?>
+                            <li class="page-item <?= ($p == 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= $base_url ?>p=<?= max($p - 1, 1) ?>"><i class="fa-solid fa-angle-left"></i></a>
+                            </li>
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?= ($i == $p) ? 'active' : '' ?>">
+                                    <a class="page-link" href="<?= $base_url ?>p=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?= ($p == $total_pages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= $base_url ?>p=<?= min($p + 1, $total_pages) ?>"><i class="fa-solid fa-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+          </div>
+    <?php else: ?>
+
+
+
+
+
+              <!-- 文章列 -->
+              <div class="card ">
+                <div class="card-body px-0 pb-2">
+                  <div class="table-responsive p-0 rounded-top">
+                    <table class="table align-items-center mb-0">
+                      <thead class="bg-gradient-dark sort-btn">
+                        <tr>
+                          <th class="text-center text-uppercase text-sm text-white" style="width:5%;">
+                            分類
+                            <a href="<?= buildSortUrl('category_id') ?>" class="text-white">
+                                <i class="fa-solid fa-sort ps-2 <?= $sort === 'category_id' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                            </a>
+                          </th>
+
+                          <th class="text-uppercase text-sm text-white" style="width:25%;">
+                            標題
+                            <a href="<?= buildSortUrl('title') ?>" class="text-white">
+                              <i class="fa-solid fa-sort ps-2 <?= $sort === 'title' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                            </a>
+                          </th>
+
+                          <th
+                            class="text-uppercase text-secondary text-center text-sm ps-2 text-white" style="width:10%">
+                            編輯者
+                          </th>
+                          <th class="text-uppercase text-sm font-weight-bolder ps-2 text-white" colspan="2" style="width:35%">
+                            內文
+                            <a href="<?= buildSortUrl('content') ?>" class="text-white">
+                                <i class="fa-solid fa-sort ps-2 <?= $sort === 'content' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                            </a>
+                          </th>
+
+                          <th class="text-uppercase text-sm font-weight-bolder text-center ps-2 text-white" style="width:10%">
+                            最後更新時間
+                            <a href="<?= buildSortUrl('update_time') ?>" class="text-white">
+                              <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                            </a>
+                          </th>
+                          <th
+                            class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%">
+                            檢視
+                          </th>
+                          <th
+                            class="text-center text-uppercase text-sm font-weight-bolder text-white" style="width:5%">
+                            編輯
+                          </th>
+                          <th
+                            class="text-center text-uppercase text-sm text-white" style="width:5%">
+                            狀態
+                            <a href="<?= buildSortUrl('is_deleted') ?>" class="text-white">
+                              <i class="fa-solid fa-sort ps-2 <?= $sort === 'is_deleted' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                            </a>
+                          </th>
+                        </tr>
+                      </thead>
+                      
+                      <tbody>
+                        <?php foreach ($articles as $article): ?>
+                          <tr>
+                            <!-- 分類 -->
+                            <td class="text-center">
+                              <p class="text-xs font-weight-bold mb-0 text-warning"><?= htmlspecialchars($article['category_name']) ?></p>
+                            </td>
+                            <!-- 標題 -->
+                            <td style="width:25%">
+                              <div class="d-flex px-2 py-1 title-wrap">
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm"><?= htmlspecialchars(strip_tags($article['title'])) ?></h6>
+                                </div>
+                              </div>
+                            </td>
+                            <!-- 編輯者 -->
+                            <td style="cursor:pointer;">
+                              <p class="text-xs font-weight-bold text-center mb-0">管理員</p>
+                            </td>
+                            <!-- 內文 -->
+                            <td colspan="2" style="width:35%">
+                              <p class="text-xs font-weight-bold mb-0 content">
+                                <?= htmlspecialchars(truncate(strip_tags($article['content']), 150)) ?>
+                              </p>
+                            </td>
+                            <!--更新時間 -->
+                            <td style="width:10%; cursor:pointer;" title="<?= isset($article['update_time']) ? htmlspecialchars($article['update_time']) : '未更新' ?>">
+                              <p class="text-xs font-weight-bold mb-0 text-center text-primary"><?= isset($article['update_time']) ? htmlspecialchars(time_elapsed_string($article['update_time'])) : '未更新' ?></p>
+                            </td>
+                            <!-- 檢視-->
+                            <td class="align-middle text-center">
+                              <a
+                                href="javascript:;"
+                                class="text-secondary font-weight-bold text-sm"
+                                data-toggle="tooltip"
+                                data-original-title="Edit user">
+                                <i class="fa-regular fa-eye"></i>
+                              </a>
+                            </td>
+                            <!-- 編輯 -->
+                            <td class="align-middle text-center">
+                              <a
+                                href="articleEdit.php?id=<?= $article['id'] ?>"
+                                class="text-danger font-weight-bold text-sm"
+                                data-toggle="tooltip"
+                                data-original-title="Edit user">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                              </a>
+                            </td>
+                            <!-- 文章狀態 -->
+                            <td class="text-center align-middle">  
+                              <div class="form-check form-switch d-flex justify-content-center align-items-center">  
+                                <input   
+                                  class="form-check-input toggle-delete"  
+                                  type="checkbox"   
+                                  role="switch"  
+                                  id="toggleSwitch<?= $article['id'] ?>"   
+                                  data-id="<?= $article['id'] ?>"  
+                                  <?= $article['is_deleted'] ? 'checked' : '' ?>  
+                                >  
+                                <label class="form-check-label" for="toggleSwitch<?= $article['id'] ?>"></label>  
+                              </div>  
+                            </td>  
+                          <?php endforeach; ?>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <?php if (isset($_GET['is_deleted']) && $archived_count == 0): ?>
+                    <div class="alert alert-danger text-center text-white mt-3" role="alert">
+                        目前沒有下架文章
+                    </div>
+                <?php endif; ?>
               </div>
             </div>
-            <?php if (isset($_GET['is_deleted']) && $archived_count == 0): ?>
-                <div class="alert alert-danger text-center text-white mt-3" role="alert">
-                    目前沒有下架文章
-                </div>
-            <?php endif; ?>
           </div>
-        </div>
-      </div>
-      <!-- 分頁按鈕 -->
-        <?php if ($total_pages > 1): ?>
-          <nav class="mt-5" aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-              <?php
-              // 構建基礎URL
-              $base_url = 'article.php?';
-              $params = $_GET;
-              unset($params['p']); // 移除當前頁數參數
-              $query_string = http_build_query($params);
-              $base_url .= $query_string ? $query_string . '&' : '';
-              ?>
-              
-              <li class="page-item <?= ($p == 1) ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= $base_url ?>p=<?= $p - 1 ?>"><i class="fa-solid fa-angle-left"></i></a>
-              </li>
-              <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= ($i == $p) ? 'active' : '' ?>">
-                  <a class="page-link" href="<?= $base_url ?>p=<?= $i ?>"><?= $i ?></a>
-                </li>
-              <?php endfor; ?>
-              <li class="page-item <?= ($p == $total_pages) ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= $base_url ?>p=<?= $p + 1 ?>"><i class="fa-solid fa-chevron-right"></i></a>
-              </li>
-            </ul>
-          </nav>
-        <?php endif; ?>
+          <!-- 分頁按鈕 -->
+            <?php if (($p == 1 && $articleCount > 10) || ($p > 1 && $articleCount > 0)): ?>
+                <nav class="mt-5" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <?php
+                        // 構建基礎URL
+                        $base_url = 'article.php?';
+                        $params = $_GET;
+                        unset($params['p']); // 移除當前頁數參數
+                        $query_string = http_build_query($params);
+                        $base_url .= $query_string ? $query_string . '&' : '';
+                        ?>
+                        <li class="page-item <?= ($p == 1) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= $base_url ?>p=<?= max($p - 1, 1) ?>"><i class="fa-solid fa-angle-left"></i></a>
+                        </li>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= ($i == $p) ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= $base_url ?>p=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <li class="page-item <?= ($p == $total_pages) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= $base_url ?>p=<?= min($p + 1, $total_pages) ?>"><i class="fa-solid fa-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+    <?php endif; ?>
     </div>
   </main>
 

@@ -61,6 +61,31 @@ try {
       height:auto ;
       
     }
+
+    .btn-back a{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #FFF;
+
+  }
+  .btn-back a:hover{
+    background: #FFF;
+      color: #000;
+  }
+
+  .btn-under button{
+    width: 50px;
+  }
+  .btn-under button:hover{
+    background: #FFF;
+    color:#000;
+  }
+
+  .btn-under a:hover{
+    background: #FFF;
+    color:#dc3545;
+  }
   </style>
   <title>camera_articleEdit</title>
   <!--     Fonts and icons     -->
@@ -158,6 +183,11 @@ try {
    <!-- Navbar -->
 
     <div class="container-fluid py-2">
+      <div class="d-flex ps-5 mt-4 btn-back">
+          <a class="btn btn-dark align-content-center" href="article.php">
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+      </div>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -172,49 +202,51 @@ try {
                     </tr>
                   </thead>
                 </table>
-                  <form action="doEdit.php" method="post">
-                    <!-- 隱藏的 ID 欄位 -->
-                    <input type="hidden" name="id" value="<?= htmlspecialchars($article['id']) ?>">
+                <div class="card-body px-0 pb-2">
+                  <div class="table-responsive p-0 rounded-top">
+                    <form action="doEdit.php" method="post">
+                      <!-- 隱藏的 ID 欄位 -->
+                      <input type="hidden" name="id" value="<?= htmlspecialchars($article['id']) ?>">
 
-                    <div class="container mt-3">
-                        <!-- 文章類別選擇 -->
-                        <div class="d-flex my-3">
-                            <h5 class="mt-2">文章類別 :</h5>
-                            <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" onchange="updateCategory(this.value)" required>
-                                <option value="">選擇分類</option>
-                                <?php foreach ($categories as $category): ?>
-                                    <option value="<?= htmlspecialchars($category['id']) ?>" <?= $category['id'] == $article['category_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($category['name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                      <div class="container mt-3">
+                          <!-- 文章類別選擇 -->
+                          <div class="d-flex my-3">
+                              <h5 class="mt-2 font-weight-bold text-md">文章類別 :</h5>
+                              <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" onchange="updateCategory(this.value)" required>
+                                  <option value=""> --請選擇分類-- </option>
+                                  <?php foreach ($categories as $category): ?>
+                                      <option value="<?= htmlspecialchars($category['id']) ?>" <?= $category['id'] == $article['category_id'] ? 'selected' : '' ?>>
+                                          <?= htmlspecialchars($category['name']) ?>
+                                      </option>
+                                  <?php endforeach; ?>
+                              </select>
+                          </div>
 
-                        <!-- 標題輸入 -->
-                        <div class="input-group mb-1">
-                            <div class="input-group-text pe-4">標題</div>
-                            <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="<?= htmlspecialchars($article["title"]) ?>" required>
-                        </div>
+                          <!-- 標題輸入 -->
+                          <div class="input-group mb-1">
+                              <div class="input-group-text pe-4">標題</div>
+                              <input type="text" name="title" class="form-control border border-secondary rounded ps-4" style="font-size:20px; font-weight:500;" value="<?= htmlspecialchars($article["title"]) ?>" required>
+                          </div>
 
-                        <!-- 內容編輯器 -->
-                        <div class="mb-3">
-                            <label for="content">內容</label>
-                            <textarea name="content" id="content" class="form-control" required><?= htmlspecialchars($article["content"]) ?></textarea>
-                        </div>
+                          <!-- 內容編輯器 -->
+                          <div class="mb-3">
+                              <label for="content">內容</label>
+                              <textarea name="content" id="content" class="form-control" required><?= htmlspecialchars($article["content"]) ?></textarea>
+                          </div>
 
-                        <!-- 送出和返回按鈕 -->
-                        <div class="d-flex mt-3">
-                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center" style="height:45px; border-radius:15px;">送出</button>
-                            <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>
-                        </div>
-                    </div>
-                  </form>
+                          <!-- 送出和返回按鈕 -->
+                          <div class="d-flex mt-3 btn-under">
+                              <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send font-weight-bold" style="height:45px; border-radius:50%;">送出</button>
+                              <a class="btn btn-sm btn-danger align-content-center font-weight-bold" style="height:45px; border-radius:50%;" href="article.php">取消</a>
+                          </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
   </main>
 
 <!-- CKEditor 初始化 -->
