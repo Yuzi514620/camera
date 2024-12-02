@@ -145,47 +145,48 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
                           </div>
                           <div>
-                            <label for="" class="form-label ">大頭貼</label>
+                            <label for="" class="form-label ">大頭貼:</label>
                             <input type="file" class="input-group-text form-control form1 btn btn-white border bordrer-dark test" name="img" aria-describedby="inputGroupFileAddon04" aria-label="Upload" value="<?= $row["img"] ?>">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">帳號</label>
+                            <label for="" class="form-label">帳號:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">密碼</label>
+                            <label for="" class="form-label">密碼:</label>
                             <input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">確認密碼</label>
+                            <label for="" class="form-label">確認密碼:</label>
                             <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">姓名</label>
+                            <label for="" class="form-label">姓名:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name">
                           </div>
-                          <div class="form-check form-check-inline">
+                          <div class="form-check form-check-inline " >
+                          <label for="" class="form-label" style="padding-right: 70px;">性別:</label>
                             <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
-                            <label class="form-check-label" for="gender">男</label>
+                            <label class="form-check-label " style="padding-right: 10px;" for="gender">男</label>
                           </div>
                           <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input" type="radio" name="gender" id="gender" value="option2">
-                            <label class="form-check-label" for="gender">女</label>
+                            <label class="form-check-label" style="padding-right: 90px;" for="gender">女</label>
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">email</label>
+                            <label for="" class="form-label">email:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">手機號碼</label>
+                            <label for="" class="form-label">手機號碼:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">住址</label>
+                            <label for="" class="form-label">住址:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address">
                           </div>
                           <div class="mb-2">
-                            <label for="" class="form-label">生日</label>
+                            <label for="" class="form-label">生日:</label>
                             <input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday">
                           </div>
                           <?php if (isset($_SESSION["error"]["message"])): ?>

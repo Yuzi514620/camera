@@ -165,7 +165,7 @@ $result = $conn->query($sql);
             <button type="submit" class="btn btn-secondary my-0"><i class="fa-solid fa-magnifying-glass fa-fw pe-1"></i></button>
           </form>
           <!-- 新增課程 -->
-          <a href="course_add.php" class="btn btn-secondary m-0 mx-3">新增課程</a>
+          <a href="course_add.php" class="btn btn-secondary m-0 mx-3 text-sm">新增課程</a>
         </div>
 
 
