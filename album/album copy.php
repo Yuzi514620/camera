@@ -91,27 +91,12 @@ include("../rental/link.php");
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'camera'; ?>
-  <?php include '../sidebar.php'; ?>
+  <?php include '../pages/sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-    <?php
-        // 設定麵包屑的層級
-        $breadcrumbs = [
-            'users' => '首頁', // 第一層的文字
-            'album' => '媒體庫管理', // 第一層的文字
-        ];
-
-        $page = 'album';//當前的頁面
-
-        // 設定麵包屑的連結
-        $breadcrumbLinks = [
-            'users' => 'users.php',           // 第一層的連結
-            'album' => 'album.php',      // 第二層的連結
-        ];
-
-        include '../navbar.php';
-        ?>
+      <?php $page = 'camera'; ?>
+      <?php include '../pages/navbar.php'; ?>
     <!-- Navbar -->
 
     <div class="container-fluid ">
@@ -135,8 +120,8 @@ include("../rental/link.php");
           </form>
             <!-- 新增 -->
             <div>
-              <button id="deleteImageButton" class="btn btn-secondary" disabled>刪除照片</button>
-              <button id="loadModalButton" class="btn btn-success">新增圖片</button>              
+              <button id="loadModalButton" class="btn btn-primary">新增圖片</button>
+
             </div>
           </div>
       </div>
@@ -149,7 +134,7 @@ include("../rental/link.php");
           <table class="table align-items-center mb-0">
             <thead class="bg-gradient-dark">
               <tr>
-                <th class="text-uppercase text-secondary text-xs opacity-7 text-white">
+                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
                   編號
                   <?php if ($order === 'i1'): ?>
                       <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=i0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
@@ -183,7 +168,7 @@ include("../rental/link.php");
             <?php else: ?>
                 <?php foreach ($rows as $row): ?>
                   <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-                <div class="card checkCard p-1" data-id="<?= htmlspecialchars($row['id']) ?>" style="height: 180px;">
+                <div class="card checkCard p-1" style="height: 180px;">
                     <img src="../album/upload/<?= htmlspecialchars($row['image_url']) ?>"                 
                          style="max-height:100px; width: 100%; object-fit: contain;" 
                          class="card-img-top p-1" 
@@ -293,65 +278,6 @@ include("../rental/link.php");
       });
   });
   </script>
-
-<script>
-    $(document).ready(function () {
-        let lastSelectedCard = null; // 記錄最後一個選中的卡片
-
-        // 卡片點擊事件處理器
-        $('.checkCard').click(function () {
-            if (lastSelectedCard) {
-                // 如果之前有選中的卡片，移除 outline
-                lastSelectedCard.css('outline', 'none');
-            }
-
-            // 設定當前卡片為選中的卡片，並加上 outline
-            lastSelectedCard = $(this);
-            lastSelectedCard.css('outline', '3px solid #e91e63');
-
-            // 啟用刪除按鈕
-            $('#deleteImageButton').prop('disabled', false);
-
-            // 保存選中卡片的 image ID
-            const dataId = $(this).data('id');
-            $('#deleteImageButton').data('id', dataId);
-        });
-
-        // 頁面刷新或跳轉到其他頁面時，重置選擇
-        $(document).on('click', 'a.page-link', function () {
-            if (lastSelectedCard) {
-                lastSelectedCard.css('outline', 'none');
-            }
-            lastSelectedCard = null;
-            $('#deleteImageButton').prop('disabled', true);
-        });
-
-        // 點擊刪除按鈕時的處理
-        $('#deleteImageButton').click(function () {
-            const dataId = $(this).data('id');
-
-            if (confirm('您確定要刪除此圖片嗎？')) {
-                // 發送 AJAX 請求刪除圖片
-                $.ajax({
-                    url: '../album/images_delete.php', // 修正這裡的路徑
-                    type: 'POST',
-                    data: { id: dataId },
-                    success: function (response) {
-                        if (response.trim() === "success") {
-                            alert('圖片刪除成功！');
-                            location.reload(); // 重新載入頁面
-                        } else {
-                            alert(response); // 顯示錯誤訊息
-                        }
-                    },
-                    error: function () {
-                        alert('圖片刪除失敗，請稍後再試。');
-                    }
-                });
-            }
-        });
-    });
-</script>
 </body>
 
 </html>

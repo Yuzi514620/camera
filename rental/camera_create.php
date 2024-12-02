@@ -10,8 +10,8 @@ if (!$conn) {
 }
 
 // 取得所有 image 資料
-$sql_images = "SELECT id, name, type, description, image_url FROM images";
-$result_images = $conn->query($sql_images);
+$sql_image = "SELECT id, name, type, description, image_url FROM image";
+$result_image = $conn->query($sql_image);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // 獲取來自表單的資料
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!-- 模態框 -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-between align-items-center">
                     <h5 class="modal-title" id="exampleModalLabel"><?=$title?></h5>
@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <td>
                                     <select id="image_id" name="image_id" style="width:100%" onchange="showImage()" required>
                                         <?php
-                                        if ($result_images && $result_images->num_rows > 0) {
-                                            while ($row = $result_images->fetch_assoc()) {
+                                        if ($result_image && $result_image->num_rows > 0) {
+                                            while ($row = $result_image->fetch_assoc()) {
                                                 echo "<option value='" . $row['id'] . "'>" . $row['name'] . " (" . $row['type'] . ") ". "</option>";
                                             }
                                         } else {
