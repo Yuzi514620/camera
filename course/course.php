@@ -101,6 +101,15 @@ $result = $conn->query($sql);
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
 
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- jQuery（Bootstrap 需要）-->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
   <link rel="stylesheet" href="course.css">
 </head>
 
@@ -132,7 +141,6 @@ $result = $conn->query($sql);
 
 
     <div class="container-fluid pt-2 mt-6">
-      <p class="text-xs text-end px-2">總共有 <?php echo $row_count['total']; ?> 筆資料</p>
       <!-- 搜尋欄位 -->
       <div class="d-flex justify-content-between align-items-center p-0">
         <div class="d-flex">
@@ -160,34 +168,36 @@ $result = $conn->query($sql);
           <a href="course_add.php" class="btn btn-secondary m-0 mx-3">新增課程</a>
         </div>
 
+
         <!-- 排序按鈕 -->
-        <!-- id -->
+
         <div class="d-flex justify-content-end">
-          <a href="?page=<?= $current_page ?>&order_by=id&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
+          <p class="text-xs text-end px-2 mb-0 mt-4">總共有 <?php echo $row_count['total']; ?> 筆資料</p>
+          <!-- <a href="?page=<?= $current_page ?>&order_by=id&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
             id
             <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
           </a>
-          <!-- 報名開始時間 -->
+         
           <div class="d-flex justify-content-end">
             <a href="?page=<?= $current_page ?>&order_by=apply_start&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
               報名開始時間
-              <!-- 根據排序狀態顯示不同的箭頭，方向和課程開始時間相反 -->
+            
               <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
             </a>
           </div>
 
-          <!-- 課程開始時間 -->
+         
           <div class="d-flex justify-content-end">
             <a href="?page=<?= $current_page ?>&order_by=course_start&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
               課程開始時間
-              <!-- 根據排序狀態顯示不同的箭頭 -->
+          
               <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
-            </a>
-          </div>
+            </a> -->
         </div>
       </div>
-
     </div>
+
+
 
 
     <div class="container-fluid mt-0">
@@ -204,53 +214,49 @@ $result = $conn->query($sql);
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gradient-dark">
                     <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="?order_by=id&order_type=<?php echo ($order_by == 'id' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          ID <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        圖片
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="" class="text-white">圖片</a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        名稱
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="" class="text-white">名稱</a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        分類
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
+                        <a href="" class="text-white">分類</a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        價格
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="?order_by=price&order_type=<?php echo ($order_by == 'price' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          價格 <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        講師
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="" class="text-white">講師</a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        報名時間
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="?order_by=apply_start&order_type=<?php echo ($order_by == 'apply_start' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          報名時間 <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        課程時間
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="?order_by=course_start&order_type=<?php echo ($order_by == 'course_start' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          課程時間 <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
+                        <a href="" class="text-white">檢視</a>
                       </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
+                        <a href="" class="text-white">編輯</a>
                       </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        狀態
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="" class="text-white">狀態</a>
                       </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="" class="text-white">刪除</a>
                       </th>
                       <!-- <th class="text-secondary opacity-7"></th> -->
                     </tr>
@@ -268,8 +274,7 @@ $result = $conn->query($sql);
                             <!-- 圖片 -->
                             <div class="d-flex px-2 py-1" style="overflow: hidden">
                               <div>
-                                <img src="../course_images/course_cover/<?php echo $row['image_name']; ?>"
-                                  class="me-3 border-radius-lg course-img img-fit" alt="course image" />
+                                <img src="../course_images/course_cover/<?php echo $row['image_name']; ?>" class="me-3 border-radius-lg course-img img-fit" alt="course image" />
                               </div>
                             </div>
                           </td>
@@ -281,10 +286,9 @@ $result = $conn->query($sql);
                             <!-- 分類 -->
                             <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['category_name']); ?></p>
                           </td>
-
                           <td>
                             <!-- 價格 -->
-                            <p class="text-xs font-weight-bold mb-0"> <?php echo number_format($row['price']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?php echo number_format($row['price']); ?></p>
                           </td>
                           <td>
                             <!-- 講師 -->
@@ -293,30 +297,24 @@ $result = $conn->query($sql);
                           <td>
                             <!-- 報名時間 -->
                             <p class="text-xs font-weight-bold mb-0">
-                              <?php
-                              echo date("Y/m/d", strtotime($row['apply_start'])) . " ~ " . date("Y/m/d", strtotime($row['apply_end']));
-                              ?>
+                              <?php echo date("Y/m/d", strtotime($row['apply_start'])) . " ~ " . date("Y/m/d", strtotime($row['apply_end'])); ?>
                             </p>
                           </td>
                           <td>
                             <!-- 課程時間 -->
                             <p class="text-xs font-weight-bold mb-0">
-                              <?php
-                              echo date("Y/m/d", strtotime($row['course_start'])) . " ~ " . date("Y/m/d", strtotime($row['course_end']));
-                              ?>
+                              <?php echo date("Y/m/d", strtotime($row['course_start'])) . " ~ " . date("Y/m/d", strtotime($row['course_end'])); ?>
                             </p>
                           </td>
                           <td class="align-middle text-center">
                             <!-- 檢視 -->
-                            <a href="course_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                              data-original-title="Edit user">
+                            <a href="course_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                               <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
                             <!-- 編輯 -->
-                            <a href="course_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                              data-original-title="Edit user">
+                            <a href="course_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                               <i class="fa-regular fa-pen-to-square"></i>
                             </a>
                           </td>
@@ -327,11 +325,7 @@ $result = $conn->query($sql);
                             </a>
                           </td>
                           <td class="align-middle text-center">
-                            <!-- 刪除 -->
-                            <a href="course_delete.php?id=<?php echo $row['id']; ?>"
-                              class="text-secondary font-weight-bold text-xs"
-                              data-toggle="tooltip" data-original-title="Delete course"
-                              onclick="return confirm('確定要刪除這筆資料嗎？');">
+                            <a href="#" class="text-secondary font-weight-bold text-xs delete-btn" data-id="<?= $row['id']; ?>" data-toggle="modal" data-target="#deleteModal">
                               <i class="fa-regular fa-trash-can"></i>
                             </a>
                           </td>
@@ -345,44 +339,64 @@ $result = $conn->query($sql);
           </div>
         </div>
       </div>
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">確認刪除</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              確定要刪除這筆資料嗎？
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <a href="#" id="confirmDeleteBtn" class="btn btn-danger">確定刪除</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <!-- 分頁按鈕 -->
-      <nav>
-        <ul class="pagination justify-content-center">
-          <!-- 第一頁按鈕 -->
-          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=1&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angles-left"></i>
-            </a>
-          </li>
-          <!-- 上一頁按鈕 -->
-          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page - 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angle-left"></i>
-            </a>
-          </li>
+    <!-- 分頁按鈕 -->
+    <nav>
+      <ul class="pagination justify-content-center">
+        <!-- 第一頁按鈕 -->
+        <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=1&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angles-left"></i>
+          </a>
+        </li>
+        <!-- 上一頁按鈕 -->
+        <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $current_page - 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angle-left"></i>
+          </a>
+        </li>
 
-          <!-- 顯示頁碼 -->
-          <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
-              <a class="page-link" href="?page=<?= $i ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>"><?= $i ?></a>
-            </li>
-          <?php endfor; ?>
+        <!-- 顯示頁碼 -->
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+          <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
+            <a class="page-link" href="?page=<?= $i ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>"><?= $i ?></a>
+          </li>
+        <?php endfor; ?>
 
-          <!-- 下一頁按鈕 -->
-          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page + 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-chevron-right"></i>
-            </a>
-          </li>
-          <!-- 最後一頁按鈕 -->
-          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $total_pages ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angles-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
+        <!-- 下一頁按鈕 -->
+        <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $current_page + 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+        </li>
+        <!-- 最後一頁按鈕 -->
+        <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $total_pages ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angles-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
     </div>
   </main>
 
@@ -402,6 +416,16 @@ $result = $conn->query($sql);
             row.parentNode.removeChild(row);
           }
         });
+      });
+    });
+  </script>
+
+  <script>
+    $(document).ready(function() {
+      // 當點擊刪除按鈕時，設定要刪除的課程ID
+      $('.delete-btn').on('click', function() {
+        var courseId = $(this).data('id');
+        $('#confirmDeleteBtn').attr('href', 'course_delete.php?id=' + courseId);
       });
     });
   </script>
