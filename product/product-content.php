@@ -30,34 +30,8 @@ WHERE
     product.id = '$id' AND product.is_deleted = 0;
 ";
 
-// $sql = "SELECT  
-//     p.id,  
-//     p.name AS product_name,
-//     i.name AS image_name,  
-//     i.image_url,  
-//     p.price,  
-//     b.brand_name,  
-//     c.category_name,  
-//     p.stock,
-//     p.created_at,  
-//     p.updated_at,  
-//     p.state  
-// FROM  
-//     product p  
-// INNER JOIN    
-//     category c ON p.category_id = c.category_id  
-// INNER JOIN  
-//     brand b ON p.brand_id = b.brand_id  
-// INNER JOIN  
-//     image i ON p.name = i.name  -- 條件：product 的 name 必須匹配 image 的 name  
-// WHERE  
-//     p.is_deleted = 0";
-
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
-
-// var_dump($row);
-
 ?>
 
 <!DOCTYPE html>
@@ -136,11 +110,6 @@ $row = $result->fetch_assoc();
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
-              </div>
-            </div> -->
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
                 <table class="table align-items-center mb-0">
@@ -221,40 +190,3 @@ $row = $result->fetch_assoc();
 </body>
 
 </html>
-
-
-
-<!-- <div class="container">
-        <a href="product.php" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
-        <table class="table table-bordered">
-            <?php if ($result->num_rows > 0): ?>
-                <h1><?= $row["name"] ?></h1>
-                <tr>
-                    <th>id</th>
-                    <td><?= $row["id"] ?></td>
-                </tr>
-                <tr>
-                    <th>照片</th>
-                    <td>
-                        <div class="ratio ratio-4x3" style="width: 300px;">
-                            <img class="object-fit-cover" src="upload/<?= $row["image_url"] ?>" alt="">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th>價格</th>
-                    <td><?= number_format($row["price"]) ?></td>
-                </tr>
-                <tr>
-                    <th>品牌</th>
-                    <td><?= $row["brand_name"] ?></td>
-                </tr>
-                <tr>
-                    <th>商品規格</th>
-                    <td><?= nl2br($row["spec"]) ?></td>
-                </tr>
-        </table>
-    <?php else: ?>
-        <h1>查無資料</h1>
-    <?php endif; ?>
-    </div> -->

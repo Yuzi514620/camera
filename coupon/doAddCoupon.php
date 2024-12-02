@@ -5,12 +5,16 @@ $name = (empty($_REQUEST['name']))?"":$_REQUEST['name'];
 $discount = (empty($_REQUEST['discount']))?"":$_REQUEST['discount'];
 $lower_purchase = (empty($_REQUEST['lower_purchase']))?"":$_REQUEST['lower_purchase'];
 $quantity = (empty($_REQUEST['quantity']))?"":$_REQUEST['quantity'];
-$days = (empty($_REQUEST['days']))?"":$_REQUEST['days'];
-$brand = (empty($_REQUEST['brand']))?"":$_REQUEST['brand'];
-$accessories = (empty($_REQUEST['accessories']))?"":$_REQUEST['accessories'];
+$days = (empty($_REQUEST['days']))? "":$_REQUEST['days'];
+$brand = (empty($_REQUEST['brand']))? 0 :$_REQUEST['brand'];
+$accessories = (empty($_REQUEST['accessories']))? 0 :$_REQUEST['accessories'];
 $brandText = (empty($_REQUEST['brandText']))?"":$_REQUEST['brandText'];
 $accessoriesText = (empty($_REQUEST['accessoriesText']))?"":$_REQUEST['accessoriesText'];
+
 $concatStr = '';
+$timeNow = date("Y-m-d H:i:s");
+$timeEnd = date("Y-m-d H:i:s",strtotime("+$days day"));
+
 if($_FILES["file"]["error"] == 0){
 
     $imageName = time();
@@ -27,25 +31,26 @@ if($_FILES["file"]["error"] == 0){
 }
 $uploadImg = $_FILES['file']['name'];
 
-$timeNow = date("Y-m-d H:i:s");
-$timeEnd = date("Y-m-d H:i:s",strtotime("+$days day"));
-
-
 $couponCodeSql = "SELECT `id` FROM coupon order by id DESC";
 $stmt = $db_host->prepare($couponCodeSql);
 $stmt->execute();
+
 $code = $stmt->rowCount();
-
-
-for($i=1;$i<=6;$i++){
-    $random .= rand(1,9);
-}
 $cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
 
-$concatStr = $brandText.$name;
-if($brandText != $accessoriesText){
-    $concatStr = $brandText.$accessoriesText.$name;
+
+if($brand == 'null' || $brand == 0){
+    $brandText ='全館';
 }
+if($accessories == 'null' || $accessories == 0){
+    $accessoriesText ='全館';
+}
+
+$concatStr .= $brandText;
+if($accessoriesText != '全館'){
+    $concatStr .= $accessoriesText;
+}
+$concatStr .= $name;
 
 $pdoSql = "INSERT INTO `coupon`(`name`, `coupon_code`, `start_date`, `end_date`, `discount`, `lower_purchase`, `quantity`, `img`, `brand`, `accessories`, `is_deleted`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 $stmt = $db_host->prepare($pdoSql);

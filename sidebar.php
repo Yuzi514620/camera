@@ -28,13 +28,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'order' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/order.php">
+                <a class="nav-link <?= $page === 'order' ? 'active bg-white text-dark' : 'text-white' ?>" href="">
                     <i class="material-symbols-rounded opacity-5">table_view</i>
                     <span class="nav-link-text ms-1">訂單管理</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'product' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/product.php">
+                <a class="nav-link <?= $page === 'product' ? 'active bg-white text-dark' : 'text-white' ?>" href="../product/product.php">
                     <i class="material-symbols-rounded opacity-5">receipt_long</i>
                     <span class="nav-link-text ms-1">商品管理</span>
                 </a>
@@ -52,7 +52,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'article' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/article.php">
+                <a class="nav-link <?= $page === 'article' ? 'active bg-white text-dark' : 'text-white' ?>" href="../article/article.php">
                     <i class="fa-regular fa-newspaper opacity-5" style="font-size: 14px"></i>
                     <span class="nav-link-text ms-1">文章管理</span>
                 </a>
@@ -64,8 +64,10 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'coupon' ? 'active bg-white text-dark' : 'text-white' ?>" href="../album/album.php">
-                    <i class="fa-regular fa-image opacity-5" style="font-size: 14px"></i>
+
+                <a class="nav-link <?= $page === 'album' ? 'active bg-white text-dark' : 'text-white' ?>" href="../album/album.php">
+                    <i class="fa-regular fa-image opacity-5" style="font-size: 14px"></i> 
+
                     <span class="nav-link-text ms-1">媒體庫管理</span>
                 </a>
             </li>
