@@ -168,7 +168,7 @@ if ($result->num_rows > 0) {
         $page = 'course_add';
 
         $breadcrumbLinks = [
-            'users' => '../users.php',
+            'users' => '../users/users.php',
             'course' => 'course.php',
             'course_add' => 'course_add.php',
         ];
