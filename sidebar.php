@@ -65,7 +65,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link <?= $page === 'coupon' ? 'active bg-white text-dark' : 'text-white' ?>" href="../album/album.php">
-                    <i class="fa-regular fa-image opacity-5" style="font-size: 14px"></i> 
+                    <i class="fa-regular fa-image opacity-5" style="font-size: 14px"></i>
                     <span class="nav-link-text ms-1">媒體庫管理</span>
                 </a>
             </li>
