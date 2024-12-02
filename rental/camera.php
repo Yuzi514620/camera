@@ -10,10 +10,10 @@ if (!isset($_GET["id"])) {
 }
 
 $id = intval($_GET["id"]); // 確保 id 是數字
-$sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, 
-        images.type AS image_type, images.image_url
+$sql = "SELECT camera.*, image.name AS image_name, image.description AS image_description, 
+        image.type AS image_type, image.image_url
         FROM camera
-        JOIN images ON camera.image_id = images.id
+        JOIN image ON camera.image_id = image.id
         WHERE camera.id = $id";
 
 $result = $conn->query($sql);
@@ -22,7 +22,7 @@ if ($result && $camera = $result->fetch_assoc()) {
 ?>
 
 <div class="modal fade" id="cameraModal<?= $id ?>" data-id="<?= $camera['id'] ?>" tabindex="-1" role="dialog">
-    <div div class="modal-dialog" role="document">
+    <div div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <!-- 相機名稱 -->
@@ -68,7 +68,7 @@ if ($result && $camera = $result->fetch_assoc()) {
    
                 <!-- 按鈕用於打開 camera_edit.php -->
                 <button type="button" 
-                        class="btn btn-primary modalChange" 
+                        class="btn btn-dark modalChange" 
                         data-id="<?= $camera['id'] ?>" 
                         data-target="camera_edit.php">編輯
                 </button>

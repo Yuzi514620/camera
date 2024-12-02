@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['myFile'])) {
             // 移動上傳的檔案
             if (move_uploaded_file($tmpFilePath, $destinationPath)) {
                 // 插入資料到資料庫
-                $stmt = $conn->prepare("INSERT INTO images (name, type, description, image_url, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt = $conn->prepare("INSERT INTO image (name, type, description, image_url, created_at) VALUES (?, ?, ?, ?, NOW())");
                 $stmt->bind_param("ssss", $name, $type, $description, $newFileName);
 
                 if ($stmt->execute()) {
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['myFile'])) {
 }
 
 // 撈取現有資料（可選）
-$sql = "SELECT * FROM images";
+$sql = "SELECT * FROM image";
 $result = $conn->query($sql);
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -87,8 +87,8 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
 
-<div class="modal fade" id="imagesModal" tabindex="-1" aria-labelledby="imagesModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between align-items-center">
                 <h5 class="modal-title"><?= htmlspecialchars($title) ?></h5>
@@ -124,8 +124,8 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer ">
-                    <button type="submit" class="btn btn-primary">送出</button>
+                <div class="modal-footer pb-0">
+                    <button type="submit" class="btn btn-dark">送出</button>
                 </div>                    
             </form>
         </div>
@@ -164,7 +164,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (event
 
 <!-- modal 專用 -->
 <script>
-    $(document).on('submit', '#imagesModal form', function (e) {
+    $(document).on('submit', '#imageModal form', function (e) {
     e.preventDefault(); // 阻止默認提交行為
     var formData = new FormData(this);
 
@@ -179,7 +179,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (event
         success: function (response) {
             alert('圖片上傳成功！');
             location.reload();
-            $('#imagesModal').modal('hide');
+            $('#imageModal').modal('hide');
         },
         error: function () {
             alert('上傳過程中出現錯誤');

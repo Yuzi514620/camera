@@ -8,28 +8,50 @@ if ($conn->connect_error) {
   die("資料庫連接失敗: " . $conn->connect_error);
 }
 
+
+$where_clause = 'WHERE 1=1'; // 初始化
+
+$search = isset($_GET["search"]) ? trim($_GET["search"]) : '';
+if (!empty($search)) {
+    $search_escaped = $conn->real_escape_string($search);
+    $where_clause .= " AND (name LIKE '%$search_escaped%' OR description LIKE '%$search_escaped%')";
+}
+
+// 排序邏輯
+$order = isset($_GET["order"]) ? $_GET["order"] : 'i1'; // 默認為按 id 降序排序
+switch ($order) {
+    case 'i0': $order_by = 'image.id ASC'; break;
+    case 'n0': $order_by = 'image.name ASC'; break;
+    case 'n1': $order_by = 'image.name DESC'; break;
+    case 'd0': $order_by = 'image.description ASC'; break;
+    case 'd1': $order_by = 'image.description DESC'; break;
+    default: $order_by = 'image.id DESC'; break;
+}
+
+
 // 分頁設定
 $items_per_page = 18;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $page = max(1, $page);  // 確保頁數不小於 1
 $offset = ($page - 1) * $items_per_page;
 
-// 搜尋設定
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$where_clause = '';
-if (!empty($search)) {
-  $search_escaped = $conn->real_escape_string($search);
-  $where_clause = "WHERE description LIKE '%$search_escaped%'";
-}
+// // 搜尋設定
+// $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+// $where_clause = '';
+// if (!empty($search)) {
+//   $search_escaped = $conn->real_escape_string($search);
+//   $where_clause = "WHERE description LIKE '%$search_escaped%'";
+// }
+
 
 // 查詢資料數量
-$count_sql = "SELECT COUNT(*) AS total FROM images $where_clause";
+$count_sql = "SELECT COUNT(*) AS total FROM image $where_clause";
 $count_result = $conn->query($count_sql);
 $total_items = $count_result->fetch_assoc()['total'] ?? 0; // 確保有默認值
 $total_pages = ceil($total_items / $items_per_page);
 
 // 查詢資料
-$sql = "SELECT * FROM images $where_clause ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+$sql = "SELECT * FROM image $where_clause ORDER BY $order_by LIMIT $items_per_page OFFSET $offset";
 $result = $conn->query($sql);
 $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : []; // 確保有默認值
 
@@ -69,12 +91,27 @@ include("../rental/link.php");
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'camera'; ?>
-  <?php include '../pages/sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-      <?php $page = 'camera'; ?>
-      <?php include '../pages/navbar.php'; ?>
+    <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'users' => '首頁', // 第一層的文字
+            'album' => '媒體庫管理', // 第一層的文字
+        ];
+
+        $page = 'album';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'users' => 'users.php',           // 第一層的連結
+            'album' => 'album.php',      // 第二層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
     <!-- Navbar -->
 
     <div class="container-fluid ">
@@ -85,9 +122,11 @@ include("../rental/link.php");
             <!-- 搜尋 -->
             <form class="d-flex mb-4" id="searchForm" action="" method="get">
               <div class="input-group">
+                  <input type="hidden" name="page" value="1">
                   <input type="search" name="search" class="btn btn-light text-start" 
                         value="<?= htmlspecialchars(isset($_GET['search']) ? $_GET['search'] : '') ?>" 
                         placeholder="搜尋名稱或描述">
+                  <input type="hidden" name="order" value="<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
                   <div class="btn-group ps-1">
                       <button type="submit" class="btn btn-dark" title="搜尋">搜尋</button>
                       <a href="album.php" class="btn btn-outline-secondary" title="清除搜尋">清除搜尋</a>
@@ -96,8 +135,8 @@ include("../rental/link.php");
           </form>
             <!-- 新增 -->
             <div>
-              <button id="loadModalButton" class="btn btn-primary">新增圖片</button>
-
+              <button id="deleteImageButton" class="btn btn-secondary" disabled>刪除照片</button>
+              <button id="loadModalButton" class="btn btn-dark">新增圖片</button>              
             </div>
           </div>
       </div>
@@ -110,23 +149,31 @@ include("../rental/link.php");
           <table class="table align-items-center mb-0">
             <thead class="bg-gradient-dark">
               <tr>
-                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  選擇</th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 text-white">
-                  圖片</th>
+                  編號
+                  <?php if ($order === 'i1'): ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=i0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=i1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>    
+                </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
-                  規格</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white">
-                  租金 / 押金</th>
+                  名稱
+                  <?php if ($order === 'n1'): ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=n0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=n1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>    
+                </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
-                  庫存</th>
-                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
-                  狀態</th>
-                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
-                  編輯</th>
-                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  刪除</th>
-              </tr>
+                  描述
+                  <?php if ($order === 'd1'): ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=d0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="album.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=d1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>    
+                </th>
+                <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
             </thead>
           </table>
           <!-- 圖片列表 -->
@@ -136,7 +183,7 @@ include("../rental/link.php");
             <?php else: ?>
                 <?php foreach ($rows as $row): ?>
                   <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-                <div class="card p-1" style="height: 180px;">
+                <div class="card checkCard p-1" data-id="<?= htmlspecialchars($row['id']) ?>" style="height: 180px;">
                     <img src="../album/upload/<?= htmlspecialchars($row['image_url']) ?>"                 
                          style="max-height:100px; width: 100%; object-fit: contain;" 
                          class="card-img-top p-1" 
@@ -158,14 +205,14 @@ include("../rental/link.php");
     <ul class="pagination justify-content-center">
         <!-- 首頁 -->
         <li class="page-item <?= $currentPage == 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="album.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+            <a class="page-link" href="album.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
                 <i class="fa-solid fa-angles-left"></i>
             </a>
         </li>
 
         <!-- 上一頁 -->
         <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="album.php?page=<?= max(1, $currentPage - 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+            <a class="page-link" href="album.php?page=<?= max(1, $currentPage - 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
                 <i class="fa-solid fa-angle-left"></i>
             </a>
         </li>
@@ -173,20 +220,20 @@ include("../rental/link.php");
         <!-- 中間頁碼 -->
         <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
             <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                <a class="page-link" href="album.php?page=<?= $i ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
+                <a class="page-link" href="album.php?page=<?= $i ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
             </li>
         <?php endfor; ?>
 
         <!-- 下一頁 -->
         <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-            <a class="page-link" href="album.php?page=<?= min($totalPages, $currentPage + 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+            <a class="page-link" href="album.php?page=<?= min($totalPages, $currentPage + 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
         </li>
 
         <!-- 末頁 -->
         <li class="page-item <?= $currentPage == $totalPages ? 'disabled' : '' ?>">
-            <a class="page-link" href="album.php?page=<?= $totalPages ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+            <a class="page-link" href="album.php?page=<?= $totalPages ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
                 <i class="fa-solid fa-angles-right"></i>
             </a>
         </li>
@@ -233,7 +280,7 @@ include("../rental/link.php");
 
 <script>
     // 自定義關閉模態框
-    $(document).on('click', '.close-modal', function () {
+    $(document).on('click', '.modalClose', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框
 
       // 使用 Bootstrap 的方法關閉模態框
@@ -246,6 +293,65 @@ include("../rental/link.php");
       });
   });
   </script>
+
+<script>
+    $(document).ready(function () {
+        let lastSelectedCard = null; // 記錄最後一個選中的卡片
+
+        // 卡片點擊事件處理器
+        $('.checkCard').click(function () {
+            if (lastSelectedCard) {
+                // 如果之前有選中的卡片，移除 outline
+                lastSelectedCard.css('outline', 'none');
+            }
+
+            // 設定當前卡片為選中的卡片，並加上 outline
+            lastSelectedCard = $(this);
+            lastSelectedCard.css('outline', '3px solid #333');
+
+            // 啟用刪除按鈕
+            $('#deleteImageButton').prop('disabled', false);
+
+            // 保存選中卡片的 image ID
+            const dataId = $(this).data('id');
+            $('#deleteImageButton').data('id', dataId);
+        });
+
+        // 頁面刷新或跳轉到其他頁面時，重置選擇
+        $(document).on('click', 'a.page-link', function () {
+            if (lastSelectedCard) {
+                lastSelectedCard.css('outline', 'none');
+            }
+            lastSelectedCard = null;
+            $('#deleteImageButton').prop('disabled', true);
+        });
+
+        // 點擊刪除按鈕時的處理
+        $('#deleteImageButton').click(function () {
+            const dataId = $(this).data('id');
+
+            if (confirm('您確定要刪除此圖片嗎？')) {
+                // 發送 AJAX 請求刪除圖片
+                $.ajax({
+                    url: '../album/images_delete.php', // 修正這裡的路徑
+                    type: 'POST',
+                    data: { id: dataId },
+                    success: function (response) {
+                        if (response.trim() === "success") {
+                            alert('圖片刪除成功！');
+                            location.reload(); // 重新載入頁面
+                        } else {
+                            alert(response); // 顯示錯誤訊息
+                        }
+                    },
+                    error: function () {
+                        alert('圖片刪除失敗，請稍後再試。');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

@@ -64,7 +64,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $page === 'rental' ? 'active bg-white text-dark' : 'text-white' ?>" href="../pages/rental.php">
+                <a class="nav-link <?= $page === 'coupon' ? 'active bg-white text-dark' : 'text-white' ?>" href="../album/album.php">
+                    <i class="fa-regular fa-image opacity-5" style="font-size: 14px"></i> 
+                    <span class="nav-link-text ms-1">媒體庫管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?= $page === 'rental' ? 'active bg-white text-dark' : 'text-white' ?>" href="../rental/camera_list.php">
                     <i class="fa-solid fa-arrow-right-arrow-left opacity-5" style="font-size: 14px"></i>
                     <span class="nav-link-text ms-1">租借商品管理</span>
                 </a>
