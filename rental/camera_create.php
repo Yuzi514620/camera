@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </tr>  
                         </table>
                         <div class="modal-footer pb-0">
-                            <button type="submit" class="btn btn-primary">新增</button>
+                            <button type="submit" class="btn btn-dark">新增</button>
                         </div>
                     </form>
                 <?php } ?>

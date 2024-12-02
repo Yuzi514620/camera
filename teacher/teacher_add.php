@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             if ($stmt_update = $conn->prepare($sql_update)) {
                                 $stmt_update->bind_param("ii", $image_id, $teacher_id);
                                 if ($stmt_update->execute()) {
-                                    header("Location: teacher.php?message=success");
+                                    header("Location: teacher_info.php?id=$teacher_id&message=更新成功");
                                     exit();
                                 } else {
                                     echo "<script>alert('更新圖片關聯失敗！');</script>";
