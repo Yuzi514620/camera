@@ -130,45 +130,45 @@ session_start();
                   </div>
                 </div>
               </div>
-              <?php if(isset($_SESSION["error"]["times"])&& $_SESSION["error"]["times"]>3):?>
-                    <h4 class="text-danger m-5 text-center">你已經登入失敗超過3次<br>請稍後再試</h4>
-                    <?php else: ?>
-              <div class="card-body p-3">
-                <form action="doSignin.php" role="form" method="post" class="text-start">
-                  <div class="input-group input-group-outline my-3">
-                    <label class="form-label">帳號</label>
-                    <input type="account" class="form-control" name="account">
-                  </div>
-                  <div class="input-group input-group-outline mb-3">
-                    <label class="form-label">密碼</label>
-                    <input type="password" class="form-control" name="password">
-                  </div>
-                  <div class="form-check form-switch d-flex align-items-center mb-3">
-                    <input class="form-check-input" type="checkbox" id="rememberMe" checked>
-                    <label class="form-check-label mb-0 ms-3" for="rememberMe">記住我</label>
-                  </div>
-                  <div class="text-center">
-                    <button type="submit" name="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">登入</button>
-                  </div>
-                  <?php if(isset($_SESSION["error"]["message"])):?>
-                  <div class="p-1 mb-2 text-danger text-center"><?=$_SESSION["error"]["message"]?></div>
-                  <?php unset($_SESSION["error"]["message"]); ?>
-                  <?php endif; ?>
-                  <p class="mt-4 text-sm text-center">
-                    沒有帳號嗎 ?
-                    <a href="../pages/sign-up.html" class="text-primary text-gradient font-weight-bold">註冊</a>
-                  </p>
-                </form>
+              <?php if (isset($_SESSION["error"]["times"]) && $_SESSION["error"]["times"] > 3): ?>
+                <h4 class="text-danger m-5 text-center">你已經登入失敗超過3次<br>請稍後再試</h4>
+              <?php else: ?>
+                <div class="card-body p-3">
+                  <form action="doSignin.php" role="form" method="post" class="text-start">
+                    <div class="input-group input-group-outline my-3">
+                      <label class="form-label">帳號</label>
+                      <input type="account" class="form-control" name="account">
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">密碼</label>
+                      <input type="password" class="form-control" name="password">
+                    </div>
+                    <div class="form-check form-switch d-flex align-items-center mb-3">
+                      <input class="form-check-input" type="checkbox" id="rememberMe" checked>
+                      <label class="form-check-label mb-0 ms-3" for="rememberMe">記住我</label>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" name="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">登入</button>
+                    </div>
+                    <?php if (isset($_SESSION["error"]["message"])): ?>
+                      <div class="p-1 mb-2 text-danger text-center"><?= $_SESSION["error"]["message"] ?></div>
+                      <?php unset($_SESSION["error"]["message"]); ?>
+                    <?php endif; ?>
+                    <p class="mt-4 text-sm text-center">
+                      沒有帳號嗎 ?
+                      <a href="../pages/sign-up.html" class="text-primary text-gradient font-weight-bold">註冊</a>
+                    </p>
+                  </form>
                 <?php endif; ?>
-              </div>
+                </div>
             </div>
           </div>
         </div>
       </div>
       <footer class="footer position-absolute bottom-2 py-2 w-100">
         <div class="container">
-          <div class="row align-items-center justify-content-lg-end">
-            <div class="col-12 col-md-6 my-auto">
+          <div class="row align-items-center justify-content-center">
+            <div class="d-flex justify-content-center align-items-center h-100 text-white">
               <div class="copyright text-center text-sm text-white text-lg-start">
                 © <script>
                   document.write(new Date().getFullYear())
