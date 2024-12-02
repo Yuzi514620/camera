@@ -3,9 +3,7 @@ require_once("../coupon/pdo_connect.php");
 $title = 'coupon';
 
 $pdoSqlALl = "SELECT * FROM coupon ";
-$stmt = $db_host->prepare($pdoSqlALl);
-$stmt->execute();
-$resultCount = $stmt->rowCount();
+$resultCount = rowCount($pdoSqlALl,$db_host);
 
 $per_page = 8;
 if (isset($_GET["search"])) {
@@ -35,19 +33,14 @@ if (isset($_GET["search"])) {
       $pdoCluse = "order by `start_date` DESC";
       break;
     case 4:
-
-      $pdoSqlALl = "SELECT * FROM coupon where `is_deleted` = 0";
-      $stmt = $db_host->prepare($pdoSqlALl);
-      $stmt->execute();
-      $resultCount = $stmt->rowCount();
       $pdoCluse = 'where `is_deleted` = 0';
+      $pdoSqlALl .=$pdoCluse;
+      $resultCount = rowCount($pdoSqlALl,$db_host);
       break;
     case 5:
-      $pdoSqlALl = "SELECT * FROM coupon where `is_deleted` = 1";
-      $stmt = $db_host->prepare($pdoSqlALl);
-      $stmt->execute();
-      $resultCount = $stmt->rowCount();
       $pdoCluse = 'where `is_deleted` = 1';
+      $pdoSqlALl .= $pdoCluse;
+      $resultCount = rowCount($pdoSqlALl,$db_host);
       break;
   }
 
@@ -66,6 +59,13 @@ try {
   echo "Error: " . $e->getMessage() . "<br/>";
   $db_host = NULL;
   exit;
+}
+function rowCount($pdoSqlALl,$db_host){
+  $stmt = $db_host->prepare($pdoSqlALl);
+  $stmt->execute();
+  $resultCount = $stmt->rowCount();
+
+  return $resultCount;
 }
 ?>
 <!DOCTYPE html>
