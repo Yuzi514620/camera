@@ -105,7 +105,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
-  <?php $page = 'camera'; ?>
+  <?php $page = 'rental'; ?>
   <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
