@@ -1,6 +1,9 @@
 <?php
 require_once 'pdo_connect_camera.php';
 
+
+
+
 // 只在函數不存在時定義 truncate()，避免重複宣告
 if (!function_exists('truncate')) {
     function truncate($text, $length = 150, $suffix = '...')
@@ -234,6 +237,8 @@ $breadcrumbLinks = [
     'article' => 'users.php',           // 第一層的連結
     'article_list' => 'article.php',    // 第二層的連結
 ];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -286,6 +291,10 @@ $breadcrumbLinks = [
       /* 自動換行 */
       white-space: normal;
       /* 保留正常的空白符號 */
+    }
+    .btn-color {
+      background-color: #3C3C3C;
+      color: #FFF;
     }
     .btn-search{
       border-radius: 0 10px 10px 0;
@@ -433,7 +442,7 @@ $breadcrumbLinks = [
           <div class="d-flex justify-content-between align-items-center pe-5 ps-1">
             <div class="input-group" style="width: 20%;">
               <form class="d-flex" method="GET" action="article.php">
-                <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm " placeholder="搜尋文章" name="search" value="" style="height: 38px; border-radius:10px 0 0 10px;">
+                <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm " placeholder="搜尋文章" name="search" value="<?= htmlspecialchars(isset($_GET['search']) ? $_GET['search'] : '') ?>" style="height: 38px; border-radius:10px 0 0 10px;">
                 <button class="btn btn-dark btn-search" type="submit"><i class="fa-solid fa-magnifying-glass" ></i></button>
               </form>
             </div>
@@ -450,11 +459,11 @@ $breadcrumbLinks = [
           <div class="d-flex justify-content-between">
             <div class="px-2 mb-2">目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章</div>
             <div class="btn-group">  
-              <a href="article.php?" class="btn btn-dark <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
+              <a href="article.php?" class="btn btn-secondary btn-color <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
               <?php foreach ($categories as $id => $name): ?>  
-                  <a href="?category_id=<?= $id ?>" class="btn btn-dark <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
+                  <a href="?category_id=<?= $id ?>" class="btn btn-dark btn-color <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
               <?php endforeach; ?>
-              <a href="?is_deleted=1" class="btn btn-dark <?= isset($_GET['is_deleted']) ? 'active' : '' ?>">
+              <a href="?is_deleted=1" class="btn btn-secondary btn-color <?= isset($_GET['is_deleted']) ? 'active' : '' ?>">
                   下架文章 <span class="badge bg-white text-danger border rounded-circle"><?= $archived_count ?></span>
               </a>
             </div>
@@ -502,7 +511,7 @@ $breadcrumbLinks = [
                       <th class="text-uppercase text-sm font-weight-bolder text-center ps-2 text-white" style="width:10%">
                         最後更新時間
                         <a href="<?= buildSortUrl('update_time') ?>" class="text-white">
-                            <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
+                          <i class="fa-solid fa-sort ps-2 <?= $sort === 'update_time' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
                       </th>
                       <th
