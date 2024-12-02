@@ -524,7 +524,7 @@ $breadcrumbLinks = [
                       </th>
                       <th
                         class="text-center text-uppercase text-sm text-white" style="width:5%">
-                        文章狀態
+                        狀態
                         <a href="<?= buildSortUrl('is_deleted') ?>" class="text-white">
                           <i class="fa-solid fa-sort ps-2 <?= $sort === 'is_deleted' ? ($order === 'asc' ? 'fa-sort-up' : 'fa-caret-down') : '' ?>"></i>
                         </a>
