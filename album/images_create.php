@@ -124,8 +124,8 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer ">
-                    <button type="submit" class="btn btn-primary">送出</button>
+                <div class="modal-footer pb-0">
+                    <button type="submit" class="btn btn-dark">送出</button>
                 </div>                    
             </form>
         </div>

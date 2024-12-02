@@ -115,9 +115,9 @@ if ($result && $camera = $result->fetch_assoc()) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">儲存</button>
+                        <button type="submit" class="btn btn-dark">儲存</button>
                         <button type="button" 
-                                class="btn btn-secondary modalChange"
+                                class="btn btn-outline-secondary modalChange"
                                 data-id="<?= $camera['id'] ?>" 
                                 data-target="camera.php">返回
                         </button>

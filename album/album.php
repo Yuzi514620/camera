@@ -136,7 +136,7 @@ include("../rental/link.php");
             <!-- 新增 -->
             <div>
               <button id="deleteImageButton" class="btn btn-secondary" disabled>刪除照片</button>
-              <button id="loadModalButton" class="btn btn-success">新增圖片</button>              
+              <button id="loadModalButton" class="btn btn-dark">新增圖片</button>              
             </div>
           </div>
       </div>
@@ -280,7 +280,7 @@ include("../rental/link.php");
 
 <script>
     // 自定義關閉模態框
-    $(document).on('click', '.close-modal', function () {
+    $(document).on('click', '.modalClose', function () {
       var modal = $(this).closest('.modal'); // 獲取當前模態框
 
       // 使用 Bootstrap 的方法關閉模態框
@@ -307,7 +307,7 @@ include("../rental/link.php");
 
             // 設定當前卡片為選中的卡片，並加上 outline
             lastSelectedCard = $(this);
-            lastSelectedCard.css('outline', '3px solid #e91e63');
+            lastSelectedCard.css('outline', '3px solid #333');
 
             // 啟用刪除按鈕
             $('#deleteImageButton').prop('disabled', false);

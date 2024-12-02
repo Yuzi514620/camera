@@ -31,6 +31,12 @@ switch ($order) {
   case 'i1':
       $order_by = 'camera.id DESC';
       break;
+  case 'f0':
+      $order_by = 'camera.fee ASC';
+      break;
+  case 'f1':
+      $order_by = 'camera.fee DESC';
+      break;
   case 's0':
       $order_by = 'camera.stock ASC';
       break;
@@ -148,9 +154,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                     onclick="toggleDeleted(<?php echo $newIsDeletedValue; ?>)"><?= $buttonText ?>
             </button>
             <button type="button" 
-                    class="btn btn-success" 
+                    class="btn btn-dark" 
                     data-toggle="modal" 
-                    data-target="camera_create.php">新增相機
+                    data-target="camera_create.php">新增商品
             </button>
           </div>
         </div>
@@ -175,7 +181,13 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   規格</th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
-                  租金 / 押金</th>
+                  租金 / 押金
+                  <?php if ($order === 'f1'): ?>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=f0&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=f1&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>
+                </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   庫存
                   <?php if ($order === 's1'): ?>
@@ -189,7 +201,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
                   編輯</th>
                 <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  上架</th>
+                  上架 / 下架</th>
               </tr>
             </thead> 
             <tbody>
@@ -248,8 +260,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                               class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                               data-bs-toggle="modal" 
                               data-bs-target="#deleteModal" 
-                              data-id="<?= $camera['id'] ?>">                        
-                          <i class="fa-regular fa-trash-can"></i> <!-- 刪除圖標 -->
+                              data-id="<?= $camera['id'] ?>">
+                            <i class="fa-solid fa-store-slash"></i>                                             
+                          <!-- <i class="fa-regular fa-trash-can"></i> -->
                       </button>
                   <?php else: ?>
                       <!-- 顯示還原按鈕 -->
@@ -257,8 +270,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                               class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                               data-bs-toggle="modal" 
                               data-bs-target="#revertModal" 
-                              data-id="<?= $camera['id'] ?>">                        
-                          <i class="fa-solid fa-rotate-left"></i> <!-- 還原圖標 -->
+                              data-id="<?= $camera['id'] ?>"> 
+                            <i class="fa-solid fa-store"></i>                       
+                          <!-- <i class="fa-solid fa-rotate-left"></i> -->
                       </button>
                   <?php endif; ?>
               </td>
@@ -335,8 +349,8 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 你確定要下架嗎？
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <a href="" id="confirmDelete" class="btn btn-primary">下架</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmDelete" class="btn btn-dark">下架</a>
             </div>
         </div>
     </div>
@@ -354,8 +368,8 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 你確定要上架嗎？
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <a href="" id="confirmRevert" class="btn btn-primary">上架</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmRevert" class="btn btn-dark">上架</a>
             </div>
         </div>
     </div>
@@ -542,6 +556,7 @@ $(document).on('click', '.modalClose', function () {
 
         // 更新 URL 並重新載入頁面
         urlParams.set('is_deleted', is_deleted);
+        urlParams.set('page', 1)
         window.location.search = urlParams.toString();
     });
 </script>

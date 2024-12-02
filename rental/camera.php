@@ -68,7 +68,7 @@ if ($result && $camera = $result->fetch_assoc()) {
    
                 <!-- 按鈕用於打開 camera_edit.php -->
                 <button type="button" 
-                        class="btn btn-primary modalChange" 
+                        class="btn btn-dark modalChange" 
                         data-id="<?= $camera['id'] ?>" 
                         data-target="camera_edit.php">編輯
                 </button>
