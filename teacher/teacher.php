@@ -129,7 +129,7 @@ $result = $conn->query($sql);
     $page = 'teacher';
 
     $breadcrumbLinks = [
-      'users' => '../users.php',
+      'users' => '../users/users.php',
       'teacher' => 'teacher.php',
     ];
 

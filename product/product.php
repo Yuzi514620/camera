@@ -164,6 +164,11 @@ $conn->close();
     color: #ffffff;
     /* 文字顏色改為白色 */
   }
+
+  .btn-search {
+    border-radius: 0 10px 10px 0;
+    height: 38px;
+  }
 </style>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -191,14 +196,15 @@ $conn->close();
     include '../navbar.php';
     ?>
     <!-- Navbar -->
+
     <div class="container-fluid py-2">
       <div class="d-flex justify-content-between">
-        <form action="" method="get">
-          <div class="input-group">
-            <input type="search" class="form-control border border-secondary" style="height: 38px;" name="search" value="<?= $_GET["search"] ?? "" ?>">
-            <button class="btn btn-dark" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-          </div>
-        </form>
+        <div class="input-group" style="width: 20%;">
+          <form class="d-flex" method="GET" action="product.php">
+            <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm " placeholder="搜尋商品" name="search" value="<?= htmlspecialchars($search) ?>" style="height: 38px; border-radius:10px 0 0 10px;">
+            <button class="btn btn-dark btn-search" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
+        </div>
         <a class="btn btn-dark ms-2" href="addProduct.php">新增商品</i></a>
       </div>
 
@@ -208,7 +214,7 @@ $conn->close();
       <h6 class="mt-3">共 <?= $totalData ?> 件商品</h6>
 
       <!-- 篩選表單 -->
-      <form action="" method="get" class="d-flex flex-wrap align-items-center gap-3">
+      <form action="" method="get" class="d-flex flex-wrap align-items-center gap-3 ">
         <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
         <input type="hidden" name="p" value="<?= htmlspecialchars($p) ?>">
 
@@ -239,7 +245,7 @@ $conn->close();
         </select>
 
         <!-- 狀態選單 -->
-        <select name="state" class="form-select ps-2" style="width: 200px;" onchange="this.form.submit()">
+        <select name="state" class="form-select ps-2 " style="width: 200px;" onchange="this.form.submit()">
           <option value="">全部狀態</option>
           <option value="上架" <?= ($selectedState == '上架') ? 'selected' : '' ?>>上架</option>
           <option value="下架" <?= ($selectedState == '下架') ? 'selected' : '' ?>>下架</option>
@@ -378,7 +384,11 @@ $conn->close();
                         </td>
                         <!-- 刪除 -->
                         <td class="align-middle text-center">
-                          <a href="doDelete.php?id=<?= $product['id'] ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          <a href="doDelete.php?id=<?= $product['id'] ?>"
+                            class="text-secondary font-weight-bold text-xs"
+                            data-toggle="tooltip"
+                            data-original-title="Edit user"
+                            onclick="return confirm('確定要刪除此商品嗎？');">
                             <i class="fa-regular fa-trash-can"></i>
                           </a>
                         </td>
@@ -466,11 +476,14 @@ $conn->close();
       </div>
     </div>
   </main>
+
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script>
     var win = navigator.platform.indexOf("Win") > -1;
     if (win && document.querySelector("#sidenav-scrollbar")) {
@@ -484,6 +497,27 @@ $conn->close();
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+  <script>
+    document.querySelectorAll('.delete-button').forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-id');
+        Swal.fire({
+          title: '確定要刪除此商品嗎？',
+          text: "刪除後無法恢復！",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: '確定',
+          cancelButtonText: '取消'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `doDelete.php?id=${productId}`;
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

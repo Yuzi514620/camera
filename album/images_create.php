@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['myFile'])) {
     $response = [];
 
     // 允許的副檔名
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif' , 'webp'];
 
     foreach ($files['name'] as $index => $originalFileName) {
         if ($files['error'][$index] === UPLOAD_ERR_OK) {

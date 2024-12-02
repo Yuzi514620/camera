@@ -60,22 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <th><label for="image_id">選擇圖片</label></th>
                                 <td>
                                     <select id="image_id" name="image_id" style="width:100%" onchange="showImage()" required>
-                                    <?php
+                                        <?php
                                         if ($result_image && $result_image->num_rows > 0) {
-                                            // 將資料存入陣列
-                                            $images = [];
                                             while ($row = $result_image->fetch_assoc()) {
-                                                $images[] = $row;
-                                            }
-
-                                            // 按照 ID 降冪排序
-                                            usort($images, function ($a, $b) {
-                                                return $b['id'] - $a['id'];
-                                            });
-
-                                            // 生成選項
-                                            foreach ($images as $image) {
-                                                echo "<option value='" . $image['id'] . "'>" . $image['name'] . " (" . $image['type'] . ")</option>";
+                                                echo "<option value='" . $row['id'] . "'>" . $row['name'] . " (" . $row['type'] . ") ". "</option>";
                                             }
                                         } else {
                                             echo "<option value=''>沒有可用的圖片</option>";
