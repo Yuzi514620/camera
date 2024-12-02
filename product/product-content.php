@@ -133,9 +133,6 @@ $row = $result->fetch_assoc();
     <!-- Navbar -->
 
     <div class="container-fluid py-2">
-      <a href="product.php" class="btn btn-dark">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -161,7 +158,7 @@ $row = $result->fetch_assoc();
                         <?php if ($result->num_rows > 0): ?>
                           <h1><?= $row["name"] ?></h1>
                           <tr>
-                            <th>id</th>
+                            <th>編號</th>
                             <td><?= $row["id"] ?></td>
                           </tr>
                           <tr>

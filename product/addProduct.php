@@ -96,31 +96,28 @@ $conn->close();
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
     <?php
-        // 設定麵包屑的層級
-        $breadcrumbs = [
-          'teacher' => '首頁', // 第一層的文字
-          'teacher_list' => '商品管理', // 第一層的文字
-          'teacher_add' => '新增商品', // 第二層的文字
+    // 設定麵包屑的層級
+    $breadcrumbs = [
+      'teacher' => '首頁', // 第一層的文字
+      'teacher_list' => '商品管理', // 第一層的文字
+      'teacher_add' => '新增商品', // 第二層的文字
 
-          ];
+    ];
 
-        $page = 'teacher_add';//當前的頁面
+    $page = 'teacher_add'; //當前的頁面
 
-        // 設定麵包屑的連結
-        $breadcrumbLinks = [
-            'teacher' => 'product.php',           // 第一層的連結
-            'teacher_list' => 'product.php',      // 第二層的連結
-            'teacher_add' => 'addProduct.php',      // 第二層的連結
-        ];
+    // 設定麵包屑的連結
+    $breadcrumbLinks = [
+      'teacher' => 'product.php',           // 第一層的連結
+      'teacher_list' => 'product.php',      // 第二層的連結
+      'teacher_add' => 'addProduct.php',      // 第二層的連結
+    ];
 
-        include '../navbar.php';
-        ?>
+    include '../navbar.php';
+    ?>
     <!-- Navbar -->
 
     <div class="container-fluid py-2">
-      <a href="product.php" class="btn btn-dark">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -140,30 +137,30 @@ $conn->close();
                       <!-- 商品名稱 -->
                       <tr>
                         <td>
-                          <!-- <label for="name" class="form-label">商品名稱：</label> -->
+                          <label for="name" class="form-label">商品名稱：</label>
                           <input type="text" class="form-control" name="name" placeholder="輸入商品名稱" required>
                         </td>
                       </tr>
                       <!-- 圖片 -->
                       <tr>
-                      <td>
-                        <a class="btn btn-dark" href="up_image.php">圖片</a>
-                          <!-- <label for="myFile" class="form-label">選擇圖片</label>
-                          <input type="file" class="form-control" id="fileInput" name="myFile[]" accept="image/*" multiple required>
-                          <div id="previewContainer" class="mt-3 d-flex flex-wrap"></div> -->
+                        <td>
+                          <!-- <label for="image" class="form-label">上傳圖片：</label> -->
+                          <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#uploadImageModal">
+                            上傳圖片
+                          </button>
                         </td>
                       </tr>
                       <!-- 價格 -->
                       <tr>
                         <td>
-                          <!-- <label for="price" class="form-label">價格：</label> -->
+                          <label for="price" class="form-label">價格：</label>
                           <input type="number" class="form-control" name="price" placeholder="輸入價格" required>
                         </td>
                       </tr>
                       <!-- 品牌 -->
                       <tr>
                         <td>
-                          <!-- <label for="brand_id" class="form-label">品牌：</label> -->
+                          <label for="brand_id" class="form-label">品牌：</label>
                           <select name="brand_id" id="brand_id" class="form-select border border-dark ps-2">
                             <option value="0">-請選擇品牌-</option>
                             <option value="1">Leica</option>
@@ -177,7 +174,7 @@ $conn->close();
                       <!-- 種類 -->
                       <tr>
                         <td>
-                          <!-- <label for="category_id" class="form-label">種類：</label> -->
+                          <label for="category_id" class="form-label">種類：</label>
                           <select name="category_id" id="category_id" class="form-select border border-dark ps-2">
                             <option value="0">-請選擇種類-</option>
                             <option value="1">相機</option>
@@ -189,20 +186,21 @@ $conn->close();
                       <!-- 庫存 -->
                       <tr>
                         <td>
-                          <!-- <label for="stock" class="form-label">庫存：</label> -->
+                          <label for="stock" class="form-label">庫存：</label>
                           <input type="number" class="form-control" name="stock" min="0" placeholder="輸入庫存數量" required>
                         </td>
                       </tr>
                       <!-- 規格 -->
                       <tr>
                         <td>
-                          <!-- <label for="spec" class="form-label">規格：</label> -->
+                          <label for="spec" class="form-label">規格：</label>
                           <textarea class="form-control" name="spec" placeholder="輸入規格"></textarea>
                         </td>
                       </tr>
                       <!-- 狀態 -->
                       <tr>
                         <td>
+                          <label for="state" class="form-label">狀態:</label>
                           <select class="form-select ps-2" name="state" id="state" required>
                             <option value="上架" selected>上架</option>
                             <option value="下架">下架</option>
@@ -225,6 +223,38 @@ $conn->close();
                       </tr>
                     </form>
                   </tbody>
+                  <!-- 圖片上傳模態框 -->
+                  <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="uploadImageModalLabel">上傳圖片</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="uploadForm" action="doUpload.php" method="post" enctype="multipart/form-data">
+                            <div class="mb-2">
+                              <label for="name" class="form-label">圖片名稱</label>
+                              <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-2">
+                              <label for="myFile" class="form-label">選擇檔案</label>
+                              <input type="file" class="form-control" id="fileInput" name="myFile[]" accept="image/*" multiple>
+                            </div>
+                            <label for="type" class="form-label">類型</label>
+                            <select class="form-control" name="type" id="type" required>
+                              <option value="" disabled selected hidden>請選擇類型</option>
+                              <option value="相機">相機</option>
+                              <option value="配件">配件</option>
+                              <option value="鏡頭">鏡頭</option>
+                            </select>
+                            <div id="previewContainer" class="mb-4"></div>
+                            <button class="btn btn-dark" type="submit">送出</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </table>
               </div>
             </div>
@@ -250,9 +280,7 @@ $conn->close();
             img.style.width = '150px';
             img.style.height = '150px';
             img.style.marginRight = '10px';
-            img.style.objectFit = 'cover';
-            img.style.border = '1px solid #ddd';
-            img.style.borderRadius = '5px';
+            img.style.objectFit = 'contain';
             previewContainer.appendChild(img);
           };
           reader.readAsDataURL(file);
@@ -282,47 +310,3 @@ $conn->close();
 </html>
 
 
-<!-- <form action="doaddProduct.php" method="post" enctype="multipart/form-data">
-            <div class="mb-2">
-                <label for="name" class="form-label">商品名稱</label>
-                <input type="text" class="form-control" name="name" required>
-            </div>
-            <div class="mb-2">
-                <a href="up_image.php" class="btn btn-dark">選擇圖片</a>
-            </div>
-            <div class="mb-2">
-                <label for="price" class="form-label">價格</label>
-                <input type="number" class="form-control" name="price" required>
-            </div>
-            <div class="mb-2">
-                <label for="brand_id" class="form-label">品牌</label>
-                <select name="brand_id" id="brand_id" class="form-select">
-                    <option value="1">Leica</option>
-                    <option value="2">Nikon</option>
-                    <option value="3">Sony</option>
-                    <option value="4">Hasselblad</option>
-                    <option value="5">Canon</option>
-                </select>
-            </div>
-            <div class="mb-2">
-                <label for="category_id" class="form-label">種類</label>
-                <select name="category_id" id="category_id" class="form-select">
-                    <option value="1">相機</option>
-                    <option value="2">鏡頭</option>
-                    <option value="3">配件</option>
-                </select>
-            </div>
-            <div class="mb-2">
-                <label for="stock" class="form-label">庫存</label>
-                <input type="number" class="form-control" name="stock" min="0" required>
-            </div>
-            <div class="mb-2">
-                <label for="spec" class="form-label">規格</label>
-                <textarea type="text" class="form-control" name="spec"></textarea>
-            </div>
-            <div class="mb-2">
-                <label for="state" class="form-label">狀態</label>
-                <input type="text" class="form-control" name="state">
-            </div>
-            <button class="btn btn-primary" type="submit">送出</button>
-        </form> -->
