@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $stmt_update->bind_param("ii", $image_id, $course_id);
                         $stmt_update->execute();
 
-                        header("Location: course.php?message=success");
+                        header("Location: course_info.php?id=$course_id&message=更新成功");
                         exit();
                         exit();
                     } else {
@@ -154,7 +154,7 @@ if ($result->num_rows > 0) {
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'course'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->

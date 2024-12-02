@@ -4,6 +4,26 @@
   height: 100%;
   width: 100%;
 }
+  .page-link {
+    color: #ff6600;
+    /* 修改為橘色 */
+  }
+
+  .page-link:hover {
+    color: #cc5500;
+    /* 滑鼠懸停時顏色 */
+    background-color: transparent;
+    /* 可避免有背景色 */
+  }
+
+  .page-item.active .page-link {
+    background-color: black;
+    /* 背景顏色改為橘色 */
+    border-color: black;
+    /* 邊框顏色改為橘色 */
+    color: #ffffff;
+    /* 文字顏色改為白色 */
+  }
 </style>
 <!--     Fonts and icons     -->
   <link

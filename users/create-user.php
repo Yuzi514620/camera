@@ -2,8 +2,8 @@
 
 $sql = "SELECT * FROM users WHERE is_deleted=0";
 
-$result=$conn->query($sql);
-$row=$result->fetch_assoc();
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
 
 
 $sql = "SELECT * FROM users";
@@ -86,24 +86,24 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     <!-- Navbar -->
     <?php $page = 'users'; ?>
     <?php
-        // 設定麵包屑的層級
-        $breadcrumbs = [
-            'teacher' => '首頁', // 第一層的文字
-            'teacher_list' => '會員管理', 
-            'teacher_add' => '新增使用者', // 第一層的文字
-        ];
+    // 設定麵包屑的層級
+    $breadcrumbs = [
+      'teacher' => '首頁', // 第一層的文字
+      'teacher_list' => '會員管理',
+      'teacher_add' => '新增使用者', // 第一層的文字
+    ];
 
-        $page = 'teacher_add';//當前的頁面
+    $page = 'teacher_add'; //當前的頁面
 
-        // 設定麵包屑的連結
-        $breadcrumbLinks = [
-            'teacher' => 'users.php',           // 第一層的連結
-            'teacher_list' => 'users.php',      
-            'teacher_add' => 'creat-user.php',   // 第三層的連結
-        ];
+    // 設定麵包屑的連結
+    $breadcrumbLinks = [
+      'teacher' => 'users.php',           // 第一層的連結
+      'teacher_list' => 'users.php',
+      'teacher_add' => 'creat-user.php',   // 第三層的連結
+    ];
 
-        include '../navbar.php';
-        ?>
+    include '../navbar.php';
+    ?>
     <!-- Navbar -->
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center">
@@ -140,55 +140,63 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                     <tr>
                       <td class="text-center">
                         <form action="doCreateUser.php" method="post">
-                          
+
                           <div class="mb-2">
-                    
-                            </div>
-                            <div>
+
+                          </div>
+                          <div>
                             <label for="" class="form-label ">大頭貼</label>
                             <input type="file" class="input-group-text form-control form1 btn btn-white border bordrer-dark test" name="img" aria-describedby="inputGroupFileAddon04" aria-label="Upload" value="<?= $row["img"] ?>">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">帳號</label>
-                              <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">密碼</label>
-                              <input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-20位密碼" minlength="6" maxlength="20" name="password">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">確認密碼</label>
-                              <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">姓名</label>
-                              <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">email</label>
-                              <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">手機號碼</label>
-                              <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">住址</label>
-                              <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address">
-                            </div>
-                            <div class="mb-2">
-                              <label for="" class="form-label">生日</label>
-                              <input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday">
-                            </div>
-                            <?php if(isset($_SESSION["error"]["message"])):?>
-                  <div class="p-1 mb-2 text-danger text-center"><?=$_SESSION["error"]["message"]?></div>
-                  <?php unset($_SESSION["error"]["message"]); ?>
-                  <?php endif; ?>
-                            <button class="btn btn-dark" type="submit">送出</button>
-                            <a href="users.php" class="btn btn-primary">上一頁</a>
-                            </a>
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">帳號</label>
+                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">密碼</label>
+                            <input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">確認密碼</label>
+                            <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">姓名</label>
+                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name">
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
+                            <label class="form-check-label" for="gender">男</label>
+                          </div>
+                          <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option2">
+                            <label class="form-check-label" for="gender">女</label>
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">email</label>
+                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">手機號碼</label>
+                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">住址</label>
+                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address">
+                          </div>
+                          <div class="mb-2">
+                            <label for="" class="form-label">生日</label>
+                            <input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday">
+                          </div>
+                          <?php if (isset($_SESSION["error"]["message"])): ?>
+                            <div class="p-1 mb-2 text-danger text-center"><?= $_SESSION["error"]["message"] ?></div>
+                            <?php unset($_SESSION["error"]["message"]); ?>
+                          <?php endif; ?>
+                          <button class="btn btn-dark" type="submit">送出</button>
+                          <a href="users.php" class="btn btn-primary">上一頁</a>
+                          </a>
                         </form>
-                      
+
                       </td>
 
 
@@ -624,13 +632,12 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
   <!-- 照片預覽 -->
   <script>
-
     const testImg = document.querySelector("#test-img");
 
-    $(".test").change(function(){
+    $(".test").change(function() {
       let image = $(this).val();
       newImage = image.split("\\");
-      testImg.src="/camera/users/img/"+`${newImage[newImage.length-1]}`;
+      testImg.src = "/camera/users/img/" + `${newImage[newImage.length-1]}`;
       console.log(image);
       console.log(newImage);
     })

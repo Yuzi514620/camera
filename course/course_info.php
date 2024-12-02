@@ -96,7 +96,7 @@ $course = $result->fetch_assoc();
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
     <?php $page = 'course'; ?>
-    <?php include 'sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->

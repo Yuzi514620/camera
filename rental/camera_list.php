@@ -18,7 +18,7 @@ if ($is_deleted == 1) {
 $search = isset($_GET["search"]) ? trim($_GET["search"]) : '';
 if (!empty($search)) {
     $search_escaped = $conn->real_escape_string($search);
-    $whereClause .= " AND (images.name LIKE '%$search_escaped%' OR images.description LIKE '%$search_escaped%')";
+    $whereClause .= " AND (image.name LIKE '%$search_escaped%' OR image.description LIKE '%$search_escaped%')";
 }
 
 // 排序邏輯 - 新增 order 參數控制排序方向
@@ -30,6 +30,12 @@ switch ($order) {
       break;
   case 'i1':
       $order_by = 'camera.id DESC';
+      break;
+  case 'f0':
+      $order_by = 'camera.fee ASC';
+      break;
+  case 'f1':
+      $order_by = 'camera.fee DESC';
       break;
   case 's0':
       $order_by = 'camera.stock ASC';
@@ -48,7 +54,7 @@ $items_per_page = 10;
 $currentPage = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
 
 // 計算總數與分頁
-$count_sql = "SELECT COUNT(*) AS total FROM camera JOIN images ON camera.image_id = images.id WHERE $whereClause";
+$count_sql = "SELECT COUNT(*) AS total FROM camera JOIN image ON camera.image_id = image.id WHERE $whereClause";
 $count_result = $conn->query($count_sql);
 $totalItems = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $totalPages = max(ceil($totalItems / $items_per_page), 1);
@@ -56,10 +62,10 @@ $totalPages = max(ceil($totalItems / $items_per_page), 1);
 $offset = ($currentPage - 1) * $items_per_page;
 
 // 撈取資料
-$sql = "SELECT camera.*, images.name AS image_name, images.description AS image_description, 
-        images.type AS image_type, images.image_url
+$sql = "SELECT camera.*, image.name AS image_name, image.description AS image_description, 
+        image.type AS image_type, image.image_url
         FROM camera
-        JOIN images ON camera.image_id = images.id
+        JOIN image ON camera.image_id = image.id
         WHERE $whereClause
         ORDER BY $order_by
         LIMIT $items_per_page OFFSET $offset";
@@ -67,11 +73,11 @@ $result = $conn->query($sql);
 $cameras = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
 // 圖片資料邏輯
-$imgSql = "SELECT * FROM images";
+$imgSql = "SELECT * FROM image";
 $resultImg = $conn->query($imgSql);
-$images = $resultImg->fetch_all(MYSQLI_ASSOC);
+$image = $resultImg->fetch_all(MYSQLI_ASSOC);
 $imageArr = [];
-foreach ($images as $image) {
+foreach ($image as $image) {
     $imageArr[$image["id"]] = $image["name"];
 }
 
@@ -99,13 +105,28 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
-  <?php $page = 'camera'; ?>
-  <?php include '../pages/sidebar.php'; ?>
+  <?php $page = 'rental'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-      <?php $page = 'camera'; ?>
-      <?php include '../pages/navbar.php'; ?>
+      <?php
+        // 設定麵包屑的層級
+        $breadcrumbs = [
+            'users' => '首頁', // 第一層的文字
+            'camera_list' => '租借商品管理', // 第一層的文字
+        ];
+
+        $page = 'camera_list';//當前的頁面
+
+        // 設定麵包屑的連結
+        $breadcrumbLinks = [
+            'users' => 'users.php',           // 第一層的連結
+            'camera_list' => 'camera_list.php',      // 第二層的連結
+        ];
+
+        include '../navbar.php';
+        ?>
     <!-- Navbar -->
 
     <div class="container-fluid ">
@@ -116,7 +137,10 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
           <!-- 搜尋 -->
           <form method="GET" action="camera_list.php">
             <div class="input-group">
+              <input type="hidden" name="page" value="1">
               <input type="search" name="search" class="btn btn-light text-start" value="<?= htmlspecialchars(isset($_GET['search']) ? $_GET['search'] : '') ?>" placeholder="搜尋名稱或描述">
+              <input type="hidden" name="order" value="<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="is_deleted" value="<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>">              
               <div class="btn-group ps-1">
                 <button type="submit" class="btn btn-dark" title="搜尋">搜尋</button>
                 <a href="camera_list.php" class="btn btn-outline-secondary" title="清除搜尋">清除搜尋</a>
@@ -130,9 +154,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                     onclick="toggleDeleted(<?php echo $newIsDeletedValue; ?>)"><?= $buttonText ?>
             </button>
             <button type="button" 
-                    class="btn btn-success" 
+                    class="btn btn-dark" 
                     data-toggle="modal" 
-                    data-target="camera_create.php">新增相機
+                    data-target="camera_create.php">新增商品
             </button>
           </div>
         </div>
@@ -149,29 +173,35 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 <th class="text-uppercase text-secondary text-xs opacity-7 text-white">
                   出租商品
                   <?php if ($order === 'i1'): ?>
-                      <a href="camera_list.php?order=i0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=i0&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
                   <?php else: ?>
-                      <a href="camera_list.php?order=i1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=i1&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
                   <?php endif; ?>                  
                 </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   規格</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2 text-white">
-                  租金 / 押金</th>
+                <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
+                  租金 / 押金
+                  <?php if ($order === 'f1'): ?>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=f0&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                  <?php else: ?>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=f1&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                  <?php endif; ?>
+                </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   庫存
                   <?php if ($order === 's1'): ?>
-                      <a href="camera_list.php?order=s0" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=s0&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0"><i class="fa-solid fa-caret-up"></i></a>
                   <?php else: ?>
-                      <a href="camera_list.php?order=s1" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
+                      <a href="camera_list.php?page=<?= htmlspecialchars($currentPage, ENT_QUOTES, 'UTF-8') ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=s1&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-borderless text-light font-weight-bold text-xs m-0" style="transform: translatey(-2px);"><i class="fa-solid fa-sort-down"></i></a>
                   <?php endif; ?>
                 </th>
-                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
+                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
                   狀態</th>
-                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-white">
+                <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
                   編輯</th>
                 <th class="text-center text-uppercase text-secondary text-xs opacity-7 text-white">
-                  上架</th>
+                  上架 / 下架</th>
               </tr>
             </thead> 
             <tbody>
@@ -230,8 +260,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                               class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                               data-bs-toggle="modal" 
                               data-bs-target="#deleteModal" 
-                              data-id="<?= $camera['id'] ?>">                        
-                          <i class="fa-regular fa-trash-can"></i> <!-- 刪除圖標 -->
+                              data-id="<?= $camera['id'] ?>">
+                            <i class="fa-solid fa-store-slash"></i>                                             
+                          <!-- <i class="fa-regular fa-trash-can"></i> -->
                       </button>
                   <?php else: ?>
                       <!-- 顯示還原按鈕 -->
@@ -239,8 +270,9 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                               class="btn btn-borderless text-secondary font-weight-bold text-xs m-0" 
                               data-bs-toggle="modal" 
                               data-bs-target="#revertModal" 
-                              data-id="<?= $camera['id'] ?>">                        
-                          <i class="fa-solid fa-rotate-left"></i> <!-- 還原圖標 -->
+                              data-id="<?= $camera['id'] ?>"> 
+                            <i class="fa-solid fa-store"></i>                       
+                          <!-- <i class="fa-solid fa-rotate-left"></i> -->
                       </button>
                   <?php endif; ?>
               </td>
@@ -255,13 +287,13 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
               <ul class="pagination justify-content-center">
                   <!-- 首頁 -->
                   <li class="page-item <?= $currentPage == 1 ? 'disabled' : '' ?>">
-                      <a class="page-link" href="camera_list.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                      <a class="page-link" href="camera_list.php?page=1&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>">
                       <i class="fa-solid fa-angles-left"></i></a>
                   </li>
 
                   <!-- 上一頁 -->
                   <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-                      <a class="page-link" href="camera_list.php?page=<?= max(1, $currentPage - 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                      <a class="page-link" href="camera_list.php?page=<?= max(1, $currentPage - 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>">
                       <i class="fa-solid fa-angle-left"></i></a>
                   </li>
 
@@ -279,19 +311,19 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
                   <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                       <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                          <a class="page-link" href="camera_list.php?page=<?= $i ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
+                          <a class="page-link" href="camera_list.php?page=<?= $i ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
                       </li>
                   <?php endfor; ?>
 
                   <!-- 下一頁 -->
                   <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-                      <a class="page-link" href="camera_list.php?page=<?= min($totalPages, $currentPage + 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                      <a class="page-link" href="camera_list.php?page=<?= min($totalPages, $currentPage + 1) ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>">
                       <i class="fa-solid fa-chevron-right"></i></a>
                   </li>
 
                   <!-- 末頁 -->
                   <li class="page-item <?= $currentPage == $totalPages ? 'disabled' : '' ?>">
-                      <a class="page-link" href="camera_list.php?page=<?= $totalPages ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>">
+                      <a class="page-link" href="camera_list.php?page=<?= $totalPages ?>&search=<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>&order=<?= htmlspecialchars($order, ENT_QUOTES, 'UTF-8') ?>&is_deleted=<?= htmlspecialchars($is_deleted, ENT_QUOTES, 'UTF-8') ?>">
                       <i class="fa-solid fa-angles-right"></i></a>
                   </li>
               </ul>
@@ -307,7 +339,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
 <!-- 刪除專用 -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">商品下架</h5>
@@ -317,8 +349,8 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 你確定要下架嗎？
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <a href="" id="confirmDelete" class="btn btn-danger">下架</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmDelete" class="btn btn-dark">下架</a>
             </div>
         </div>
     </div>
@@ -326,7 +358,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
 <!-- 復原專用 -->
 <div class="modal fade" id="revertModal" tabindex="-1" aria-labelledby="revertModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">商品上架</h5>
@@ -336,8 +368,8 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                 你確定要上架嗎？
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <a href="" id="confirmRevert" class="btn btn-danger">上架</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="" id="confirmRevert" class="btn btn-dark">上架</a>
             </div>
         </div>
     </div>
@@ -524,6 +556,7 @@ $(document).on('click', '.modalClose', function () {
 
         // 更新 URL 並重新載入頁面
         urlParams.set('is_deleted', is_deleted);
+        urlParams.set('page', 1)
         window.location.search = urlParams.toString();
     });
 </script>

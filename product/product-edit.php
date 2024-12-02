@@ -10,7 +10,8 @@ $id = $_GET["id"];
 $sql = "SELECT 
     product.*, 
     brand.brand_name, 
-    category.category_name
+    category.category_name,
+    image.image_url
 FROM 
     product
 INNER JOIN 
@@ -21,6 +22,11 @@ INNER JOIN
     category 
 ON 
     product.category_id = category.category_id
+LEFT JOIN
+    image
+ON
+    product.name = image.name
+    
 WHERE 
     product.id = '$id'
 ";
@@ -79,7 +85,37 @@ $categories_result = $conn->query($sql_categories);
         integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer" />
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous" />
 </head>
+<style>
+    .custom-header th {
+        text-transform: uppercase;
+        background: linear-gradient(90deg, #1a1a1a, #333);
+        color: white;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.9;
+        border-bottom: none !important;
+        /* 移除底部邊框 */
+        padding-bottom: 0;
+        /* 確保內邊距不導致間距 */
+    }
+
+    .table {
+        margin-top: 0 !important;
+        /* 移除可能的頂部間距 */
+    }
+
+    .card-body {
+        padding: 0 !important;
+        /* 確保父容器無內間距 */
+    }
+</style>
 
 <body class="g-sidenav-show bg-gray-100">
     <!-- 側邊欄 -->
@@ -94,7 +130,6 @@ $categories_result = $conn->query($sql_categories);
             'teacher' => '首頁', // 第一層的文字
             'teacher_list' => '商品管理', // 第一層的文字
             'teacher_add' => '編輯商品', // 第二層的文字
-
         ];
 
         $page = 'teacher_add'; //當前的頁面
@@ -105,7 +140,6 @@ $categories_result = $conn->query($sql_categories);
             'teacher_list' => 'product.php',      // 第二層的連結
             'teacher_add' => 'product-edit.php',      // 第二層的連結
         ];
-
         include '../navbar.php';
         ?>
         <!-- Navbar -->
@@ -117,18 +151,16 @@ $categories_result = $conn->query($sql_categories);
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0 rounded-top">
                                 <table class="table align-items-center mb-0">
-                                    <thead class="bg-gradient-dark">
+                                    <thead class="custom-header">
                                         <tr>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white" colspan="10">
-                                                編輯商品
-                                            </th>
+                                            <th colspan="10">編輯商品</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+
                                         <div class="container">
                                             <?php if ($result->num_rows > 0): ?>
-                                                <form action="updateProduct.php" method="post">
+                                                <form action="updateProduct.php" method="post" enctype="multipart/form-data">
                                                     <table class="table table-bordered">
                                                         <input type="hidden" name="id" value="<?= $row["id"] ?>">
                                                         <tr>
@@ -138,16 +170,22 @@ $categories_result = $conn->query($sql_categories);
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <th>編輯圖片</th>
+                                                            <th>更新圖片</th>
                                                             <td>
-                                                                <?php if (!empty($row["image"])): ?>
-                                                                    <img src="../uploads/<?= htmlspecialchars($row["image"]) ?>" alt="商品圖片" style="max-width: 150px; margin-bottom: 10px;">
+                                                                <!-- 顯示當前圖片 -->
+                                                                <?php if (!empty($row["image_url"])): ?>
+                                                                    <div class="ratio ratio-4x3" style="width: 300px;">
+                                                                        <img class="object-fit-cover" src="../album/upload/<?= htmlspecialchars($row["image_url"]) ?>" alt="商品圖片">
+                                                                    </div>
                                                                 <?php else: ?>
                                                                     <p>尚未上傳圖片</p>
                                                                 <?php endif; ?>
-                                                                <input type="file" class="form-control" name="image">
+
+                                                                <!-- 圖片上傳欄位 -->
+                                                                <input type="file" class="form-control mt-2" name="image">
                                                             </td>
                                                         </tr>
+
                                                         <tr>
                                                             <th>價格</th>
                                                             <td>
@@ -209,9 +247,6 @@ $categories_result = $conn->query($sql_categories);
                                                             <button class="btn btn-dark" type="submit">儲存</button>
                                                             <a href="product.php?id=<?= $row["id"] ?>" class="btn btn-dark">取消</a>
                                                         </div>
-                                                        <!-- <div>
-                                                            <a href="doDelete.php?id=<?= $row["id"] ?>" data-bs-toggle="modal" data-bs-target="#confirmModal" class="btn btn-danger" type="button">刪除</a>
-                                                        </div> -->
                                                     </div>
                                                 </form>
                                             <?php else: ?>

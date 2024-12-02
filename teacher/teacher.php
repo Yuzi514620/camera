@@ -100,6 +100,14 @@ $result = $conn->query($sql);
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- jQuery（Bootstrap 需要）-->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <link rel="stylesheet" href="teacher.css">
 </head>
@@ -129,8 +137,8 @@ $result = $conn->query($sql);
     ?>
 
 
-    <div class="container-fluid pt-2 mt-3">
-      <p class="text-xs text-end px-2">總共有 <?php echo $row_count['total']; ?> 筆資料</p>
+    <div class="container-fluid pt-2 mt-5">
+
       <!-- 搜尋欄位 -->
       <div class="d-flex justify-content-between align-items-center p-0">
         <div class="d-flex">
@@ -158,13 +166,14 @@ $result = $conn->query($sql);
           <a href="teacher_add.php" class="btn btn-secondary m-0 mx-3">新增師資</a>
         </div>
 
+
         <!-- 排序按鈕 -->
-        <!-- id -->
-        <div class="d-flex justify-content-end">
-          <a href="?page=<?= $current_page ?>&order_by=id&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
+        <div class="d-flex justify-content-end ">
+          <p class="text-xs text-end px-2 mb-0 mt-4">總共有 <?php echo $row_count['total']; ?> 筆資料</p>
+          <!-- <a href="?page=<?= $current_page ?>&order_by=id&order_type=<?= $order_type === 'asc' ? 'desc' : 'asc' ?>" class="btn btn-secondary mb-0 mx-1">
             id
             <i class="fa-solid <?= $order_type === 'asc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-down-short-wide' ?>"></i>
-          </a>
+          </a> -->
         </div>
       </div>
     </div>
@@ -176,53 +185,32 @@ $result = $conn->query($sql);
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
-              </div>
-            </div> -->
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0 rounded-top">
                 <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
+                  <thead class="bg-gradient-dark card-header">
                     <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        ID
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
+                        <a href="?order_by=id&order_type=<?= ($order_by == 'id' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          ID <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        照片
+                      <th class="text-uppercase text-secondary text-xxs opacity-8 text-white"><a class="text-white">照片</a></th>
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white"><a class="text-white">姓名</a></th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white"><a class="text-white">簡介</a></th>
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="?order_by=email&order_type=<?= ($order_by == 'email' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          信箱 <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        姓名
+                      <th class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
+                        <a href="?order_by=phone&order_type=<?= ($order_by == 'phone' && $order_type == 'asc') ? 'desc' : 'asc'; ?>" class="text-white">
+                          電話 <i class="fa-solid fa-sort"></i>
+                        </a>
                       </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-white">
-                        簡介
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        信箱
-                      </th>
-                      <th
-                        class="text-uppercase text-secondary text-xxs opacity-7 ps-2 text-white">
-                        電話
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        檢視
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">
-                        編輯
-                      </th>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        刪除
-                      </th>
-                      <!-- <th class="text-secondary opacity-7"></th> -->
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white"><a class="text-white">檢視</a></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white"><a class="text-white">編輯</a></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white"><a class="text-white">刪除</a></th>
                     </tr>
                   </thead>
 
@@ -231,55 +219,37 @@ $result = $conn->query($sql);
                       <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
                           <td class="text-center">
-                            <!-- ID -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo $row['id']; ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?= $row['id']; ?></p>
                           </td>
                           <td>
-                            <!-- 照片 -->
-                            <div class="d-flex px-2 py-1" style="overflow: hidden">
-                              <div>
-                                <img src="../course_images/teacher/<?php echo $row['image_name']; ?>"
-                                  class="me-3 border-radius-lg teacher-img img-fit" alt="teacher_image" />
-                              </div>
+                            <div class="d-flex px-2 py-1">
+                              <img src="../course_images/teacher/<?= $row['image_name']; ?>" class="me-3 border-radius-lg teacher-img img-fit" alt="teacher_image" />
                             </div>
                           </td>
                           <td>
-                            <!-- 姓名 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['name']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?= htmlspecialchars($row['name']); ?></p>
                           </td>
                           <td>
-                            <!-- 簡介 -->
-                            <p class="text-xs font-weight-bold mb-0 text-ellipsis"><?php echo htmlspecialchars($row['info']); ?></p>
-                          </td>
-
-                          <td>
-                            <!-- 信箱 -->
-                            <p class="text-xs font-weight-bold mb-0"> <?php echo htmlspecialchars($row['email']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0 text-ellipsis"><?= htmlspecialchars($row['info']); ?></p>
                           </td>
                           <td>
-                            <!-- 電話 -->
-                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($row['phone']); ?></p>
+                            <p class="text-xs font-weight-bold mb-0"><?= htmlspecialchars($row['email']); ?></p>
+                          </td>
+                          <td>
+                            <p class="text-xs font-weight-bold mb-0"><?= htmlspecialchars($row['phone']); ?></p>
                           </td>
                           <td class="align-middle text-center">
-                            <!-- 檢視 -->
-                            <a href="teacher_info.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                              data-original-title="Edit user">
+                            <a href="teacher_info.php?id=<?= $row['id']; ?>" class="text-secondary font-weight-bold text-xs">
                               <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
-                            <!-- 編輯 -->
-                            <a href="teacher_edit.php?id=<?php echo $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                              data-original-title="Edit user">
+                            <a href="teacher_edit.php?id=<?= $row['id']; ?>" class="text-secondary font-weight-bold text-xs">
                               <i class="fa-regular fa-pen-to-square"></i>
                             </a>
                           </td>
                           <td class="align-middle text-center">
-                            <!-- 刪除 -->
-                            <a href="teacher_delete.php?id=<?php echo $row['id']; ?>"
-                              class="text-secondary font-weight-bold text-xs"
-                              data-toggle="tooltip" data-original-title="Delete course"
-                              onclick="return confirm('確定要刪除這筆資料嗎？');">
+                            <a href="#" class="text-secondary font-weight-bold text-xs delete-btn" data-id="<?= $row['id']; ?>" data-toggle="modal" data-target="#deleteModal">
                               <i class="fa-regular fa-trash-can"></i>
                             </a>
                           </td>
@@ -293,49 +263,79 @@ $result = $conn->query($sql);
           </div>
         </div>
       </div>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">確認刪除</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            確定要刪除這筆資料嗎？
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <a href="#" id="confirmDeleteBtn" class="btn btn-danger">確定刪除</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <!-- 分頁按鈕 -->
-      <nav>
-        <ul class="pagination justify-content-center">
-          <!-- 第一頁按鈕 -->
-          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=1&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angles-left"></i>
-            </a>
-          </li>
-          <!-- 上一頁按鈕 -->
-          <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page - 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angle-left"></i>
-            </a>
-          </li>
+    <!-- 分頁按鈕 -->
+    <nav>
+      <ul class="pagination justify-content-center">
+        <!-- 第一頁按鈕 -->
+        <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=1&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angles-left"></i>
+          </a>
+        </li>
+        <!-- 上一頁按鈕 -->
+        <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $current_page - 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angle-left"></i>
+          </a>
+        </li>
 
-          <!-- 顯示頁碼 -->
-          <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
-              <a class="page-link" href="?page=<?= $i ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>"><?= $i ?></a>
-            </li>
-          <?php endfor; ?>
+        <!-- 顯示頁碼 -->
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+          <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
+            <a class="page-link" href="?page=<?= $i ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>"><?= $i ?></a>
+          </li>
+        <?php endfor; ?>
 
-          <!-- 下一頁按鈕 -->
-          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page + 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-chevron-right"></i>
-            </a>
-          </li>
-          <!-- 最後一頁按鈕 -->
-          <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $total_pages ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
-              <i class="fa-solid fa-angles-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
+        <!-- 下一頁按鈕 -->
+        <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $current_page + 1 ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+        </li>
+        <!-- 最後一頁按鈕 -->
+        <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $total_pages ?>&order_by=<?= $order_by ?>&order_type=<?= $order_type ?>">
+            <i class="fa-solid fa-angles-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
     </div>
   </main>
 
 
-
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          document.getElementById('confirmDeleteBtn').href = `teacher_delete.php?id=${id}`;
+        });
+      });
+    });
+  </script>
 
 
 
