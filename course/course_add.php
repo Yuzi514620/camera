@@ -105,6 +105,8 @@ if ($result->num_rows > 0) {
         $categories[] = $row;
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -168,7 +170,7 @@ if ($result->num_rows > 0) {
         $page = 'course_add';
 
         $breadcrumbLinks = [
-            'users' => '../users.php',
+            'users' => '../users/users.php',
             'course' => 'course.php',
             'course_add' => 'course_add.php',
         ];
@@ -222,8 +224,8 @@ if ($result->num_rows > 0) {
                             <select class="form-control px-2" id="teacher_id" name="teacher_id" required>
                                 <option value="" disabled selected>請選擇講師</option>
                                 <?php
-                                // 從資料庫取得所有講師
-                                $sql_teachers = "SELECT * FROM teacher";
+                                // 從資料庫取得所有講師，按 id 降序排序
+                                $sql_teachers = "SELECT * FROM teacher ORDER BY id DESC";
                                 $result_teachers = $conn->query($sql_teachers);
                                 if ($result_teachers->num_rows > 0) {
                                     while ($teacher = $result_teachers->fetch_assoc()) {

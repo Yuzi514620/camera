@@ -110,7 +110,7 @@ $course = $result->fetch_assoc();
         $page = 'course_info';
 
         $breadcrumbLinks = [
-            'users' => '../users.php',
+            'users' => '../users/users.php',
             'course' => 'course.php',
             'course_info' => 'course_info.php',
         ];

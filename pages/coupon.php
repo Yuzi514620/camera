@@ -1,10 +1,9 @@
 <?php
 require_once("../coupon/pdo_connect.php");
 $title = 'coupon';
+
 $pdoSqlALl = "SELECT * FROM coupon ";
-$stmt = $db_host->prepare($pdoSqlALl);
-$stmt->execute();
-$resultCount = $stmt->rowCount();
+$resultCount = rowCount($pdoSqlALl,$db_host);
 
 $per_page = 8;
 if (isset($_GET["search"])) {
@@ -20,7 +19,7 @@ if (isset($_GET["search"])) {
   }
   $sort = $_GET["sort"];
   $start_item = ($p - 1) * $per_page;
-  $total_page = ceil($resultCount / $per_page);
+  
 
   $pdoCluse = '';
   switch ($sort) {
@@ -33,8 +32,19 @@ if (isset($_GET["search"])) {
     case 3:
       $pdoCluse = "order by `start_date` DESC";
       break;
+    case 4:
+      $pdoCluse = 'where `is_deleted` = 0';
+      $pdoSqlALl .=$pdoCluse;
+      $resultCount = rowCount($pdoSqlALl,$db_host);
+      break;
+    case 5:
+      $pdoCluse = 'where `is_deleted` = 1';
+      $pdoSqlALl .= $pdoCluse;
+      $resultCount = rowCount($pdoSqlALl,$db_host);
+      break;
   }
 
+  $total_page = ceil($resultCount / $per_page);
   $pdosql = "SELECT * FROM coupon $pdoCluse limit $start_item, $per_page ";
 } else {
   header("location: coupon.php?p=1&sort=1");
@@ -49,6 +59,13 @@ try {
   echo "Error: " . $e->getMessage() . "<br/>";
   $db_host = NULL;
   exit;
+}
+function rowCount($pdoSqlALl,$db_host){
+  $stmt = $db_host->prepare($pdoSqlALl);
+  $stmt->execute();
+  $resultCount = $stmt->rowCount();
+
+  return $resultCount;
 }
 ?>
 <!DOCTYPE html>
@@ -113,7 +130,7 @@ try {
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'coupon'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
@@ -155,12 +172,16 @@ try {
               ?>
                 <div class="btn-group ">
                   <a class="btn btn-dark <?php if ($sort == 2) echo "active" ?>" href="coupon.php?p=<?= $p ?>&sort=2">
-                    <!-- <i class="fa-solid fa-arrow-up-wide-short fa-fw"></i> -->
                     從最舊
                   </a>
-                  <a class="btn btn-dark <?php if ($sort == 2) echo "active" ?>" href="coupon.php?p=<?= $p ?>&sort=3">
-                    <!-- <i class="fa-solid fa-arrow-down-wide-short fa-fw"></i> -->
+                  <a class="btn btn-dark <?php if ($sort == 3) echo "active" ?>" href="coupon.php?p=<?= $p ?>&sort=3">
                     從最新
+                  </a>
+                  <a class="btn btn-dark <?php if ($sort == 4) echo "active" ?>" href="coupon.php?p=<?= $p ?>&sort=4">
+                    已上架
+                  </a>
+                  <a class="btn btn-dark <?php if ($sort == 5) echo "active" ?>" href="coupon.php?p=<?= $p ?>&sort=5">
+                    已下架
                   </a>
                 </div>
               <?php endif; ?>
@@ -199,22 +220,22 @@ try {
                           <td class="text-end"><?= number_format($row["lower_purchase"]) ?></td>
                           <td class="text-end"><?= number_format($row["quantity"]) ?></td>
                           <td class="status">
-                            <?php if ($row["is_deleted"] == 0): ?>已上架
-                            <?php else: ?>已下架
+                            <?php if ($row["is_deleted"] == 0): ?><span style="color: green;">已上架</span>
+                            <?php else: ?><span style="color: red;">已下架</span>
                           <?php endif; ?>
                           </td>
                           <td>
                             <div class="d-flex justify-content-center">
-                              <button class="btn btn-success mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>">上架</button>
-                              <button class="btn btn-warning mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>">下架</button>
+                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-up"></i></button>
+                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-down"></i></button>
                               <form action="../coupon/updateCoupon.php" method="POST">
                                 <input type="hidden" name="id" value="<?= $row["id"] ?>">
-                                <button class="btn btn-info mb-2 mt-2 btn-updated" type="submit">
-                                  修改
+                                <button class="btn mb-2 mt-2 btn-updated" type="submit">
+                                  <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                               </form>
-                              <button type="button" class="btn btn-primary mb-2 mt-2 btn-deletedData" data-id="<?= $row["id"] ?>" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                刪除
+                              <button type="button" class="btn mb-2 mt-2 btn-deletedData" data-id="<?= $row["id"] ?>" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                              <i class="fa-solid fa-trash"></i>
                               </button>
                               <!-- Modal -->
                               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -78,14 +78,14 @@ try {
     <!-- 側邊欄 -->
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <?php 
+        <?php
         // 設定麵包屑的層級
         $breadcrumbs = [
             'coupon' => '優惠券列表', // 第一層的文字
-            'updateCoupon' =>"修改優惠券"
+            'updateCoupon' => "修改優惠券"
         ];
 
-        $page = 'updateCoupon';//當前的頁面
+        $page = 'updateCoupon'; //當前的頁面
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
@@ -158,7 +158,7 @@ try {
                                             <span>數量</span>
                                         </div>
                                         <div class="col-5">
-                                            <input type="text" class="form-control " name="quantity" id="quantity" value="<?= $result["quantity"] ?>">
+                                            <input type="number" class="form-control " name="quantity" id="quantity" value="<?= $result["quantity"] ?>">
                                         </div>
                                     </div>
                                     <div class="input-box row-auto g-2 mt-2 ms-2 align-items-center">
@@ -177,10 +177,14 @@ try {
                                             <input type="file" class="form-control " name="img" id="uploadImg" accept="image/*">
                                         </div>
                                     </div>
+                                    <div class="d-flex justify-content-center">
+                                        <span class="imgError"></span>
+                                    </div>
                                     <div class="btn-box position-relative mt-3 ">
                                         <button class="btn btn-success btn-update me-3">完成</button>
                                         <a href="../pages/coupon.php" class="btn btn-info">返回</a>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -209,49 +213,31 @@ try {
     <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
     <?php include_once("../../js.php") ?>
     <script>
-        const name = document.querySelector("#name");
-        const discount = document.querySelector("#discount");
-        const lower_purchase = document.querySelector("#lower_purchase");
-        const quantity = document.querySelector("#quantity");
-        const days = document.querySelector("#days");
         const id = <?= $id ?>;
 
-       
-
+        
         $(".btn-update").click(function() {
-            const select = $("select[name='coupon-select']");
-            const subSelect = $("select[name='coupon-subselect']")
-            const brand = select.val();
-            const accessories = subSelect.val();
-                
+            const name = document.querySelector("#name").value;
+            const discount = document.querySelector("#discount").value;
+            const lower_purchase = document.querySelector("#lower_purchase").value;
+            const quantity = document.querySelector("#quantity").value;
+            const days = document.querySelector("#days").value;
+            const imgError = document.querySelector(".imgError");
 
-            const option = $(".coupon-select option:selected")
-            const subOption = $(".coupon-subselect option:selected")
-            const brandText = option.text();
-            const accessoriesText = subOption.text();
+            const brand = $("select[name='coupon-select']").val();
+            const accessories = $("select[name='coupon-subselect']").val();
+            const brandText = $(".coupon-select option:selected").text();
+            const accessoriesText = $(".coupon-subselect option:selected").text();
 
             let file_data = $('#uploadImg').prop('files')[0];
-            let form_data = new FormData();
             if (file_data != null) {
-                form_data.append('file', file_data);
-                form_data.append('id', id);
-                form_data.append('name', name.value);
-                form_data.append('discount', discount.value);
-                form_data.append('lower_purchase', lower_purchase.value);
-                form_data.append('quantity', quantity.value);
-                form_data.append('days', days.value);
-                form_data.append('brand', brand);
-                form_data.append('accessories', accessories);
-                form_data.append('brandText', brandText);
-                form_data.append('accessoriesText', accessoriesText);
-
                 $.ajax({
                         method: "POST",
                         url: "doUpdateCoupon.php",
                         cache: false,
                         contentType: false,
                         processData: false,
-                        data: form_data
+                        data: form_data(file_data, id, name, discount, lower_purchase, quantity, days, brand, accessories, brandText, accessoriesText)
                     })
                     .done(function(response) {
                         window.location.replace("../pages/coupon.php");
@@ -259,8 +245,27 @@ try {
                     .fail(function(jqXHR, textStatus) {
                         console.log(textStatus);
                     })
+            } else {
+                imgError.textContent = "請上傳圖片";
+                imgError.style.color = "red";
             }
         })
+
+        function form_data(file_data, id, name, discount, lower_purchase, quantity, days, brand, accessories, brandText, accessoriesText) {
+            let form_data = new FormData();
+            form_data.append('file', file_data);
+            form_data.append('id', id);
+            form_data.append('name', name);
+            form_data.append('discount', discount);
+            form_data.append('lower_purchase', lower_purchase);
+            form_data.append('quantity', quantity);
+            form_data.append('days', days);
+            form_data.append('brand', brand);
+            form_data.append('accessories', accessories);
+            form_data.append('brandText', brandText);
+            form_data.append('accessoriesText', accessoriesText);
+            return form_data;
+        }
     </script>
 </body>
 
