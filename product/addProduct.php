@@ -173,7 +173,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="brand_id" class="form-label">品牌：</label>
-                          <select name="brand_id" id="brand_id" class="form-select ps-2">
+                          <select name="brand_id" id="brand_id" class="form-select ps-2" required>
                             <option value="0">-請選擇品牌-</option>
                             <option value="1">Leica</option>
                             <option value="2">Nikon</option>
@@ -187,7 +187,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="category_id" class="form-label">種類：</label>
-                          <select name="category_id" id="category_id" class="form-select ps-2">
+                          <select name="category_id" id="category_id" class="form-select ps-2" required>
                             <option value="0">-請選擇種類-</option>
                             <option value="1">相機</option>
                             <option value="2">鏡頭</option>
@@ -199,7 +199,7 @@ $conn->close();
                       <tr>
                         <td>
                           <label for="stock" class="form-label">庫存：</label>
-                          <input type="number" class="form-control" name="stock" min="0" placeholder="輸入庫存數量" required>
+                          <input type="number" class="form-control" name="stock" min="0" max="999" placeholder="輸入庫存數量" required>
                         </td>
                       </tr>
                       <!-- 規格 -->
@@ -221,9 +221,12 @@ $conn->close();
                       </tr>
                       <tr>
                         <td>
-                          <!-- 預設值為今天 -->
+                          <!-- 預設值為今天，禁止選擇已過日期 -->
                           <label for="form-label">日期</label>
-                          <input type="date" class="form-control" name="created_at" placeholder="選擇日期" value="<?= date('Y-m-d') ?>" min="2020-01-01" max="2030-12-31">
+                          <input type="date" class="form-control" name="created_at" placeholder="選擇日期"
+                            value="<?= date('Y-m-d') ?>"
+                            min="<?= date('Y-m-d') ?>"
+                            max="2030-12-31">
                         </td>
                       </tr>
                       <!-- 提交按鈕 -->
@@ -298,6 +301,19 @@ $conn->close();
           reader.readAsDataURL(file);
         }
       });
+    });
+  </script>
+  <script>
+    // 監聽庫存欄位的變更
+    document.querySelector('input[name="stock"]').addEventListener('input', function() {
+      const value = parseInt(this.value, 10); // 將輸入值轉為數字
+      if (value > 999) {
+        alert('庫存數量不能超過 999！');
+        this.value = 999; // 若超過最大值，重設為 999
+      } else if (value < 0) {
+        alert('庫存數量不能為負數！');
+        this.value = 0; // 若小於最小值，重設為 0
+      }
     });
   </script>
   <script src="../assets/js/core/popper.min.js"></script>
