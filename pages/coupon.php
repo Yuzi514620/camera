@@ -228,8 +228,8 @@ function rowCount($pdoSqlALl,$db_host){
                           </td>
                           <td>
                             <div class="d-flex justify-content-center">
-                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-up"></i></button>
-                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-down"></i></button>
+                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="0" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-turn-up"></i></i></button>
+                              <button class="btn mb-2 mt-2 btn-upDownLoad" data-status="1" data-id="<?= $row["id"] ?>"><i class="fa-solid fa-arrow-turn-down"></i></button>
                               <form action="../coupon/updateCoupon.php" method="POST">
                                 <input type="hidden" name="id" value="<?= $row["id"] ?>">
                                 <button class="btn mb-2 mt-2 btn-updated" type="submit">
