@@ -35,7 +35,7 @@ $couponCodeSql = "SELECT `id` FROM coupon order by id DESC";
 $stmt = $db_host->prepare($couponCodeSql);
 $stmt->execute();
 
-$code = $stmt->rowCount();
+$code = $stmt->rowCount()+1;
 $cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
 
 
