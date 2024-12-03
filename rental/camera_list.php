@@ -121,7 +121,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
-            'users' => 'users.php',           // 第一層的連結
+            'users' => '../users/users.php',      // 第一層的連結
             'camera_list' => 'camera_list.php',      // 第二層的連結
         ];
 
