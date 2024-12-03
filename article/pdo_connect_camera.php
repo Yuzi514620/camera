@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "admin";
-$password = "12345";
-$dbname = "camera";
+$username = "root";
+$password = "";
+$dbname = "camera_school";
 
 try {
     // 使用 utf8mb4 編碼以支持更多字符
