@@ -69,7 +69,11 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+
   <style>
+    .padding{
+      padding: 27px;
+    }
     .form1 {
       width: 100%;
       max-width: 300px;
@@ -90,7 +94,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     $breadcrumbs = [
       'teacher' => '首頁', // 第一層的文字
       'teacher_list' => '會員管理',
-      'teacher_add' => '新增使用者', // 第一層的文字
+      'teacher_add' => '新增會員', // 第一層的文字
     ];
 
     $page = 'teacher_add'; //當前的頁面
@@ -108,6 +112,130 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center">
       </div>
+
+      <!-- ------- -->
+      <div class="row">
+
+
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-body px-0 pb-2 ">
+              <div class="table-responsive p-0 rounded-top">
+                <div class="text-center text-uppercase text-secondary text-xxs text-white bg-dark p-1">
+                  <h5 class="text-white">新增會員</h5>
+                </div>
+                <table class="table table-bordered align-middle">
+                  <form class="" action="doCreateUser.php" method="post">
+                    <?php if ($result->num_rows > 0) : ?>
+                      <input type="hidden" name="id" value="<?= $row["id"] ?>">
+                      <tr class="">
+                        <th class="padding">大頭貼</th>
+                        <td>
+                          <div>
+                          <input type="file" class="form-control form1 btn btn-white border bordrer-dark test" name="img" >
+                          <img class="ms-3" id="test-img" src="/camera/users/img/9.jpg" alt="預覽圖" style="max-width: 100px; max-height: 100px;">
+                          </div>
+                    
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="padding">帳號</th>
+                        <td>
+                          <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
+                        </td>
+
+                      </tr>
+                      <tr>
+                        <th class="padding">密碼</th>
+                        <td><input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password"></td>
+                      </tr>
+                      <tr>
+                        <th class="padding">確認密碼</th>
+                        <td> <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword"></td>
+                      </tr>
+                      <tr>
+                        <th class="padding">姓名</th>
+                        <td> <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name"></td>
+                      </tr>
+                      <tr>
+                        <th class="padding">性別</th>
+                        <td><div class="form-check form-check-inline ">
+                    
+                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
+                            <label class="form-check-label " style="padding-right: 10px;" for="gender">男</label>
+                          </div>
+                          <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option2">
+                            <label class="form-check-label" style="padding-right: 90px;" for="gender">女</label></td>
+                </tr>
+                <tr>
+                  <th class="padding">信箱</th>
+                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email"></td>
+                </tr>
+                
+                <tr>
+                  <th class="padding">手機</th>
+                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone"></td>
+                </tr>
+                <tr>
+                  <th class="padding">地址</th>
+                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address"></td>
+                </tr>
+                <tr>
+                  <th class="padding">生日</th>
+                  <td><input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday"></td>
+                </tr>
+              <?php endif; ?>
+              </table>
+              <?php if (isset($_SESSION["error"]["message"])): ?>
+                <div class=" mb-2 text-danger text-start" style="padding-left: 300px;"><?= $_SESSION["error"]["message"] ?></div>
+                <?php unset($_SESSION["error"]["message"]); ?>
+              <?php endif; ?>
+              <button class="btn btn-dark ms-5" type="submit">送出</button>
+              <a href="users.php" class="btn btn-primary">上一頁</a>
+              </a>
+              
+              <!-- <table class="table align-items-center mb-0">
+          <thead class="">
+          <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">id</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">1</td>
+            </tr>
+            <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">姓名</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">蔡育騰</td>
+            </tr>
+            <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">信箱</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">a@b.com</td>
+            </tr>
+            <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">生日</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">1999/99/99</td>
+            </tr>
+            <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">手機</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">098888888</td>
+            </tr>
+            <tr>
+              <th class="text-end text-uppercase text-secondary text-lg ">地址</th>
+              <td class="text-center text-uppercase text-secondary text-lg ">新北勢111111111111111111111111111</td>
+            </tr>
+          </thead> -->
+
+
+
+              <tbody>
+              </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
 
       <div class="row">
 
@@ -164,8 +292,8 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                             <label for="" class="form-label">姓名:</label>
                             <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name">
                           </div>
-                          <div class="form-check form-check-inline " >
-                          <label for="" class="form-label" style="padding-right: 70px;">性別:</label>
+                          <div class="form-check form-check-inline ">
+                            <label for="" class="form-label" style="padding-right: 70px;">性別:</label>
                             <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
                             <label class="form-check-label " style="padding-right: 10px;" for="gender">男</label>
                           </div>
@@ -201,428 +329,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                       </td>
 
 
-                      <!-- <div class="row">
-          <div class="col-12">
-            <div class="card my-4">
-              <div
-                class="card-header p-0 position-relative mt-n4 mx-3 z-index-2"
-              >
-                <div
-                  class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3"
-                >
-                  <h6 class="text-white text-capitalize ps-3">
-                    Projects table
-                  </h6>
-                </div>
-              </div>
-              <div class="card-body px-0 pb-2">
-                <div class="table-responsive p-0">
-                  <table
-                    class="table align-items-center justify-content-center mb-0"
-                  >
-                    <thead>
-                      <tr>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-                        >
-                          Project
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                        >
-                          Budget
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                        >
-                          Status
-                        </th>
-                        <th
-                          class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2"
-                        >
-                          Completion
-                        </th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-asana.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="spotify"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Asana</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$2,500</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">working</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >60%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-info"
-                                  role="progressbar"
-                                  aria-valuenow="60"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 60%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button class="btn btn-link text-secondary mb-0">
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/github.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="invision"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Github</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$5,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">done</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >100%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="100"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-atlassian.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="jira"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Atlassian</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$3,400</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">canceled</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >30%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-danger"
-                                  role="progressbar"
-                                  aria-valuenow="30"
-                                  aria-valuemin="0"
-                                  aria-valuemax="30"
-                                  style="width: 30%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/bootstrap.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="webdev"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Bootstrap</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$14,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">working</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >80%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-info"
-                                  role="progressbar"
-                                  aria-valuenow="80"
-                                  aria-valuemin="0"
-                                  aria-valuemax="80"
-                                  style="width: 80%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/logo-slack.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="slack"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Slack</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$1,000</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">canceled</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >0%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="0"
-                                  aria-valuemin="0"
-                                  aria-valuemax="0"
-                                  style="width: 0%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2">
-                            <div>
-                              <img
-                                src="../assets/img/small-logos/devto.svg"
-                                class="avatar avatar-sm rounded-circle me-2"
-                                alt="xd"
-                              />
-                            </div>
-                            <div class="my-auto">
-                              <h6 class="mb-0 text-sm">Devto</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm font-weight-bold mb-0">$2,300</p>
-                        </td>
-                        <td>
-                          <span class="text-xs font-weight-bold">done</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <div
-                            class="d-flex align-items-center justify-content-center"
-                          >
-                            <span class="me-2 text-xs font-weight-bold"
-                              >100%</span
-                            >
-                            <div>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-gradient-success"
-                                  role="progressbar"
-                                  aria-valuenow="100"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="align-middle">
-                          <button
-                            class="btn btn-link text-secondary mb-0"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="fa fa-ellipsis-v text-xs"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-                      <!-- <footer class="footer py-4">
-          <div class="container-fluid">
-            <div class="row align-items-center justify-content-lg-between">
-              <div class="col-lg-6 mb-lg-0 mb-4">
-                <div
-                  class="copyright text-center text-sm text-muted text-lg-start"
-                >
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  , made with <i class="fa fa-heart"></i> by
-                  <a
-                    href="https://www.creative-tim.com"
-                    class="font-weight-bold"
-                    target="_blank"
-                    >Creative Tim</a
-                  >
-                  for a better web.
-                </div>
-              </div> -->
-                      <!-- <div class="col-lg-6">
-                <ul
-                  class="nav nav-footer justify-content-center justify-content-lg-end"
-                >
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >Creative Tim</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/presentation"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >About Us</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/blog"
-                      class="nav-link text-muted"
-                      target="_blank"
-                      >Blog</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/license"
-                      class="nav-link pe-0 text-muted"
-                      target="_blank"
-                      >License</a
-                    >
-                  </li>
-                </ul>
-              </div> -->
-                      <!-- </div>
-          </div>
-        </footer> -->
+
               </div>
   </main>
 
@@ -633,6 +340,23 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
   <!-- 照片預覽 -->
   <script>
+  document.querySelector(".test").addEventListener("change", function(event) {
+      const file = event.target.files[0]; // 取得選中的檔案
+      const testImg = document.querySelector("#test-img"); // 目標圖片元素
+
+      if (file) {
+          const reader = new FileReader();
+
+          reader.onload = function(e) {
+              testImg.src = e.target.result; // 設定圖片的src為預覽的結果
+          };
+
+          reader.readAsDataURL(file); // 開始讀取檔案
+      }
+  });
+</script>
+
+  <!-- <script>
     const testImg = document.querySelector("#test-img");
 
     $(".test").change(function() {
@@ -642,7 +366,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
       console.log(image);
       console.log(newImage);
     })
-  </script>
+  </script> -->
   <script>
     var win = navigator.platform.indexOf("Win") > -1;
     if (win && document.querySelector("#sidenav-scrollbar")) {
@@ -656,6 +380,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+  
 </body>
 
 </html>
