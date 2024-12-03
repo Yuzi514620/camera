@@ -461,21 +461,6 @@ $query = $pdo->query("SELECT COUNT(*) FROM article WHERE is_deleted = 1");
 $archived_count = $query->fetchColumn();
 
 
-// 設定麵包屑的層級
-$breadcrumbs = [
-    'article' => '首頁',
-    'article_list' => '文章管理',
-];
-
-$page = 'article_list';
-
-// 設定麵包屑的連結
-$breadcrumbLinks = [
-    'article' => 'users.php',           // 第一層的連結
-    'article_list' => 'article.php',    // 第二層的連結
-];
-
-
 ?>
 
 <!DOCTYPE html>
@@ -620,64 +605,25 @@ $breadcrumbLinks = [
 <body class="g-sidenav-show bg-gray-100">
   <!-- 側邊欄 -->
   <?php $page = 'article'; ?>
-  <?php include 'sidebar.php'; ?>
+  <?php include '../sidebar.php'; ?>
   <!-- 側邊欄 -->
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-    <!-- Navbar -->
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
-      <div class="container-fluid py-1 px-3 justify-content-end">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+          <!-- Navbar -->
           <?php
-          // 初始化上一層的連結
-          $previousPage = '';
+          $breadcrumbs = [
+              'users' => '首頁',
+              'article' => '文章管理',
+          ];
 
-          // 遍歷所有麵包屑
-          foreach ($breadcrumbs as $key => $title) {
-            // 顯示上一層頁面
-            if ($previousPage) {
-              echo '<li class="breadcrumb-item text-sm"><a class=" text-dark" href="' . $breadcrumbLinks[$previousPage] . '">' . $breadcrumbs[$previousPage] . '</a></li>';
-            }
+          $page = 'article';
 
-            // 顯示當前頁面，並標註為活動頁面
-            if ($page === $key) {
-              echo '<li class="breadcrumb-item text-sm text-dark opacity-5 active" aria-current="page">' . $title . '</li>';
-            }
+          $breadcrumbLinks = [
+              'users' => '../users/users.php',
+              'article' => 'article.php',
+          ];
 
-            // 設置當前頁面為上一頁
-            $previousPage = $key;
-          }
+          include '../navbar.php';
           ?>
-        </ol>
-        </nav>
-        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <!-- 添加 ms-auto 將內容推向右側 -->
-          <ul class="navbar-nav d-flex align-items-center justify-content-end ms-auto">
-            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                <div class="sidenav-toggler-inner">
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                </div>
-              </a>
-            </li>
-            <li class="nav-item d-flex align-items-center">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </li>
-            <li class="nav-item d-flex align-items-center ms-3">
-              <a href="../pages/sign-in.php" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa-solid fa-right-from-bracket"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <!-- Navbar -->
-
 
 
     <!-- 文章列表 -->
