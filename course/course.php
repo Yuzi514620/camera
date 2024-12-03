@@ -159,13 +159,13 @@ $result = $conn->query($sql);
             <input
               type="text"
               name="search"
-              class="form-control me-2 ps-3 py-0"
+              class="form-control form-control-lg me-2 ps-3 text-sm"
               placeholder="搜尋課程名稱"
               value="<?= htmlspecialchars($search) ?>">
             <button type="submit" class="btn btn-secondary my-0"><i class="fa-solid fa-magnifying-glass fa-fw pe-1"></i></button>
           </form>
           <!-- 新增課程 -->
-          <a href="course_add.php" class="btn btn-secondary m-0 mx-3 text-sm">新增課程</a>
+          <a href="course_add.php" class="btn btn-secondary m-0 mx-3 text-sm d-flex align-items-center">新增課程</a>
         </div>
 
 

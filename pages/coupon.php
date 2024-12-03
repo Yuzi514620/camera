@@ -137,6 +137,7 @@ function rowCount($pdoSqlALl,$db_host){
     <?php 
         // 設定麵包屑的層級
         $breadcrumbs = [
+            'user' => '首頁', // 第一層的文字
             'coupon' => '優惠券列表', // 第一層的文字
         ];
 
@@ -144,6 +145,7 @@ function rowCount($pdoSqlALl,$db_host){
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
+            'user' => '../users/users.php',
             'coupon' => 'coupon.php',           // 第一層的連結
         ];
 
@@ -186,7 +188,7 @@ function rowCount($pdoSqlALl,$db_host){
                 </div>
               <?php endif; ?>
               <div class="me-2">
-                <a class="btn btn-info" href="../coupon/addCoupon.php">新增優惠券</a>
+                <a class="btn btn-dark" href="../coupon/addCoupon.php">新增優惠券</a>
               </div>
             </div>
             <div class="card my-4">

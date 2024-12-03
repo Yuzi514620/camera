@@ -60,6 +60,7 @@
         <?php
         // 設定麵包屑的層級
         $breadcrumbs = [
+            'user' => '首頁',
             'coupon' => '優惠券列表', // 第一層的文字
             'addCoupon' => "新增優惠券"
         ];
@@ -68,6 +69,7 @@
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
+            'user' => '../users/users.php',
             'coupon' => '../pages/coupon.php', // 第一層的連結
             'addCoupon' => 'addCoupon.php'
         ];
@@ -96,6 +98,9 @@
                                                         <option value="" selected disabled>請選擇</option>
                                                         <option value="0">全館</option>
                                                         <option value="1">sony</option>
+                                                        <option value="2">Nikon</option>
+                                                        <option value="3">Canon</option>
+                                                        <option value="4">FUJFILM</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-1">
@@ -106,7 +111,9 @@
                                                         <option value="" selected disabled>請選擇</option>
                                                         <option value="0">全館</option>
                                                         <option value="1">相機</option>
-                                                        <option value="2">包包</option>
+                                                        <option value="2">鏡頭</option>
+                                                        <option value="3">包包</option>
+                                                        <option value="4">背帶</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -234,16 +241,13 @@
             })
             function form_data(file_data,name,discount,lower_purchase,quantity,days,brand,accessories,brandText,accessoriesText) {
                 let form_data = new FormData();
-                form_data.append('file', file_data);
-                form_data.append('name', name);
-                form_data.append('discount', discount);
-                form_data.append('lower_purchase', lower_purchase);
-                form_data.append('quantity', quantity);
-                form_data.append('days', days);
-                form_data.append('brand', brand);
-                form_data.append('accessories', accessories);
-                form_data.append('brandText', brandText);
-                form_data.append('accessoriesText', accessoriesText);
+                keyArr = ['file','name','discount','lower_purchase','quantity','days','brand','accessories','brandText','accessoriesText'];
+                dataArr = [file_data,name,discount,lower_purchase,quantity,days,brand,accessories,brandText,accessoriesText];
+                length = dataArr.length;
+
+                for(let i = 0 ;i<length; i++){
+                    form_data.append(`${keyArr[i]}`,dataArr[i]);
+                }
 
                 return form_data;
             }

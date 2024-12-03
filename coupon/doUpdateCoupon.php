@@ -36,12 +36,8 @@ if ($_FILES["file"]["error"] == 0) {
 }
 $uploadImg = $_FILES['file']['name'];
 
-if ($brand == 'null' || $brand == 0) {
-    $brandText = '全館';
-}
-if ($accessories == 'null' || $accessories == 0) {
-    $accessoriesText = '全館';
-}
+$brandText = status($brand,$brandText);
+$accessoriesText = status($accessories,$accessoriesText);
 
 if($brand == 'null' && $accessories == 'null'){
     $concatStr .= $name;
@@ -73,4 +69,10 @@ try{
     echo json_encode($data);
     $db_host = NULL;
     exit;
+}
+function status($status,$text){
+    if ($status == 'null' || $status == 0) {
+        $text = '全館';
+    }
+    return $text;
 }

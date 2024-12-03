@@ -39,12 +39,8 @@ $code = $stmt->rowCount();
 $cpnCode = date("ymd").str_pad($code,5,0,STR_PAD_LEFT);
 
 
-if($brand == 'null' || $brand == 0){
-    $brandText ='全館';
-}
-if($accessories == 'null' || $accessories == 0){
-    $accessoriesText ='全館';
-}
+$brandText = status($brand,$brandText);
+$accessoriesText = status($accessories,$accessoriesText);
 
 $concatStr .= $brandText;
 if($accessoriesText != '全館'){
@@ -63,4 +59,10 @@ try{
     exit;
 }
 
+function status($status,$text){
+    if ($status == 'null' || $status == 0) {
+        $text = '全館';
+    }
+    return $text;
+}
 ?>

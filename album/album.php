@@ -106,8 +106,8 @@ include("../rental/link.php");
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
-            'users' => 'users.php',           // 第一層的連結
-            'album' => 'album.php',      // 第二層的連結
+            'users' => '../users/users.php',   // 第一層的連結
+            'album' => 'album.php',   // 第二層的連結
         ];
 
         include '../navbar.php';
