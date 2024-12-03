@@ -117,6 +117,9 @@ try {
                                                 <option value="" selected disabled>請選擇</option>
                                                 <option value="0">全館</option>
                                                 <option value="1">sony</option>
+                                                <option value="2">Nikon</option>
+                                                <option value="3">Canon</option>
+                                                <option value="4">FUJFILM</option>
                                             </select>
                                         </div>
                                         <div class="col-1">
@@ -127,7 +130,9 @@ try {
                                                 <option value="" selected disabled>請選擇</option>
                                                 <option value="0">全館</option>
                                                 <option value="1">相機</option>
-                                                <option value="2">包包</option>
+                                                <option value="2">鏡頭</option>
+                                                <option value="3">包包</option>
+                                                <option value="4">背帶</option>
                                             </select>
                                         </div>
                                     </div>
