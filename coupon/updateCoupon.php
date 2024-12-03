@@ -108,7 +108,7 @@ try {
                                     <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
                                         <h6 class="text-white text-capitalize ps-3">修改優惠券</h6>
                                     </div>
-                                    <div class="row d-flex justify-content-center">
+                                    <div class="row mt-3 d-flex justify-content-center">
                                         <div class="col-1">
                                             <span>品牌</span>
                                         </div>
