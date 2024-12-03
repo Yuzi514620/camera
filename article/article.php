@@ -367,6 +367,7 @@ if ($search) {
 $sql .= " ORDER BY a.$sort $order 
           LIMIT ? OFFSET ?";
 
+
 // 計算總文章數量
 try {
     $countSql = "SELECT COUNT(*) as count FROM article";  
@@ -425,28 +426,28 @@ if (!empty($search)) {
   $articleCount = getTotalArticleCount();
 }
 
-// Initialize conditions
+
 $conditions = [];
 $params = [];
 
-// Filter by category_id if set
+
 if (isset($_GET['category_id'])) {
     $conditions[] = 'category_id = :category_id';
     $params[':category_id'] = $_GET['category_id'];
 }
 
-// Filter by is_deleted if set
+
 if (isset($_GET['is_deleted'])) {
     $conditions[] = 'is_deleted = 1';
 }
 
-// Build WHERE clause
+
 $where = '';
 if (!empty($conditions)) {
     $where = 'WHERE ' . implode(' AND ', $conditions);
 }
 
-// Prepare and execute count query
+
 $countStmt = $pdo->prepare("SELECT COUNT(*) FROM article $where");
 $countStmt->execute($params);
 $articleCount = $countStmt->fetchColumn();
@@ -632,6 +633,8 @@ $archived_count = $query->fetchColumn();
           <div class="d-flex justify-content-between align-items-center pe-4 ps-2">
             <div class="input-group" style="width: 20%;">
               <form class="d-flex" method="GET" action="article.php">
+                <input type="hidden" name="sort" value="update_time">
+                <input type="hidden" name="order" value="DESC">
                 <input type="search" class="form-control border border-secondary rounded-end-0 form-control-sm " placeholder="搜尋文章" name="search" value="<?= htmlspecialchars($search) ?>" style="height: 38px; border-radius:10px 0 0 10px;">
                 <button class="btn btn-dark btn-search" type="submit"><i class="fa-solid fa-magnifying-glass" ></i></button>
               </form>
@@ -655,11 +658,11 @@ $archived_count = $query->fetchColumn();
             <?php endif; ?>
             </div>
             <div class="btn-group pe-4">  
-              <a href="article.php?" class="btn btn-secondary btn-color <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
+              <a href="article.php?sort=update_time_desc" class="btn btn-secondary btn-color <?= $current_category_id === null && !isset($_GET['is_deleted']) ? 'active' : '' ?>">全部</a>
               <?php foreach ($categories as $id => $name): ?>  
-                  <a href="?category_id=<?= $id ?>" class="btn btn-dark btn-color <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
+                  <a href="?category_id=<?= $id ?>&sort=update_time_desc" class="btn btn-dark btn-color <?= $current_category_id == $id ? 'active' : '' ?>"><?= $name ?></a>  
               <?php endforeach; ?>
-              <a href="?is_deleted=1" class="btn btn-secondary btn-color <?= isset($_GET['is_deleted']) ? 'active' : '' ?>">
+              <a href="?is_deleted=1&sort=update_time_desc" class="btn btn-secondary btn-color <?= isset($_GET['is_deleted']) ? 'active' : '' ?>">
                   下架文章 <span class="badge bg-white text-danger border rounded-circle"><?= $archived_count ?></span>
               </a>
             </div>
@@ -721,7 +724,7 @@ $archived_count = $query->fetchColumn();
                                                       </td>
                                                       <!-- 更新時間 -->
                                                       <td style="width:10%; cursor:pointer;" title="<?= isset($article['update_time']) ? htmlspecialchars($article['update_time']) : '未更新' ?>">
-                                                          <p class="text-xs font-weight-bold mb-0 text-center text-success">
+                                                          <p class="text-xs font-weight-bold mb-0 text-center text-primary">
                                                               <?= isset($article['update_time']) ? htmlspecialchars(time_elapsed_string($article['update_time'])) : '未更新' ?>
                                                           </p>
                                                       </td>
@@ -797,7 +800,7 @@ $archived_count = $query->fetchColumn();
 
 
               <!-- 文章列 -->
-              <div class="card ">
+              <div class="card me-2">
                 <div class="card-body px-0 pb-2">
                   <div class="table-responsive p-0 rounded-top">
                     <table class="table align-items-center mb-0">
