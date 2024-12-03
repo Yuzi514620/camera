@@ -179,7 +179,7 @@ $new_order = ($order === 'asc') ? 'desc' : 'asc';
                   <?php endif; ?>                  
                 </th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
-                  規格</th>
+                  商品描述</th>
                 <th class="text-uppercase text-secondary text-xs opacity-7 ps-2 text-white">
                   租金 / 押金
                   <?php if ($order === 'f1'): ?>
