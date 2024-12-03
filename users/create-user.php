@@ -71,9 +71,17 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     referrerpolicy="no-referrer" />
 
   <style>
-    .padding{
-      padding: 27px;
+    .table {
+      .padding {
+        padding-left: 20px;
+      }
+
+      .padding1 {
+        padding-right: 20px;
+      }
+
     }
+
     .form1 {
       width: 100%;
       max-width: 300px;
@@ -129,73 +137,77 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                     <?php if ($result->num_rows > 0) : ?>
                       <input type="hidden" name="id" value="<?= $row["id"] ?>">
                       <tr class="">
-                        <th class="padding">大頭貼</th>
+                        <th class="padding">大頭貼:</th>
                         <td>
                           <div>
-                          <input type="file" class="form-control form1 btn btn-white border bordrer-dark test" name="img" >
-                          <img class="ms-3" id="test-img" src="/camera/users/img/9.jpg" alt="預覽圖" style="max-width: 100px; max-height: 100px;">
+                            <input type="file" class="form-control form1 btn btn-white border bordrer-dark test" name="img">
+                            <img class="ms-3" id="test-img" src="/camera/users/img/users.webp" alt="預覽圖" style="max-width: 100px; max-height: 100px;">
                           </div>
-                    
+
                         </td>
                       </tr>
                       <tr>
-                        <th class="padding">帳號</th>
-                        <td>
+                        <th class="padding">帳號:</th>
+                        <td class="padding1">
                           <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
                         </td>
 
                       </tr>
                       <tr>
-                        <th class="padding">密碼</th>
-                        <td><input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password"></td>
+                        <th class="padding">密碼:</th>
+                        <td class="padding1"><input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password"></td>
                       </tr>
                       <tr>
-                        <th class="padding">確認密碼</th>
-                        <td> <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword"></td>
+                        <th class="padding">確認密碼:</th>
+                        <td class="padding1"> <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword"></td>
                       </tr>
                       <tr>
-                        <th class="padding">姓名</th>
-                        <td> <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name"></td>
+                        <th class="padding">姓名:</th>
+                        <td class="padding1"> <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name"></td>
                       </tr>
                       <tr>
-                        <th class="padding">性別</th>
-                        <td><div class="form-check form-check-inline ">
-                    
+                        <th class="padding">性別:</th>
+                        <td class="padding1">
+                          <div class="form-check form-check-inline ">
+
                             <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
                             <label class="form-check-label " style="padding-right: 10px;" for="gender">男</label>
                           </div>
                           <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input" type="radio" name="gender" id="gender" value="option2">
-                            <label class="form-check-label" style="padding-right: 90px;" for="gender">女</label></td>
-                </tr>
-                <tr>
-                  <th class="padding">信箱</th>
-                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email"></td>
-                </tr>
-                
-                <tr>
-                  <th class="padding">手機</th>
-                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone"></td>
-                </tr>
-                <tr>
-                  <th class="padding">地址</th>
-                  <td><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address"></td>
-                </tr>
-                <tr>
-                  <th class="padding">生日</th>
-                  <td><input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday"></td>
-                </tr>
-              <?php endif; ?>
-              </table>
-              <?php if (isset($_SESSION["error"]["message"])): ?>
-                <div class=" mb-2 text-danger text-start" style="padding-left: 300px;"><?= $_SESSION["error"]["message"] ?></div>
-                <?php unset($_SESSION["error"]["message"]); ?>
-              <?php endif; ?>
-              <button class="btn btn-dark ms-5" type="submit">送出</button>
-              <a href="users.php" class="btn btn-primary">上一頁</a>
-              </a>
-              
-              <!-- <table class="table align-items-center mb-0">
+                            <label class="form-check-label" style="padding-right: 90px;" for="gender">女</label>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="padding">信箱:</th>
+                        <td class="padding1"><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email"></td>
+                      </tr>
+
+                      <tr>
+                        <th class="padding">手機:</th>
+                        <td class="padding1"><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone"></td>
+                      </tr>
+                      <tr>
+                        <th class="padding">地址:</th>
+                        <td class="padding1"><input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address"></td>
+                      </tr>
+                      <tr>
+                        <th class="padding">生日:</th>
+                        <td class="padding1"><input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday"></td>
+                      </tr>
+                    <?php endif; ?>
+                </table>
+                <?php if (isset($_SESSION["error"]["message"])): ?>
+                  <div class=" mb-2 text-danger text-start" style="padding-left: 300px;"><?= $_SESSION["error"]["message"] ?></div>
+                  <?php unset($_SESSION["error"]["message"]); ?>
+                <?php endif; ?>
+                <div style="padding-left: 226px;">
+                  <button class="btn btn-dark ms-5" type="submit">送出</button>
+                  <a href="users.php" class="btn btn-primary">上一頁</a>
+                  </a>
+                </div>
+
+                <!-- <table class="table align-items-center mb-0">
           <thead class="">
           <tr>
               <th class="text-end text-uppercase text-secondary text-lg ">id</th>
@@ -225,9 +237,9 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
 
-              <tbody>
-              </tbody>
-              </table>
+                <tbody>
+                </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -237,100 +249,9 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
 
-      <div class="row">
 
 
-        <div class="col-12">
-          <div class="card my-4">
-            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
-              </div>
-            </div> -->
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0 rounded-top">
-                <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
-                    <tr>
-                      <th
-                        class="text-center text-uppercase text-secondary text-xxs opacity-7 text-white">
-                        新增使用者
-                      </th>
-
-                      <!-- <th class="text-secondary opacity-7"></th> -->
-                    </tr>
-                  </thead>
-
-
-
-                  <tbody>
-
-                    <tr>
-                      <td class="text-center">
-                        <form action="doCreateUser.php" method="post">
-
-                          <div class="mb-2">
-
-                          </div>
-                          <div>
-                            <label for="" class="form-label ">大頭貼:</label>
-                            <input type="file" class="input-group-text form-control form1 btn btn-white border bordrer-dark test" name="img" aria-describedby="inputGroupFileAddon04" aria-label="Upload" value="<?= $row["img"] ?>">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">帳號:</label>
-                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入6-12位帳號" minlength="6" maxlength="12" name="account">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">密碼:</label>
-                            <input type="password" class="form-control form1 btn btn-white border bordrer-dark " placeholder="請輸入5-20位密碼" minlength="5" maxlength="20" name="password">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">確認密碼:</label>
-                            <input type="password" class="form-control form1 btn btn-white border bordrer-dark " name="repassword">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">姓名:</label>
-                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="name">
-                          </div>
-                          <div class="form-check form-check-inline ">
-                            <label for="" class="form-label" style="padding-right: 70px;">性別:</label>
-                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option1">
-                            <label class="form-check-label " style="padding-right: 10px;" for="gender">男</label>
-                          </div>
-                          <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input" type="radio" name="gender" id="gender" value="option2">
-                            <label class="form-check-label" style="padding-right: 90px;" for="gender">女</label>
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">email:</label>
-                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="email">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">手機號碼:</label>
-                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="phone">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">住址:</label>
-                            <input type="text" class="form-control form1 btn btn-white border bordrer-dark " name="address">
-                          </div>
-                          <div class="mb-2">
-                            <label for="" class="form-label">生日:</label>
-                            <input type="date" class="form-control form1 btn btn-white border bordrer-dark " name="birthday">
-                          </div>
-                          <?php if (isset($_SESSION["error"]["message"])): ?>
-                            <div class="p-1 mb-2 text-danger text-center"><?= $_SESSION["error"]["message"] ?></div>
-                            <?php unset($_SESSION["error"]["message"]); ?>
-                          <?php endif; ?>
-                          <button class="btn btn-dark" type="submit">送出</button>
-                          <a href="users.php" class="btn btn-primary">上一頁</a>
-                          </a>
-                        </form>
-
-                      </td>
-
-
-
-              </div>
+    </div>
   </main>
 
   <!--   Core JS Files   -->
@@ -340,21 +261,21 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
   <!-- 照片預覽 -->
   <script>
-  document.querySelector(".test").addEventListener("change", function(event) {
+    document.querySelector(".test").addEventListener("change", function(event) {
       const file = event.target.files[0]; // 取得選中的檔案
       const testImg = document.querySelector("#test-img"); // 目標圖片元素
 
       if (file) {
-          const reader = new FileReader();
+        const reader = new FileReader();
 
-          reader.onload = function(e) {
-              testImg.src = e.target.result; // 設定圖片的src為預覽的結果
-          };
+        reader.onload = function(e) {
+          testImg.src = e.target.result; // 設定圖片的src為預覽的結果
+        };
 
-          reader.readAsDataURL(file); // 開始讀取檔案
+        reader.readAsDataURL(file); // 開始讀取檔案
       }
-  });
-</script>
+    });
+  </script>
 
   <!-- <script>
     const testImg = document.querySelector("#test-img");
@@ -380,7 +301,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
-  
+
 </body>
 
 </html>

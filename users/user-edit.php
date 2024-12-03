@@ -67,6 +67,17 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 <style>
+  .table {
+      .padding {
+        padding-left: 20px;
+        display: flex;
+        align-content: center;
+      }
+
+      .padding1 {
+        padding-left: 20px;
+      }
+    }
   .form1 {
     width: 100%;
     max-width: 300px;
@@ -187,7 +198,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                   <?php if($result->num_rows > 0) : ?>
                     <input type="hidden" name="id" value="<?= $row["id"] ?>">
                 <tr>
-                    <th class="">大頭貼</th>
+                    <th class="padding">大頭貼:</th>
                     <td>
                       <div>
                       <img class="avatar-lg" src="/camera/users/img/<?=$row["img"]?>" alt="" id="test-img">
@@ -198,45 +209,50 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                     </td>
                 </tr>
                 <tr>
-                    <th>id</th>
+                    <th class="padding">id:</th>
                     <td><?=$row["id"]?></td>
                 </tr>
                 <tr>
-                    <th>帳號</th>
+                    <th class="padding">帳號:</th>
                     <td><input type="text" class="form-control form1 border border-light" name="account" value="<?= $row["account"] ?>"></td>
                     
                 </tr>
                 <tr>
-                    <th>密碼</th>
-                    <td><input type="text" class="form-control form1 border border-light" name="password" value="<?= $row["password"] ?>"></td>
+                    <th class="padding">密碼:</th>
+
+                    <!-- <td><?=$row["pasword"]?></td> -->
+
+                    <td><input type="password" class="form-control form1 border border-light" name="password"></td>
+
+                    <!-- <td><input type="text" class="form-control form1 border border-light" name="password" value="<?= $row["password"] ?>"></td> -->
                 </tr>
                 <tr>
-                    <th>姓名</th>
+                    <th class="padding">姓名:</th>
                     <td><input type="text" class="form-control form1 border border-light" name="name" value="<?= $row["name"] ?>"></td>
                 </tr>
                 <tr>
-                    <th>性別</th>
+                    <th class="padding">性別:</th>
                     <td><?=$row["gender"] == 1 ? "男" : "女"?></td>
                 </tr>
                 <tr>
-                    <th>信箱</th>
+                    <th class="padding">信箱:</th>
                     <td><input type="text" class="form-control form1 border border-light" name="email" value="<?= $row["email"] ?>"></td>
                 </tr>
                 <tr>
-                    <th>生日</th>
+                    <th class="padding">生日:</th>
                     <td><input type="date" class="form-control form1 border border-light" name="birthday" value="<?= $row["birthday"] ?>"></td>
                 </tr>
                 <tr>
-                    <th>手機</th>
+                    <th class="padding">手機:</th>
                     <td><input type="text" class="form-control form1 border border-light" name="phone" value="<?= $row["phone"] ?>"></td>
                 </tr>
                 <tr>
-                    <th>地址</th>
+                    <th class="padding">地址:</th>
                     <td><input type="text" class="form-control form1 border border-light" name="address" value="<?= $row["address"] ?>"></td>
                 </tr>
                 <?php endif; ?>
             </table>
-            <div class="m-3">
+            <div class="m-3" style="padding-left: 226px;">
             <button type="submit" class="btn btn-info">儲存</button>
             <a href="user.php?id=<?=$row["id"]?>" class="btn btn-danger">取消</a>
             </div>

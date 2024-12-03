@@ -27,12 +27,12 @@
                     <span class="nav-link-text ms-1">會員管理</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link <?= $page === 'order' ? 'active bg-white text-dark' : 'text-white' ?>" href="">
                     <i class="material-symbols-rounded opacity-5">table_view</i>
                     <span class="nav-link-text ms-1">訂單管理</span>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link <?= $page === 'product' ? 'active bg-white text-dark' : 'text-white' ?>" href="../product/product.php">
                     <i class="material-symbols-rounded opacity-5">receipt_long</i>

@@ -135,7 +135,7 @@ session_start();
                   </div> -->
                 </div>
               </div>
-              <?php if (isset($_SESSION["error"]["times"]) && $_SESSION["error"]["times"] > 3): ?>
+              <?php if (isset($_SESSION["error"]["times"]) && $_SESSION["error"]["times"] > 2): ?>
                 <h4 class="text-danger m-5 text-center">你已經登入失敗超過3次<br>請稍後再試</h4>
               <?php else: ?>
                 <div class="card-body p-3">

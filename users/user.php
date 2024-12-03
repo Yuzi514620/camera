@@ -67,12 +67,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
 ?>
-<style>
-  .form1 {
-    width: 100%;
-    max-width: 300px;
-  }
-</style>
+
 <!--
 =========================================================
 * Material Dashboard 3 - v3.2.0
@@ -128,6 +123,25 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
+
+  <style>
+    .table {
+      .padding {
+        padding-left: 20px;
+        display: flex;
+        align-content: center;
+      }
+
+      .padding1 {
+        padding-left: 20px;
+      }
+    }
+
+    .form1 {
+      width: 100%;
+      max-width: 300px;
+    }
+  </style>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -159,24 +173,24 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
     <!-- Navbar -->
     <?php $page = 'users'; ?>
     <?php
-        // 設定麵包屑的層級
-        $breadcrumbs = [
-            'teacher' => '首頁', // 第一層的文字
-            'teacher_list' => '會員管理', 
-            'teacher_add' => '詳細資料', // 第一層的文字
-        ];
+    // 設定麵包屑的層級
+    $breadcrumbs = [
+      'teacher' => '首頁', // 第一層的文字
+      'teacher_list' => '會員管理',
+      'teacher_add' => '詳細資料', // 第一層的文字
+    ];
 
-        $page = 'teacher_add';//當前的頁面
+    $page = 'teacher_add'; //當前的頁面
 
-        // 設定麵包屑的連結
-        $breadcrumbLinks = [
-            'teacher' => 'users.php',           // 第一層的連結
-            'teacher_list' => 'users.php',      
-            'teacher_add' => 'user.php',   // 第三層的連結
-        ];
+    // 設定麵包屑的連結
+    $breadcrumbLinks = [
+      'teacher' => 'users.php',           // 第一層的連結
+      'teacher_list' => 'users.php',
+      'teacher_add' => 'user.php',   // 第三層的連結
+    ];
 
-        include '../navbar.php';
-        ?>
+    include '../navbar.php';
+    ?>
     <!-- Navbar -->
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center">
@@ -200,59 +214,59 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                 <table class="table table-bordered">
                   <?php if ($result->num_rows > 0) : ?>
                     <tr>
-                      <th class="">大頭貼</th>
+                      <th class="padding">大頭貼:</th>
                       <td>
                         <img class="avatar-lg" src="/camera/users/img/<?= $row["img"] ?>" alt="">
 
                       </td>
                     </tr>
                     <tr>
-                      <th>id</th>
-                      <td><?= $row["id"] ?></td>
+                      <th class="padding">id:</th>
+                      <td class="padding1"><?= $row["id"] ?></td>
                     </tr>
                     <tr>
-                      <th>帳號</th>
-                      <td><?= $row["account"] ?></td>
+                      <th class="padding">帳號:</th>
+                      <td class="padding1"><?= $row["account"] ?></td>
                     </tr>
                     <tr>
-                      <th>密碼</th>
-                      <td><?= $row["password"] ?></td>
+                      <th class="padding">密碼:</th>
+                      <td class="padding1"><?= $row["password"] ?></td>
                     </tr>
                     <tr>
-                      <th>姓名</th>
-                      <td><?= $row["name"] ?></td>
+                      <th class="padding">姓名:</th>
+                      <td class="padding1"><?= $row["name"] ?></td>
                     </tr>
                     <tr>
-                      <th>性別</th>
-                      <td><?= $row["gender"] == 1 ? "男" : "女" ?></td>
+                      <th class="padding">性別:</th>
+                      <td class="padding1"><?= $row["gender"] == 1 ? "男" : "女" ?></td>
                     </tr>
                     <tr>
-                      <th>信箱</th>
-                      <td><?= $row["email"] ?></td>
+                      <th class="padding">信箱:</th>
+                      <td class="padding1"><?= $row["email"] ?></td>
                     </tr>
                     <tr>
-                      <th>生日</th>
-                      <td><?= $row["birthday"] ?></td>
+                      <th class="padding">生日:</th>
+                      <td class="padding1"><?= $row["birthday"] ?></td>
                     </tr>
                     <tr>
-                      <th>手機</th>
-                      <td><?= $row["phone"] ?></td>
+                      <th class="padding">手機:</th>
+                      <td class="padding1"><?= $row["phone"] ?></td>
                     </tr>
                     <tr>
-                      <th>地址</th>
-                      <td><?= $row["address"] ?></td>
+                      <th class="padding">地址:</th>
+                      <td class="padding1"><?= $row["address"] ?></td>
                     </tr>
                   <?php endif; ?>
                 </table>
                 <div class="d-flex justify-content-between">
-                  <div class="m-3">
+                  <div class="m-3" style="padding-left: 226px;">
                     <a href="user-edit.php?id=<?= $row["id"] ?>" class="btn btn-primary">編輯</a>
                     <a href="users.php" class="btn btn-danger">回到會員列表</a>
                   </div>
                   <div class="m-3">
-                  <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" type="button">刪除</button>
-                </div>
-                <!-- <table class="table align-items-center mb-0">
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" type="button">刪除</button>
+                  </div>
+                  <!-- <table class="table align-items-center mb-0">
                   <thead class="">
                   <tr>
                       <th class="text-end text-uppercase text-secondary text-lg ">id</th>
@@ -282,17 +296,17 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
 
-                <tbody>
-                </tbody>
-                </table>
+                  <tbody>
+                  </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
 
-      <!-- <div class="row">
+        <!-- <div class="row">
           <div class="col-12">
             <div class="card my-4">
               <div
@@ -652,7 +666,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
             </div>
           </div>
         </div> -->
-      <!-- <footer class="footer py-4">
+        <!-- <footer class="footer py-4">
           <div class="container-fluid">
             <div class="row align-items-center justify-content-lg-between">
               <div class="col-lg-6 mb-lg-0 mb-4">
@@ -673,7 +687,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                   for a better web.
                 </div>
               </div> -->
-      <!-- <div class="col-lg-6">
+        <!-- <div class="col-lg-6">
                 <ul
                   class="nav nav-footer justify-content-center justify-content-lg-end"
                 >
@@ -711,10 +725,10 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                   </li>
                 </ul>
               </div> -->
-      <!-- </div>
+        <!-- </div>
           </div>
         </footer> -->
-    </div>
+      </div>
   </main>
 
   <!--   Core JS Files   -->

@@ -4,10 +4,23 @@ require_once("../db_connect.php");
 if(!isset($_POST["name"])){
     exit("請從正常管道進入此頁面");
 }
+$sql = "SELECT * FROM users";
+$result=$conn->query($sql);
+$row=$result->fetch_assoc();
 $img=$_POST["img"];
+if(empty($img)){
+	$img="$row[img]";
+}else{
+	$img=$_POST["img"];
+}
 $id=$_POST["id"];
 $account=$_POST["account"];
 $password=$_POST["password"];
+if(empty($password)){
+	$password="$row[password]";
+}else{
+	$password=md5($password);
+}
 $name=$_POST["name"];
 $gender=$_POST["gender"];
 $email=$_POST["email"];
