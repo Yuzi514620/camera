@@ -277,8 +277,6 @@ try {
 }
 
 
-
-
 $is_searching = !empty($search);
 
 
@@ -422,7 +420,7 @@ function getTotalArticleCount() {
 
 // 確保在使用之前定義這個函數
 if (!empty($search)) {
-  $articleCount = getSearchResultCount($search);
+  $articleCountSearch = getSearchResultCount($search);
 } else {
   $articleCount = getTotalArticleCount();
 }
@@ -651,7 +649,7 @@ $archived_count = $query->fetchColumn();
           <div class="d-flex justify-content-between">
             <div class="px-2 mb-2">
             <?php if (!empty($search)): ?>
-                搜尋「<?= htmlspecialchars($search) ?>」共有 <?= htmlspecialchars($articleCount) ?> 筆結果
+                搜尋「<?= htmlspecialchars($search) ?>」共有 <?= htmlspecialchars($articleCountSearch) ?> 筆結果
             <?php else: ?>
                 目前共有 <?= htmlspecialchars($articleCount) ?> 篇文章
             <?php endif; ?>
@@ -766,7 +764,7 @@ $archived_count = $query->fetchColumn();
                   </div>
               </div>
               <!-- 分頁按鈕 -->
-              <?php if (($p == 1 && $articleCount > 10) || ($p > 1 && $total_pages > 0)): ?>
+              <?php if (($p == 1 && $articleCountSearch > 10) || ($p > 1 && $total_pages > 0)): ?>
                     <nav class="mt-5" aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
                             <?php

@@ -40,7 +40,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
   
   <style>
     .add-title{
-      border-radius: 10px 10px 0 0;
+      border-radius: 15px 15px 0 0;
     }
     .ck-editor__editable_inline {
       min-height: 400px ;
@@ -148,7 +148,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
       </div>
       <div class="row">
         <div class="col-12">
-          <div class="card my-4">
+          <div class="card my-4"  style="border-radius: 15px;">
             <table class="table align-items-center mb-0">
               <thead class="bg-gradient-dark">
                 <tr>
@@ -196,7 +196,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
 
                         <!-- 送出和返回按鈕 -->
                         <div class="d-flex mt-3 btn-under">
-                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send font-weight-bold d-flex text-nowrap" style="height:50px; border-radius:50%;">送出</button>
+                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send font-weight-bold" style="height:45px; border-radius:50%;">送出</button>
                             <a class="btn btn-sm btn-danger align-content-center font-weight-bold" style="height:45px; border-radius:50%;" href="article.php">取消</a>
                         </div>
                     </div>
