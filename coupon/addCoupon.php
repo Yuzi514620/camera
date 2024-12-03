@@ -88,9 +88,9 @@
                                         <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
                                             <h6 class="text-white text-capitalize ps-3">新增優惠券</h6>
                                         </div>
-                                        <div class="textbox card-body px-0 pb-2 position-relative">
+                                        <div class="textbox card-body px-0 pb-2 mt-3 position-relative">
                                             <div class="row d-flex justify-content-center">
-                                                <div class="col-1">
+                                                <div class="col-1 ">
                                                     <span>品牌</span>
                                                 </div>
                                                 <div class="col-2">
