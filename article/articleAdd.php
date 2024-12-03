@@ -50,15 +50,39 @@ unset($_SESSION['errors'], $_SESSION['old']);
     color: red;
     margin-top: 10px;
     animation: shake 0.5s;
-}
+  }
 
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
+  @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+  }
+
+
+  .btn-back a{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #FFF;
+
+  }
+  .btn-back a:hover{
+    background: #FFF;
+      color: #000;
+  }
+
+  .btn-under button:hover{
+    background: #FFF;
+    color:#000;
+  }
+
+  .btn-under a:hover{
+    background: #FFF;
+    color:#dc3545;
+  }
+
   </style>
   <title>camera_articleAdd</title>
   <!--     Fonts and icons     -->
@@ -140,7 +164,14 @@ unset($_SESSION['errors'], $_SESSION['old']);
     </nav>
    <!-- Navbar -->
 
+
+   
     <div class="container-fluid py-2">
+      <div class="d-flex ps-5 mt-4 btn-back">
+          <a class="btn btn-dark align-content-center" href="article.php">
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+      </div>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -162,9 +193,9 @@ unset($_SESSION['errors'], $_SESSION['old']);
                     <div class="container mt-3">
                         <!-- 文章類別選擇 -->
                         <div class="d-flex my-3">
-                            <h5 class="mt-2">文章類別 :</h5>
+                            <h5 class="mt-2 font-weight-bold text-md">文章類別 :</h5>
                             <select class="ms-2" style="border-radius:5px" name="category_id" id="category_id" required>
-                                <option value="0">選擇分類</option>
+                                <option value="0"> --請選擇分類-- </option>
                                 <?php foreach ($categories as $category): ?>
                                     <option value="<?= htmlspecialchars($category['id']) ?>">
                                         <?= htmlspecialchars($category['name']) ?>
@@ -190,9 +221,9 @@ unset($_SESSION['errors'], $_SESSION['old']);
                         </div>
 
                         <!-- 送出和返回按鈕 -->
-                        <div class="d-flex mt-3">
-                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send" style="height:45px; border-radius:15px;">送出</button>
-                            <a class="btn btn-sm btn-dark align-content-center" style="height:45px; border-radius:15px;" href="article.php">返回</a>
+                        <div class="d-flex mt-3 btn-under">
+                            <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send font-weight-bold" style="height:45px; border-radius:50%;">送出</button>
+                            <a class="btn btn-sm btn-danger align-content-center font-weight-bold" style="height:45px; border-radius:50%;" href="article.php">取消</a>
                         </div>
                     </div>
                   </form>

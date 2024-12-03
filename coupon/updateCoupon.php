@@ -81,6 +81,7 @@ try {
         <?php
         // 設定麵包屑的層級
         $breadcrumbs = [
+            'user' => '首頁',
             'coupon' => '優惠券列表', // 第一層的文字
             'updateCoupon' => "修改優惠券"
         ];
@@ -89,6 +90,7 @@ try {
 
         // 設定麵包屑的連結
         $breadcrumbLinks = [
+            'user' => '../users/users.php',
             'coupon' => '../pages/coupon.php', // 第一層的連結
             'updateCoupon' => 'updateCoupon.php'
         ];
@@ -253,17 +255,14 @@ try {
 
         function form_data(file_data, id, name, discount, lower_purchase, quantity, days, brand, accessories, brandText, accessoriesText) {
             let form_data = new FormData();
-            form_data.append('file', file_data);
-            form_data.append('id', id);
-            form_data.append('name', name);
-            form_data.append('discount', discount);
-            form_data.append('lower_purchase', lower_purchase);
-            form_data.append('quantity', quantity);
-            form_data.append('days', days);
-            form_data.append('brand', brand);
-            form_data.append('accessories', accessories);
-            form_data.append('brandText', brandText);
-            form_data.append('accessoriesText', accessoriesText);
+            keyArr = ['file','id','name','discount','lower_purchase','quantity','days','brand','accessories','brandText','accessoriesText'];
+            dataArr = [file_data,id,name,discount,lower_purchase,quantity,days,brand,accessories,brandText,accessoriesText];
+            length = dataArr.length;
+
+            for(let i = 0 ;i<length; i++){
+                form_data.append(`${keyArr[i]}`,dataArr[i]);
+            }
+
             return form_data;
         }
     </script>
