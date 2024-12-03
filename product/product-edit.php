@@ -166,7 +166,7 @@ $categories_result = $conn->query($sql_categories);
                                                         <tr>
                                                             <th>商品名稱</th>
                                                             <td>
-                                                                <input type="text" class="form-control" name="name" value="<?= $row["name"] ?>">
+                                                                <input type="text" class="form-control" name="name" value="<?= $row["name"] ?>" required>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -184,7 +184,7 @@ $categories_result = $conn->query($sql_categories);
                                                         <tr>
                                                             <th>價格</th>
                                                             <td>
-                                                                <input type="text" class="form-control" name="price" value="<?= $row["price"] ?>">
+                                                                <input type="number" class="form-control" name="price" value="<?= $row["price"] ?>" required>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -224,7 +224,7 @@ $categories_result = $conn->query($sql_categories);
                                                         <tr>
                                                             <th>庫存</th>
                                                             <td>
-                                                                <input type="text" class="form-control" name="stock" value="<?= $row["stock"] ?>">
+                                                                <input type="number" class="form-control" name="stock" value="<?= $row["stock"] ?>" required>
                                                             </td>
                                                         </tr>
                                                         <tr>
