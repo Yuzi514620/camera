@@ -274,7 +274,7 @@ function rowCount($pdoSqlALl,$db_host){
                   </li>
                     <?php for ($i = 1; $i <= $total_page; $i++): ?>
                       <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
-                        <a class="page-link" href="coupon.php?p=<?= $i ?>&sort=1"><?= $i ?></a>
+                        <a class="page-link" href="coupon.php?p=<?= $i ?>&sort=<?= $_GET["sort"] ?>"><?= $i?></a>
                       </li>
                     <?php endfor; ?>
                     <li class="page-item">
