@@ -202,9 +202,9 @@ function rowCount($pdoSqlALl,$db_host){
                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">開始日</th>
                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">截止日</th>
                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">折扣</th>
-                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">最低消費</th>
-                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">數量</th>
-                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white">狀態</th>
+                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white text-end">最低消費</th>
+                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white text-end">數量</th>
+                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-white text-end">狀態</th>
                         <th class="opacity-7"></th>
                         <!-- <th class="text-secondary opacity-7"></th> -->
                       </tr>
@@ -221,7 +221,7 @@ function rowCount($pdoSqlALl,$db_host){
                           <td><?= $row["discount"] ?></td>
                           <td class="text-end"><?= number_format($row["lower_purchase"]) ?></td>
                           <td class="text-end"><?= number_format($row["quantity"]) ?></td>
-                          <td class="status">
+                          <td class="status text-end">
                             <?php if ($row["is_deleted"] == 0): ?><span style="color: green;">已上架</span>
                             <?php else: ?><span style="color: red;">已下架</span>
                           <?php endif; ?>
@@ -274,7 +274,7 @@ function rowCount($pdoSqlALl,$db_host){
                   </li>
                     <?php for ($i = 1; $i <= $total_page; $i++): ?>
                       <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
-                        <a class="page-link" href="coupon.php?p=<?= $i ?>&sort=1"><?= $i ?></a>
+                        <a class="page-link" href="coupon.php?p=<?= $i ?>&sort=<?= $_GET["sort"] ?>"><?= $i?></a>
                       </li>
                     <?php endfor; ?>
                     <li class="page-item">
@@ -282,8 +282,7 @@ function rowCount($pdoSqlALl,$db_host){
                       <span aria-hidden="true">&raquo;</span>
                     </a>
                   </li>
-                  <?php endif; ?>
-                  
+                  <?php endif; ?>   
                 </ul>
               </nav>
             </div>
@@ -335,7 +334,6 @@ function rowCount($pdoSqlALl,$db_host){
           }
         })
         .done(function(response) {
-
           document.location.reload();
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -363,23 +361,5 @@ function rowCount($pdoSqlALl,$db_host){
           console.log(textStatus);
         })
       })
-
-    $(".btn-search").click(function() {
-      const search = document.querySelector(".btn-searcg")
-      $.ajax({
-          method: "POST",
-          url: "../coupon/doSearchCoupon.php",
-          dataType: "json",
-          data: {
-            id: transData.id
-          }
-        })
-        .done(function(response) {
-          document.location.reload();
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-          console.log(textStatus);
-        })
-    })
   </script>
 </html>

@@ -173,19 +173,14 @@ $categories_result = $conn->query($sql_categories);
                                                             <th>更新圖片</th>
                                                             <td>
                                                                 <!-- 顯示當前圖片 -->
-                                                                <?php if (!empty($row["image_url"])): ?>
-                                                                    <div class="ratio ratio-4x3" style="width: 300px;">
-                                                                        <img class="object-fit-cover" src="../album/upload/<?= htmlspecialchars($row["image_url"]) ?>" alt="商品圖片">
-                                                                    </div>
-                                                                <?php else: ?>
-                                                                    <p>尚未上傳圖片</p>
-                                                                <?php endif; ?>
+                                                                <div class="ratio ratio-4x3" style="width: 300px;">
+                                                                    <img id="preview-image" class="object-fit-cover" src="../album/upload/<?= htmlspecialchars($row["image_url"]) ?>" alt="商品圖片">
+                                                                </div>
 
                                                                 <!-- 圖片上傳欄位 -->
-                                                                <input type="file" class="form-control mt-2" name="image">
+                                                                <input type="file" class="form-control mt-2" name="image" id="image-input">
                                                             </td>
                                                         </tr>
-
                                                         <tr>
                                                             <th>價格</th>
                                                             <td>
@@ -276,6 +271,19 @@ $categories_result = $conn->query($sql_categories);
             };
             Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
         }
+    </script>
+    <script>
+        // 監聽文件選擇變更
+        document.getElementById('image-input').addEventListener('change', function(event) {
+            const file = event.target.files[0]; // 獲取選擇的檔案
+            if (file) {
+                const reader = new FileReader(); // 建立 FileReader
+                reader.onload = function(e) {
+                    document.getElementById('preview-image').src = e.target.result; // 更新圖片的 src
+                };
+                reader.readAsDataURL(file); // 讀取檔案為 Data URL
+            }
+        });
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

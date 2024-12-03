@@ -53,15 +53,15 @@ try {
   <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
-
-  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
   <style>
     .ck-editor__editable_inline {
       min-height: 400px ;
       height:auto ;
-      
     }
 
+    .Edit-title{
+      border-radius: 15px 15px 0 0;
+    }
     .btn-back a{
     width: 40px;
     height: 40px;
@@ -96,10 +96,6 @@ try {
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script
-    src="https://kit.fontawesome.com/42d5adcbca.js"
-    crossorigin="anonymous"></script>
   <!-- Material Icons -->
   <link
     rel="stylesheet"
@@ -115,8 +111,10 @@ try {
     integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./style.css">
 		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -144,7 +142,7 @@ try {
           include '../navbar.php';
           ?>
 
-    <div class="container-fluid py-2">
+    <div class="container-fluid py-2 ">
       <div class="d-flex ps-5 mt-4 btn-back">
           <a class="btn btn-dark align-content-center" href="article.php">
             <i class="fa-solid fa-chevron-left"></i>
@@ -152,13 +150,11 @@ try {
       </div>
       <div class="row">
         <div class="col-12">
-          <div class="card my-4">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0 rounded-top">
-                <table class="table align-items-center mb-0">
-                  <thead class="bg-gradient-dark">
+          <div class="card my-4" style="border-radius: 15px;">
+                <table class="table align-items-center mb-0 input-table">
+                  <thead class="bg-gradient-dark input-table">
                     <tr>
-                      <th class="text-left text-uppercase text-xl text-white"  colspan="8">
+                      <th class="bg-dark text-left text-uppercase text-xl text-white Edit-title"  colspan="8">
                         編輯內容
                       </th>
                     </tr>
@@ -198,17 +194,17 @@ try {
 
                           <!-- 送出和返回按鈕 -->
                           <div class="d-flex mt-3 btn-under">
-                              <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 align-content-center btn-send font-weight-bold" style="height:50px; border-radius:50%;">送出</button>
-                              <a class="btn btn-sm btn-danger align-content-center font-weight-bold" style="height:45px; border-radius:50%;" href="article.php">取消</a>
+                              <button type="submit" class="btn btn-sm btn-dark ms-auto me-1 d-flex align-items-center justify-content-center font-weight-bold" style="height:45px; width:45px; border-radius:50%;">送出</button>
+                              <a class="btn btn-sm btn-danger d-flex align-items-center justify-content-center font-weight-bold" style="height:45px; width:45px; border-radius:50%;" href="article.php">取消</a>
                           </div>
                       </div>
                     </form>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
   </main>
 
 <!-- CKEditor 初始化 -->
