@@ -14,6 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->fetch();
         $stmt->close();
 
+        if (!is_dir("trash/")) {
+            mkdir("trash/", 0777, true);
+        }
+
         if (!empty($imageUrl)) {
             // 將圖片移動到回收桶
             $uploadPath = "../album/upload/" . $imageUrl;
